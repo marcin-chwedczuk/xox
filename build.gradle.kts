@@ -12,12 +12,20 @@ plugins {
 
     // Apply the application plugin to add support for building a CLI application.
     application
+
+    id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+}
+
+// See: https://github.com/openjfx/javafx-gradle-plugin
+javafx {
+    version = "14"
+    modules("javafx.controls", "javafx.fxml")
 }
 
 dependencies {
@@ -30,5 +38,6 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClassName = "pl.marcinchwedczuk.xox.App"
+    mainClassName = "pl.marcinchwedczuk.xox.Test"
 }
+

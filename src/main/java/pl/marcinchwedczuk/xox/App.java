@@ -3,12 +3,372 @@
  */
 package pl.marcinchwedczuk.xox;
 
+import java.util.Scanner;
+
 public class App {
-    public String getGreeting() {
-        return "Hello world.";
+    private static final int N = 4;
+    private static final int WINNING_STRIDE = 3; // < N
+
+    private static final int SCORE_WIN = 1000;
+    private static final int SCORE_LOOSE = 0;
+    private static final int SCORE_DRAW = 50;
+
+    private static final char X = 'X';
+    private static final char O = 'O';
+    private static final char EMPTY = '\0';
+
+    public static void main(String[] args) throws InterruptedException {
+        {
+            char[] tmp = new char[N * N];
+            putMark(tmp, 0, 0, O);
+            putMark(tmp, 1, 0, O);
+            putMark(tmp, 0, 2, O);
+            putMark(tmp, 0, 1, X);
+            putMark(tmp, 1, 1, X);
+            putMark(tmp, 2, 1, X);
+            putMark(tmp, 0, 3, X);
+            print(tmp);
+            System.out.println("SCORE(O) = " + scoreGame(0, tmp, O));
+            System.out.println("SCORE(X) = " + scoreGame(0, tmp, X));
+        }
+
+        char[] board = new char[N * N];
+        for (int i = 0; i < board.length; i++) board[i] = EMPTY;
+        Scanner input = new Scanner(System.in);
+
+        while (true) {
+            BestMove m = minimax(0, board, O, Short.MIN_VALUE, Short.MAX_VALUE);
+            if (m.row == -1) {
+                System.out.println("GAME ENDO!!!");
+                break;
+            }
+            System.out.println("MINMAX(O) = " + m.score);
+            BestMove tmp = m;
+            while (tmp != null) {
+                System.out.println("MOVE " + tmp.row + ", " + tmp.col
+                        + " put " + tmp.player + " score " + tmp.score +
+                        " alpha " + tmp.alpha + " beta " + tmp.beta);
+                tmp = tmp.next;
+            }
+
+            putMark(board, m.row, m.col, O);
+            System.out.println("After O move:");
+            System.out.println("SCORE(X): " + scoreGame(0, board, X));
+            System.out.println("SCORE(O): " + scoreGame(0, board, O));
+
+            if (!canPutMark(board)) {
+                System.out.print("O WINS!!!");
+                break;
+            }
+
+            print(board);
+
+            System.out.print("MOVE row,col ? ");
+            System.out.flush();
+            String move = input.nextLine();
+            String[] rc = move.split(",");
+            int r = Integer.parseInt(rc[0]);
+            int c = Integer.parseInt(rc[1]);
+
+            System.out.println("SCORE(X): " + scoreGame(0, board, X));
+            System.out.println("SCORE(O): " + scoreGame(0, board, O));
+
+            if (isEmpty(board, r, c)) {
+                putMark(board, r, c, X);
+                System.out.println("After X move:");
+                System.out.println("SCORE(X): " + scoreGame(0, board, X));
+                System.out.println("SCORE(O): " + scoreGame(0, board, O));
+
+                if (!canPutMark(board)) {
+                    System.out.print("X WINS!!!");
+                    break;
+                }
+            }
+            else {
+                // TODO: Check no more moves possible
+                System.out.println("ANGRY!!!");
+                continue;
+            }
+
+
+        }
     }
 
-    public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+    private static void print(char[] board) {
+        System.out.println("\n=" + "===".repeat(N));
+        for (int r = 0; r < N; r++) {
+            System.out.print('|');
+            for (int c = 0; c < N; c++) {
+                System.out.print(
+                    Character.toString(get(board, r, c)).repeat(2).replace('\0', ' ') + "|");
+            }
+            System.out.println("\n=" + "===".repeat(N));
+        }
+        System.out.println();
+    }
+
+    public static BestMove minimax(int level, char[] board, char player, int alpha, int beta) {
+        BestMove best = new BestMove(-1, -1,
+            maxPlayer(player) ? alpha : beta);
+        best.alpha = alpha; best.beta = beta;
+
+        // For each possible move
+        for (int r = 0; r < N; r++) {
+            for (int c = 0; c < N; c++) {
+                // Prunning
+                if (maxPlayer(player) && (best.score >= beta)) {
+                    return best;
+                }
+                if ((!maxPlayer(player)) && (best.score <= alpha)) {
+                    return best;
+                }
+
+                if (isEmpty(board, r, c)) {
+                    // Try move
+                    putMark(board, r, c, player);
+
+                    BestMove next = null;
+
+                    // Score is in absolute values, 100 - means player
+                    // wins no matter X or O. 0 means player looses;
+                    var score = scoreGame(level, board, player);
+                    var scoreI = score.score;
+                    if (!score.endGame) {
+                        // Game did not end, do opponent move
+                        next = minimax(level + 1, board, opponent(player),
+                                maxPlayer(player) ? best.score : alpha,
+                                maxPlayer(player) ? beta       : best.score
+                        );
+                        scoreI = next.score;
+                    }
+                    else {
+                        // scoreI -= 50;
+                        if (!maxPlayer(player)) {
+                            scoreI = -scoreI;
+                        }
+                    }
+
+                    if (maxPlayer(player)) {
+                        if (scoreI > best.score) {
+                            best = new BestMove(r, c, scoreI);
+                            best.alpha = alpha;
+                            best.beta = beta;
+                            best.next = next;
+                            best.player = player;
+                        }
+                    } else {
+                        if (scoreI < best.score) {
+                            best = new BestMove(r, c, scoreI);
+                            best.alpha = alpha;
+                            best.beta = beta;
+                            best.next = next;
+                            best.player = player;
+                        }
+                    }
+
+
+                    if (level == 0) {
+                        System.out.printf(
+                            "DBG AFTER MOVE %d %d, %s, score %d%n",
+                                r, c, player, scoreI);
+                    }
+                    removeMark(board, r, c);
+                }
+            }
+        }
+
+        return best;
+    }
+
+    private static class Score {
+        public final int score;
+        public final boolean endGame;
+
+        public Score(int score, boolean endGame) {
+            this.score = score;
+            this.endGame = endGame;
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(score);
+        }
+    }
+
+    private static Score scoreGame(int level, char[] board, char player) {
+        // TODO: Count "almost" wins
+        int wins = countWins(board, player);
+        // the longer the game, the better
+        int emptyPlaces = countEmpty(board);
+        boolean endGame = (wins != 0) || (emptyPlaces == 0);
+
+        if (wins > 0) {
+            // The faster we win the better
+            return new Score(wins*1000 + emptyPlaces, true);
+        }
+        else if (wins < 0) {
+            // The slower (more places filled) we loose or draw the better
+            return new Score(wins*1000 - emptyPlaces, true);
+        }
+        else {
+            // Draw or game inconclusive
+            return new Score(0, endGame);
+        }
+    }
+
+    // Returns number of player winds
+    private static int countWins(char[] board, char player) {
+        // Very crude scoring we ignore situations like
+        // X X _ <- empty field
+
+        int totalWins = 0;
+
+        // Rows
+        for (int r = 0; r < N; r++) {
+            int count = 0;
+            char lastMark = EMPTY;
+            for (int c = 0; c < N; c++) {
+                char tmp = get(board, r, c);
+                if (tmp != lastMark) {
+                    lastMark = tmp;
+                    count = 1;
+                }
+                else {
+                    count++;
+                    if (count >= WINNING_STRIDE && (lastMark != EMPTY)) {
+                        totalWins += (player == lastMark) ? 1 : -1;
+                    }
+                }
+            }
+        }
+
+        // Columns
+        for (int c = 0; c < N; c++) {
+            int count = 0;
+            char lastMark = EMPTY;
+            for (int r = 0; r < N; r++) {
+                char tmp = get(board, r, c);
+                if (tmp != lastMark) {
+                    lastMark = tmp;
+                    count = 1;
+                }
+                else {
+                    count++;
+                    if (count >= WINNING_STRIDE && lastMark != EMPTY) {
+                        totalWins += (player == lastMark) ? 1 : -1;
+                    }
+                }
+            }
+        }
+
+        // Diagnoals \
+        for (int r = 0; r <= N - WINNING_STRIDE; r++) {
+            for (int c = 0; c <= N - WINNING_STRIDE; c++) {
+                int count = 0;
+                char lastMark = EMPTY;
+                int rr = r, cc = c;
+                for (int k = 0; k < WINNING_STRIDE; k++) {
+                    char tmp = get(board, rr, cc);
+                    if (tmp != lastMark) {
+                        lastMark = tmp;
+                        count = 1;
+                    }
+                    else {
+                        count++;
+                        if (count >= WINNING_STRIDE && lastMark != EMPTY) {
+                            totalWins += (player == lastMark) ? 1 : -1;
+                        }
+                    }
+                    rr++; cc++;
+                }
+            }
+        }
+
+        // Diagonals /
+        for (int r = 0; r <= N - WINNING_STRIDE; r++) {
+            for (int c = WINNING_STRIDE-1; c < N; c++) {
+                int count = 0;
+                char lastMark = EMPTY;
+                int rr = r, cc = c;
+                for (int k = 0; k < WINNING_STRIDE; k++) {
+                    char tmp = get(board, rr, cc);
+                    if (tmp != lastMark) {
+                        lastMark = tmp;
+                        count = 1;
+                    }
+                    else {
+                        count++;
+                        if (count >= WINNING_STRIDE && lastMark != EMPTY) {
+                            totalWins += (player == lastMark) ? 1 : -1;
+                        }
+                    }
+                    rr++; cc--;
+                }
+            }
+        }
+
+        // No-one wins, the less empty places on
+        // board the better the game
+        return totalWins;
+    }
+
+    private static boolean canPutMark(char[] board) {
+        for (int i = 0; i < board.length; i++) {
+            if (board[i] == EMPTY) return true;
+        }
+        return false;
+    }
+
+    private static char opponent(char player) {
+        if (player == X) return O;
+        if (player == O) return X;
+        throw new IllegalArgumentException();
+    }
+
+    private static boolean maxPlayer(char player) {
+        return player == O;
+    }
+
+    private static boolean isEmpty(char[] board, int row, int col) {
+        char c = get(board, row, col);
+        return (c == EMPTY);
+    }
+
+    private static int countEmpty(char[] board) {
+        int c = 0;
+        for (int i = 0; i < board.length; i++) {
+            if (board[i] == EMPTY) c++;
+        }
+        return c;
+    }
+
+    private static char get(char[] board, int row, int col) {
+        if (row < 0 || row >= N || col < 0 || col >= N)
+            throw new IllegalArgumentException();
+        return board[N*row + col];
+    }
+
+    private static void putMark(char[] board, int row, int col, char mark) {
+        board[N*row + col] = mark;
+    }
+
+    private static void removeMark(char[] board, int row, int col) {
+        board[N*row + col] = EMPTY;
+    }
+
+    private static class BestMove {
+        final int row;
+        final int col;
+        final int score;
+
+        BestMove next;
+        char player;
+        int alpha, beta;
+
+        public BestMove(int row, int col, int score) {
+            this.row = row;
+            this.col = col;
+            this.score = score;
+        }
     }
 }
