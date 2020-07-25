@@ -3,6 +3,7 @@ package pl.marcinchwedczuk.xox.gui;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -13,8 +14,10 @@ import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 
-public class MainWindowController {
-    private final MainWindowModel model = new MainWindowModel();
+import java.util.Optional;
+
+public class MainWindowController implements Dialogs {
+    private final MainWindowModel model = new MainWindowModel(this);
 
     @FXML private TextArea debugLogTextArea;
 
@@ -37,6 +40,10 @@ public class MainWindowController {
     @FXML private CheckBox emptyFieldsLoseCheck;
     @FXML private CheckBox emptyFieldsWinCheck;
     @FXML private CheckBox countAlmostWinsCheck;
+
+    @FXML private Button nextMoveBtn;
+    @FXML private Button redoBtn;
+    @FXML private Button resetBtn;
 
     @FXML
     public void initialize() {
@@ -78,8 +85,13 @@ public class MainWindowController {
         cutOffRadio.setUserData(SearchStrategyType.CUT_OFF);
         fullSearchRadio.setUserData(SearchStrategyType.FULL_SEARCH);
         searchSettings.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            // TODO: Read other props
-            model.searchStrategyChanged((SearchStrategyType)newValue.getUserData());
+            var type = (SearchStrategyType)newValue.getUserData();
+            var data = new SearchStrategyData(type,
+                    cutOffLevelCombo.getValue(),
+                    (int) minNumberOfMovesSlider.getValue(),
+                    (int) percentageSearchSpaceSlider.getValue());
+
+            model.searchStrategyChanged(data);
         });
 
         emptyFieldsLoseCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -90,6 +102,16 @@ public class MainWindowController {
         });
         countAlmostWinsCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
             onHeuristicPropsChange();
+        });
+
+        nextMoveBtn.setOnAction(event -> {
+            model.nextMove();
+        });
+        redoBtn.setOnAction(event -> {
+            model.redoMove();
+        });
+        resetBtn.setOnAction(event -> {
+            model.reset();
         });
 
         reset();
@@ -245,6 +267,27 @@ public class MainWindowController {
         String formatted = String.format(fmt, args);
         debugLogTextArea.appendText(formatted);
         debugLogTextArea.appendText(System.lineSeparator());
+    }
+
+    @Override
+    public boolean ask(String question) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Question");
+        alert.setHeaderText(null);
+        alert.setContentText(question);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.get() == ButtonType.OK;
+    }
+
+    @Override
+    public void info(String text) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Info");
+        alert.setHeaderText(null);
+        alert.setContentText(text);
+
+        alert.showAndWait();
     }
 
     private static class BoardSizeItem {
