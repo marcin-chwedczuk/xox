@@ -30,7 +30,8 @@ public class MainWindowController {
 
     private void draw(Board board) {
         final int LINE_WIDTH = 4;
-        final int SPACING = 3;
+        final int MARK_LINE_WIDTH = 16;
+        final int SPACING = 4;
         final Color colorX = Color.BLACK;
         final Color colorO = Color.RED;
         final Color colorBg = Color.rgb(242, 242, 242);
@@ -61,6 +62,48 @@ public class MainWindowController {
             gc.fillRect(0, yStart, width, LINE_WIDTH);
         }
 
+        // Draw board
+        gc.setLineWidth(MARK_LINE_WIDTH);
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < rows; c++) {
+                double xStart = (width / rows) * r + LINE_WIDTH/2.0;
+                double yStart = (height / rows) * c + LINE_WIDTH/2.0;
+
+                double xEnd = (width / rows) * (r + 1) - LINE_WIDTH/2.0;
+                double yEnd = (height / rows) * (c + 1) - LINE_WIDTH/2.0;
+
+
+                // Clear
+                gc.setFill(colorBg);
+                gc.fillRect(xStart, yStart, xEnd - xStart, yEnd - yStart);
+
+
+                switch (board.get(r, c)) {
+                    case X:
+                        gc.setStroke(colorX);
+                        gc.beginPath();
+                        gc.moveTo(xStart + MARK_LINE_WIDTH, yStart + MARK_LINE_WIDTH);
+                        gc.lineTo(xEnd - MARK_LINE_WIDTH, yEnd - MARK_LINE_WIDTH);
+                        gc.closePath();
+                        gc.stroke();
+                        gc.beginPath();
+                        gc.moveTo(xEnd - MARK_LINE_WIDTH, yStart + MARK_LINE_WIDTH);
+                        gc.lineTo(xStart + MARK_LINE_WIDTH, yEnd - MARK_LINE_WIDTH);
+                        gc.closePath();
+                        gc.stroke();
+                        break;
+                    case O:
+                        gc.setStroke(colorO);
+                        gc.strokeOval(
+                                xStart + MARK_LINE_WIDTH,
+                                yStart + MARK_LINE_WIDTH,
+                                xEnd - xStart - 2*MARK_LINE_WIDTH,
+                                yEnd - yStart - 2*MARK_LINE_WIDTH);
+                        break;
+                }
+
+            }
+        }
     }
 
     @FXML private void drawBoard() {
