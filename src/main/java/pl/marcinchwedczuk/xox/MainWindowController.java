@@ -1,10 +1,13 @@
 package pl.marcinchwedczuk.xox;
 
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 
@@ -13,6 +16,8 @@ public class MainWindowController {
 
     @FXML private Canvas boardCanvas;
     @FXML private ChoiceBox<BoardSizeItem> boardSizeCombo;
+
+    private Board board;
 
     @FXML
     public void initialize() {
@@ -26,9 +31,25 @@ public class MainWindowController {
         );
         boardSizeCombo.setItems(boardSizeItems);
         boardSizeCombo.setValue(boardSizeItems.get(0));
+
+        boardCanvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                double x = event.getX();
+                double y = event.getY();
+                boardClicked(x, y);
+            }
+        });
+
+        reset();
     }
 
-    private void draw(Board board) {
+    @FXML private void reset() {
+        this.board = new Board(boardSizeCombo.getValue().boardSize);
+        drawBoard();
+    }
+
+    private void draw() {
         final int LINE_WIDTH = 4;
         final int MARK_LINE_WIDTH = 16;
         final int SPACING = 4;
@@ -107,16 +128,39 @@ public class MainWindowController {
     }
 
     @FXML private void drawBoard() {
-        var b = new Board(boardSizeCombo.getValue().boardSize);
-        b.set(0, 0, BoardMark.X);
-        b.set(1, 1, BoardMark.X);
-        b.set(2, 2, BoardMark.X);
-        b.set(1, 2, BoardMark.O);
-        b.set(2, 1, BoardMark.O);
-        b.set(2, 0, BoardMark.O);
+        draw();
+    }
 
-        debug("draw area boardSize=" + boardSizeCombo.getValue().boardSize);
-        draw(b);
+    private void boardClicked(double x, double y) {
+        int rows = board.size();
+        double cellWidth = boardCanvas.getWidth() / rows;
+        double cellHeight = boardCanvas.getHeight() / rows;
+
+        int rr = -1, cc = -1;
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < rows; c++) {
+                double xStart = cellWidth*r;
+                double yStart = cellHeight*c;
+                double xEnd = cellWidth*(r+1) - 1;
+                double yEnd = cellHeight*(c+1) - 1;
+
+                if (xStart <= x && x <= xEnd &&
+                    yStart <= y && y <= yEnd) {
+                    rr = r; cc = c;
+                }
+            }
+        }
+
+        if (rr != -1) {
+            /*Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information Dialog");
+            alert.setHeaderText(null);
+            alert.setContentText(String.format("row=%d col=%d", rr, cc));
+
+            alert.showAndWait();*/
+            board.set(rr, cc, BoardMark.O);
+            drawBoard();
+        }
     }
 
     private void debug(String fmt, Object... args) {
