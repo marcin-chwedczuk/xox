@@ -1,23 +1,42 @@
 package pl.marcinchwedczuk.xox.gui;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.BoardMark;
+import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 
 public class MainWindowController {
+    private final MainWindowModel model = new MainWindowModel();
+
     @FXML private TextArea debugLogTextArea;
 
     @FXML private Canvas boardCanvas;
     @FXML private ChoiceBox<BoardSizeItem> boardSizeCombo;
 
-    private Board board;
+    @FXML private ToggleGroup searchSettings;
+    @FXML private RadioButton probibalisticSearchRadio;
+    @FXML private RadioButton cutOffRadio;
+    @FXML private RadioButton fullSearchRadio;
+
+    @FXML private ChoiceBox<Integer> cutOffLevelCombo;
+
+    @FXML private Label minNumberOfMovesLbl;
+    @FXML private Slider minNumberOfMovesSlider;
+
+    @FXML private Label percentageSearchSpaceLabel;
+    @FXML private Slider percentageSearchSpaceSlider;
+
+    @FXML private CheckBox emptyFieldsLoseCheck;
+    @FXML private CheckBox emptyFieldsWinCheck;
+    @FXML private CheckBox countAlmostWinsCheck;
 
     @FXML
     public void initialize() {
@@ -30,22 +49,62 @@ public class MainWindowController {
                 new BoardSizeItem(5, 5)
         );
         boardSizeCombo.setItems(boardSizeItems);
+        boardSizeCombo.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            BoardSizeItem selectedItem = boardSizeItems.get(newValue.intValue());
+            model.boardSizeChanged(selectedItem.boardSize, selectedItem.winningStride);
+        });
         boardSizeCombo.setValue(boardSizeItems.get(0));
 
-        boardCanvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                double x = event.getX();
-                double y = event.getY();
-                boardClicked(x, y);
-            }
+        boardCanvas.setOnMouseClicked(event -> {
+            double x = event.getX();
+            double y = event.getY();
+            boardClicked(x, y);
+        });
+
+        cutOffLevelCombo.setItems(FXCollections.observableArrayList(3, 4, 5));
+        cutOffLevelCombo.setValue(4);
+
+        minNumberOfMovesSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            minNumberOfMovesLbl.setText(Integer.toString(newValue.intValue()));
+        });
+        minNumberOfMovesSlider.setValue(17);
+
+        percentageSearchSpaceSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            percentageSearchSpaceLabel.setText(Integer.toString(newValue.intValue()));
+        });
+        percentageSearchSpaceSlider.setValue(30);
+
+        probibalisticSearchRadio.setUserData(SearchStrategyType.PROBABILISTIC);
+        cutOffRadio.setUserData(SearchStrategyType.CUT_OFF);
+        fullSearchRadio.setUserData(SearchStrategyType.FULL_SEARCH);
+        searchSettings.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            // TODO: Read other props
+            model.searchStrategyChanged((SearchStrategyType)newValue.getUserData());
+        });
+
+        emptyFieldsLoseCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            onHeuristicPropsChange();
+        });
+        emptyFieldsWinCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            onHeuristicPropsChange();
+        });
+        countAlmostWinsCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            onHeuristicPropsChange();
         });
 
         reset();
     }
 
+    private void onHeuristicPropsChange() {
+        boolean emptyFieldsLose = emptyFieldsLoseCheck.isSelected();
+        boolean emptyFieldsWins = emptyFieldsWinCheck.isSelected();
+        boolean countAlmostWins = countAlmostWinsCheck.isSelected();
+
+        model.heuristicSettingsChanged(emptyFieldsLose, emptyFieldsWins, countAlmostWins);
+    }
+
     @FXML private void reset() {
-        this.board = new Board(boardSizeCombo.getValue().boardSize);
+        this.model.board = new Board(boardSizeCombo.getValue().boardSize);
         drawBoard();
     }
 
@@ -58,7 +117,7 @@ public class MainWindowController {
         final Color colorBg = Color.rgb(242, 242, 242);
         final Color colorLine = Color.GRAY;
 
-        int rows = board.size();
+        int rows = model.board.size();
         double width = boardCanvas.getWidth();
         double height = boardCanvas.getHeight();
         debug("canvas width = %f, height = %f", width, height);
@@ -99,7 +158,7 @@ public class MainWindowController {
                 gc.fillRect(xStart, yStart, xEnd - xStart, yEnd - yStart);
 
 
-                switch (board.get(r, c)) {
+                switch (model.board.get(r, c)) {
                     case X:
                         gc.setStroke(colorX);
                         gc.beginPath();
@@ -132,7 +191,7 @@ public class MainWindowController {
     }
 
     private void boardClicked(double x, double y) {
-        int rows = board.size();
+        int rows = model.board.size();
         double cellWidth = boardCanvas.getWidth() / rows;
         double cellHeight = boardCanvas.getHeight() / rows;
 
@@ -158,9 +217,28 @@ public class MainWindowController {
             alert.setContentText(String.format("row=%d col=%d", rr, cc));
 
             alert.showAndWait();*/
-            board.set(rr, cc, BoardMark.O);
+            model.board.set(rr, cc, BoardMark.O);
             drawBoard();
         }
+    }
+
+    @FXML private RadioButton humanComputerRadio;
+    @FXML private RadioButton computerHumanRadio;
+    @FXML private RadioButton computerComputerRadio;
+
+    @FXML private void gameModeChanged() {
+        GameMode gameMode = null;
+        if (humanComputerRadio.isSelected()) {
+            gameMode = GameMode.HUMAN_COMPUTER;
+        }
+        else if (computerHumanRadio.isSelected()) {
+            gameMode = GameMode.COMPUTER_HUMAN;
+        }
+        else if (computerComputerRadio.isSelected()){
+            gameMode = GameMode.COMPUTER_COMPUTER;
+        }
+
+        model.gameModeChanged(gameMode);
     }
 
     private void debug(String fmt, Object... args) {
