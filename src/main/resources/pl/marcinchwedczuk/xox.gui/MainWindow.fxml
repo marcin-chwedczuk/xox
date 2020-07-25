@@ -64,7 +64,7 @@
                         <ChoiceBox fx:id="cutOffLevelCombo" layoutX="386.0" layoutY="168.0" prefHeight="27.0" prefWidth="82.0" />
                         <RadioButton fx:id="fullSearchRadio" layoutX="264.0" layoutY="207.0" mnemonicParsing="false" selected="true" text="Full search" toggleGroup="$searchSettings" />
                         <Button fx:id="nextMoveBtn" layoutX="539.0" layoutY="239.0" mnemonicParsing="false" onAction="#drawBoard" prefHeight="64.0" prefWidth="174.0" text="Next Move" />
-                        <Button fx:id="resetBtn" layoutX="539.0" layoutY="675.0" mnemonicParsing="false" onAction="#reset" prefHeight="64.0" prefWidth="174.0" text="Restart" />
+                        <Button fx:id="resetBtn" layoutX="539.0" layoutY="675.0" mnemonicParsing="false" onAction="#resetX" prefHeight="64.0" prefWidth="174.0" text="Restart" />
                         <Button fx:id="redoBtn" layoutX="539.0" layoutY="315.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Redo" />
                      </children>
                   </AnchorPane>

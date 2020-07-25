@@ -10,14 +10,15 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 
 import java.util.Optional;
 
-public class MainWindowController implements Dialogs {
-    private final MainWindowModel model = new MainWindowModel(this);
+public class MainWindowController implements Dialogs, Logger {
+    private final MainWindowModel model = new MainWindowModel(this, this);
 
     @FXML private TextArea debugLogTextArea;
 
@@ -110,11 +111,11 @@ public class MainWindowController implements Dialogs {
         redoBtn.setOnAction(event -> {
             model.redoMove();
         });
-        resetBtn.setOnAction(event -> {
-            model.reset();
-        });
+        //resetBtn.setOnAction(event -> {
+        //    model.reset();
+        // });
 
-        reset();
+        model.setModelChangedListener(this::draw);
     }
 
     private void onHeuristicPropsChange() {
@@ -125,9 +126,9 @@ public class MainWindowController implements Dialogs {
         model.heuristicSettingsChanged(emptyFieldsLose, emptyFieldsWins, countAlmostWins);
     }
 
-    @FXML private void reset() {
-        this.model.board = new Board(boardSizeCombo.getValue().boardSize);
-        drawBoard();
+    @FXML private void resetX() {
+        model.extraLogging = true;
+        info("extra logging enabled");
     }
 
     private void draw() {
@@ -168,11 +169,11 @@ public class MainWindowController implements Dialogs {
         gc.setLineWidth(MARK_LINE_WIDTH);
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < rows; c++) {
-                double xStart = (width / rows) * r + LINE_WIDTH/2.0;
-                double yStart = (height / rows) * c + LINE_WIDTH/2.0;
+                double xStart = (width / rows) * c + LINE_WIDTH/2.0;
+                double yStart = (height / rows) * r + LINE_WIDTH/2.0;
 
-                double xEnd = (width / rows) * (r + 1) - LINE_WIDTH/2.0;
-                double yEnd = (height / rows) * (c + 1) - LINE_WIDTH/2.0;
+                double xEnd = (width / rows) * (c + 1) - LINE_WIDTH/2.0;
+                double yEnd = (height / rows) * (r + 1) - LINE_WIDTH/2.0;
 
 
                 // Clear
@@ -263,7 +264,8 @@ public class MainWindowController implements Dialogs {
         model.gameModeChanged(gameMode);
     }
 
-    private void debug(String fmt, Object... args) {
+    @Override
+    public void debug(String fmt, Object... args) {
         String formatted = String.format(fmt, args);
         debugLogTextArea.appendText(formatted);
         debugLogTextArea.appendText(System.lineSeparator());

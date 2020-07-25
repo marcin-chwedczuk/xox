@@ -1,9 +1,26 @@
 package pl.marcinchwedczuk.xox.game;
 
 public enum BoardMark {
-    X("X"),
-    O("O"),
-    EMPTY(" ");
+    X("X") {
+        @Override
+        public BoardMark opposite() {
+            return BoardMark.O;
+        }
+    },
+
+    O("O") {
+        @Override
+        public BoardMark opposite() {
+            return BoardMark.X;
+        }
+    },
+
+    EMPTY(" ") {
+        @Override
+        public BoardMark opposite() {
+            return EMPTY;
+        }
+    };
 
     private final String text;
 
@@ -12,4 +29,5 @@ public enum BoardMark {
     }
 
     public String asText() { return text; }
+    public abstract BoardMark opposite();
 }
