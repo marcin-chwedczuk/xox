@@ -5,7 +5,7 @@ package pl.marcinchwedczuk.xox;
 
 import java.util.Scanner;
 
-public class App {
+public class ConsoleApp {
     private static final int N = 4;
     private static final int WINNING_STRIDE = 3; // < N
 

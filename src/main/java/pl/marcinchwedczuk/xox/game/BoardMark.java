@@ -1,4 +1,4 @@
-package pl.marcinchwedczuk.xox;
+package pl.marcinchwedczuk.xox.game;
 
 public enum BoardMark {
     X("X"),

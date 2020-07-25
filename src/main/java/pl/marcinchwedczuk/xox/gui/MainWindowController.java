@@ -1,15 +1,15 @@
-package pl.marcinchwedczuk.xox;
+package pl.marcinchwedczuk.xox.gui;
 
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
+import pl.marcinchwedczuk.xox.game.Board;
+import pl.marcinchwedczuk.xox.game.BoardMark;
 
 public class MainWindowController {
     @FXML private TextArea debugLogTextArea;

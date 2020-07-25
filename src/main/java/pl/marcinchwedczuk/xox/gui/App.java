@@ -1,4 +1,4 @@
-package pl.marcinchwedczuk.xox;
+package pl.marcinchwedczuk.xox.gui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class Test extends Application {
+public class App extends Application {
 
     public static void main(String[] args) {
         launch(args);
@@ -17,7 +17,7 @@ public class Test extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(
-                getClass().getClassLoader().getResource("pl/marcinchwedczuk/xox/MainWindow.fxml"));
+            getClass().getResource("/pl/marcinchwedczuk/xox.gui/MainWindow.fxml"));
 
         Scene scene = new Scene(root);
 

@@ -38,6 +38,6 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClassName = "pl.marcinchwedczuk.xox.Test"
+    mainClassName = "pl.marcinchwedczuk.xox.gui.App"
 }
 
