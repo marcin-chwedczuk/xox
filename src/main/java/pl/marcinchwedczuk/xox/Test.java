@@ -19,10 +19,11 @@ public class Test extends Application {
         Parent root = FXMLLoader.load(
                 getClass().getClassLoader().getResource("pl/marcinchwedczuk/xox/MainWindow.fxml"));
 
-        Scene scene = new Scene(root, 300, 275);
+        Scene scene = new Scene(root);
 
-        primaryStage.setTitle("FXML Welcome");
+        primaryStage.setTitle("XOX MiniMax");
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 }

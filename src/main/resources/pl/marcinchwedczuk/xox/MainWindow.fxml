@@ -4,28 +4,97 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.ColorPicker?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.marcinchwedczuk.xox.MainWindowController">
+<AnchorPane prefHeight="790.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.marcinchwedczuk.xox.MainWindowController">
    <children>
-      <Button layoutX="418.0" layoutY="37.0" mnemonicParsing="false" onAction="#drawSth" prefHeight="70.0" prefWidth="144.0" text="Button" />
-      <CheckBox layoutX="27.0" layoutY="37.0" mnemonicParsing="false" text="CheckBox" />
-      <CheckBox layoutX="27.0" layoutY="72.0" mnemonicParsing="false" text="CheckBox" />
-      <CheckBox layoutX="27.0" layoutY="107.0" mnemonicParsing="false" text="CheckBox" />
-      <ColorPicker layoutX="34.0" layoutY="173.0" />
-      <Slider layoutX="187.0" layoutY="73.0" />
-      <ProgressIndicator layoutX="243.0" layoutY="116.0" progress="0.0" />
-      <Canvas fx:id="canvas1" height="200.0" layoutX="327.0" layoutY="180.0" width="200.0" />
-      <Circle fill="DODGERBLUE" layoutX="67.0" layoutY="280.0" radius="27.0" stroke="BLACK" strokeType="INSIDE" />
-      <ChoiceBox layoutX="225.0" layoutY="180.0" prefWidth="150.0" />
-      <ComboBox layoutX="143.0" layoutY="226.0" prefWidth="150.0" />
-      <TextField fx:id="userNameTxt" layoutX="177.0" layoutY="294.0" />
+      <TabPane layoutX="379.0" layoutY="-44.0" prefHeight="744.0" prefWidth="734.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab text="Game">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="735.0" prefWidth="728.0">
+                     <children>
+                        <AnchorPane layoutX="14.0" layoutY="239.0" prefHeight="500.0" prefWidth="500.0" style="-fx-border-color: black;">
+                           <children>
+                              <Canvas fx:id="boardCanvas" layoutX="2.0" layoutY="2.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <Pane prefHeight="156.0" prefWidth="205.0">
+                           <children>
+                              <Label layoutX="14.0" layoutY="14.0" text="Game Mode:" />
+                              <RadioButton fx:id="humanComputerRadio" layoutX="21.0" layoutY="44.0" mnemonicParsing="false" selected="true" text="Human vs Computer">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="gameMode" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="computerComputerRadio" layoutX="21.0" layoutY="112.0" mnemonicParsing="false" text="Computer vs Computer" toggleGroup="$gameMode" />
+                              <RadioButton fx:id="computerHumanRadio" layoutX="21.0" layoutY="78.0" mnemonicParsing="false" text="Computer vs Human" toggleGroup="$gameMode" />
+                           </children>
+                        </Pane>
+                        <Label layoutX="14.0" layoutY="156.0" text="Board size:" />
+                        <ChoiceBox fx:id="boardSizeCombo" layoutX="81.0" layoutY="151.0" prefWidth="150.0" />
+                        <Label layoutX="489.0" layoutY="13.0" text="Heuristic Settings:" />
+                        <CheckBox fx:id="emptyFieldsLoseCheck" layoutX="499.0" layoutY="43.0" mnemonicParsing="false" selected="true" text="Minimize empty fields when losing" />
+                        <CheckBox fx:id="emptyFieldsWinCheck" layoutX="499.0" layoutY="69.0" mnemonicParsing="false" selected="true" text="Maximize empty fields when winning" />
+                        <CheckBox fx:id="countAlmostWinsCheck" layoutX="499.0" layoutY="95.0" mnemonicParsing="false" text="Count almost wins e.g. X _ X" />
+                        <Label layoutX="260.0" layoutY="14.0" text="Search Settings:" />
+                        <RadioButton fx:id="probibalisticSearchRadio" layoutX="264.0" layoutY="45.0" mnemonicParsing="false" text="Use probabilistic search">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="searchSettings" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <Slider fx:id="minNumberOfMovesSlider" layoutX="291.0" layoutY="96.0" max="25.0" min="10.0" prefHeight="16.0" prefWidth="180.0" />
+                        <Label layoutX="293.0" layoutY="71.0" text="Min number of moves:" />
+                        <Label fx:id="minNumberOfMovesLbl" layoutX="427.0" layoutY="71.0" prefHeight="17.0" prefWidth="41.0" text="99" />
+                        <Label layoutX="293.0" layoutY="122.0" text="Perentage of the search space:" />
+                        <Label fx:id="percentageSearchSpaceLabel" layoutX="468.0" layoutY="122.0" prefHeight="17.0" prefWidth="41.0" text="99" />
+                        <Slider fx:id="percentageSearchSpaceSlider" layoutX="293.0" layoutY="145.0" max="25.0" min="10.0" prefHeight="16.0" prefWidth="180.0" />
+                        <RadioButton fx:id="cutOffRadio" layoutX="264.0" layoutY="173.0" mnemonicParsing="false" text="Use cut-off level" toggleGroup="$searchSettings" />
+                        <ChoiceBox fx:id="cutOffLevelCombo" layoutX="386.0" layoutY="168.0" prefHeight="27.0" prefWidth="82.0" />
+                        <RadioButton fx:id="fullSearchRadio" layoutX="264.0" layoutY="207.0" mnemonicParsing="false" selected="true" text="Full search" toggleGroup="$searchSettings" />
+                        <Button fx:id="nextMoveBtn" layoutX="539.0" layoutY="239.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Next Move" />
+                        <Button fx:id="resetBtn" layoutX="539.0" layoutY="675.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Restart" />
+                        <Button fx:id="redoBtn" layoutX="539.0" layoutY="315.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Redo" />
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Debug Logs">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TextArea fx:id="debugLogTextArea" editable="false" layoutX="80.0" layoutY="42.0" prefHeight="200.0" prefWidth="200.0" text="Debug logs..." wrapText="true" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                           <font>
+                              <Font name="Courier New" size="14.0" />
+                           </font>
+                        </TextArea>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="About">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ImageView fitHeight="323.0" fitWidth="473.0" layoutX="33.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@about.jpg" />
+                           </image>
+                        </ImageView>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+        </tabs>
+      </TabPane>
    </children>
 </AnchorPane>

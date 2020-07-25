@@ -8,11 +8,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 
 public class MainWindowController {
-    @FXML private TextField userNameTxt;
+    private TextField userNameTxt;
 
-    @FXML private Canvas canvas1;
+    private Canvas canvas1;
 
-    @FXML private void sayHello() {
+    private void sayHello() {
         String userNameS = userNameTxt.getText();
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -23,7 +23,7 @@ public class MainWindowController {
         alert.showAndWait();
     }
 
-    @FXML private void drawSth() {
+    private void drawSth() {
         var gc = canvas1.getGraphicsContext2D();
         gc.setFill(Color.GREEN);
         gc.setStroke(Color.BLUE);
