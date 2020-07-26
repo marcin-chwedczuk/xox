@@ -8,6 +8,9 @@ import javafx.concurrent.Task;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.XoXGame;
+import pl.marcinchwedczuk.xox.game.search.CutoffStrategy;
+import pl.marcinchwedczuk.xox.game.search.FullSearch;
+import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 import pl.marcinchwedczuk.xox.gui.gamemode.ComputerComputerGameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.ComputerHumanGameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.GameMode;
@@ -42,7 +45,7 @@ public class MainWindowModel {
     public final IntegerProperty percentageOfMoves = new SimpleIntegerProperty(40);
 
     public final ObservableList<Integer> cutoffLevels = FXCollections.observableArrayList(
-            3, 4, 5
+            1, 2, 3, 4, 5
     );
     public final ObjectProperty<Integer> cutoffLevel = new SimpleObjectProperty<>(cutoffLevels.get(0));
 
@@ -60,6 +63,7 @@ public class MainWindowModel {
     private final Logger logger;
 
     private XoXGame game;
+    private SearchStrategy searchStrategy;
     private GameMode gameMode;
 
     public Runnable modelChangedListener = () -> { };
@@ -94,10 +98,24 @@ public class MainWindowModel {
     }
 
     public void reset() {
+        searchStrategy = switch (searchStrategyProperty.get()) {
+            case FULL_SEARCH ->
+                new FullSearch();
+            case CUT_OFF -> {
+                var strategy = new CutoffStrategy();
+                strategy.setCutoff(cutoffLevel.get());
+                yield strategy;
+            }
+            default ->
+                    throw new IllegalArgumentException();
+        };
+
         var gameGeometry = gameGeometryProperty.get();
         game = new XoXGame(logger,
                 gameGeometry.boardSize,
-                gameGeometry.winningStride);
+                gameGeometry.winningStride,
+                searchStrategy);
+
 
         gameMode = switch (gameModeProperty.get()) {
             case COMPUTER_COMPUTER ->
@@ -109,8 +127,8 @@ public class MainWindowModel {
             default ->
                     throw new IllegalArgumentException();
         };
-
         gameMode.init();
+
         notifyModelChanged();
     }
 

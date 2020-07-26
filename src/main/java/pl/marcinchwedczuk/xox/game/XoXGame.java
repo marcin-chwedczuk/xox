@@ -3,6 +3,7 @@ package pl.marcinchwedczuk.xox.game;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.heuristic.BoardScorer;
 import pl.marcinchwedczuk.xox.game.search.FullSearch;
+import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 
 import java.util.Optional;
 
@@ -11,16 +12,20 @@ public class XoXGame {
 
     private final Board board;
     private BoardMark currentPlayer;
+    private SearchStrategy searchStrategy;
     private BoardScorer scorer;
 
     private GameResult gameResult;
 
-    public XoXGame(Logger logger, int boardSize, int winningStride) {
+    public XoXGame(Logger logger, int boardSize, int winningStride,
+                   SearchStrategy searchStrategy) {
         this.logger = logger;
 
         this.board = new Board(boardSize);
-        this.scorer = new BoardScorer(boardSize, winningStride);
         this.currentPlayer = BoardMark.X;
+
+        this.searchStrategy = searchStrategy;
+        this.scorer = new BoardScorer(boardSize, winningStride);
 
         this.gameResult = new GameResult(currentPlayer, false, BoardMark.EMPTY);
     }
@@ -29,7 +34,7 @@ public class XoXGame {
         checkCanPerformMove();
 
         var algo = new AlfaBetaAlgo(logger, board.copyOf(), scorer,
-                new FullSearch());
+                searchStrategy);
         var move = algo.selectMove(currentPlayer);
 
         if (move.mark != currentPlayer) {
