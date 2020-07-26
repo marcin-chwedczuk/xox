@@ -87,9 +87,9 @@ public class MainWindowController {
         redoBtn.setOnAction(event -> {
             model.redoMove();
         });
-        //resetBtn.setOnAction(event -> {
-        //    model.reset();
-        // });
+        resetBtn.setOnAction(event -> {
+            model.reset();
+        });
 
         boardCanvas.setOnMouseClicked(event -> {
             double x = event.getX();

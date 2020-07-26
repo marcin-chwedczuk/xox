@@ -86,6 +86,16 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
+                        <ImageView fitHeight="160.0" fitWidth="403.0" layoutX="-46.0" layoutY="432.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@about3.png" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="358.0" fitWidth="378.0" layoutX="341.0" layoutY="298.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@about2.jpg" />
+                           </image>
+                        </ImageView>
                         <ImageView fitHeight="323.0" fitWidth="473.0" layoutX="33.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@about.jpg" />
