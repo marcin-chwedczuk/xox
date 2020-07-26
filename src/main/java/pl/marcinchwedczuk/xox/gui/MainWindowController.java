@@ -1,7 +1,6 @@
 package pl.marcinchwedczuk.xox.gui;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
@@ -122,7 +121,7 @@ public class MainWindowController {
         final Color colorLine = Color.GRAY;
 
         Board board = model.board();
-        int rows = board.size();
+        int rows = board.sideSize();
         double width = boardCanvas.getWidth();
         double height = boardCanvas.getHeight();
 
@@ -191,7 +190,7 @@ public class MainWindowController {
     }
 
     private void boardClicked(double x, double y) {
-        int rows = model.board().size();
+        int rows = model.board().sideSize();
         double cellWidth = boardCanvas.getWidth() / rows;
         double cellHeight = boardCanvas.getHeight() / rows;
 

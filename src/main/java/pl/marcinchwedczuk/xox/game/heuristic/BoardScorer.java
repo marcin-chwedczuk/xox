@@ -21,6 +21,30 @@ public class BoardScorer {
         this.winningStride = winningStride;
     }
 
+    public Score scoreUncompleted(Board board, BoardMark player) {
+        // TODO: Count "almost" wins
+        int wins = countWins(board, player);
+        // the longer the game, the better
+        int emptyPlaces = board.countEmpty();
+        boolean endGame = (wins != 0) || (emptyPlaces == 0);
+
+        if (wins > 0) {
+            // The faster we win the better
+            return Score.gameEnded(wins*1000 + emptyPlaces);
+        }
+        else if (wins < 0) {
+            // The slower (more places filled) we loose or draw the better
+            return Score.gameEnded(wins*1000 - emptyPlaces);
+        }
+        else if (endGame) {
+            return Score.draw(0);
+        }
+        else {
+            // Draw or game inconclusive
+            return Score.gameOngoing(0);
+        }
+    }
+
     public Score score(Board board, Move lastMove) {
 
         // TODO: Count "almost" wins
@@ -59,7 +83,7 @@ public class BoardScorer {
 
     @VisibleForTesting
     public int countWinsImpl(Board board, Move lastMove) {
-        final int N = board.size();
+        final int N = board.sideSize();
         final int STRIDE = winningStride;
         int totalWins = 0;
 
@@ -159,7 +183,7 @@ public class BoardScorer {
         // Very crude scoring we ignore situations like
         // X X _ <- empty field
 
-        int N = board.size();
+        int N = board.sideSize();
         int WINNING_STRIDE = winningStride;
         int totalWins = 0;
 

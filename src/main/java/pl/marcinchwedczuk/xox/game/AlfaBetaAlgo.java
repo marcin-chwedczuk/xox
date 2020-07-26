@@ -1,97 +1,125 @@
 package pl.marcinchwedczuk.xox.game;
 
+import org.checkerframework.checker.nullness.Opt;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.heuristic.BoardScorer;
+import pl.marcinchwedczuk.xox.game.heuristic.Score;
+import pl.marcinchwedczuk.xox.game.search.MoveProposal;
+import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
+
+import java.util.List;
+import java.util.Optional;
 
 public class AlfaBetaAlgo {
     private final Logger logger;
     private final Board board;
     private final BoardScorer scorer;
+    private final SearchStrategy searchStrategy;
 
     public boolean extraLogging = false;
 
-    public AlfaBetaAlgo(Logger logger, Board board, BoardScorer scorer) {
+    public AlfaBetaAlgo(Logger logger,
+                        Board board,
+                        BoardScorer scorer,
+                        SearchStrategy searchStrategy) {
         this.logger = logger;
         this.board = board;
         this.scorer = scorer;
+        this.searchStrategy = searchStrategy;
     }
 
     public Move selectMove(BoardMark mark) {
-        return minimax(0, true, mark, Short.MIN_VALUE, Short.MAX_VALUE);
+        return minimax(0, true, mark, Short.MIN_VALUE, Short.MAX_VALUE).get();
     }
 
-    public Move minimax(int level, boolean isMaxStep,
-                        BoardMark player,
-                        double alpha, double beta) {
+    public Optional<Move> minimax(int level, boolean isMaxStep,
+                                 BoardMark player,
+                                 double alpha, double beta) {
         Move best = new Move(-1, -1,
                 player,
                 null,
                 isMaxStep ? alpha : beta,
                 alpha, beta);
 
-        int N = board.size();
+        List<MoveProposal> movesToCheck =
+                searchStrategy.movesToCheck(board, player, level);
 
-        // For each possible move
-        for (int r = 0; r < N; r++) {
-            for (int c = 0; c < N; c++) {
-                // Prunning
-                if (isMaxStep && (best.score >= beta)) {
-                    return best;
-                }
-                if (!isMaxStep && (best.score <= alpha)) {
-                    return best;
-                }
-
-                if (board.isEmpty(r, c)) {
-                    // Try move
-                    board.putMark(r, c, player);
-
-                    Move next = null;
-
-                    // Score is in absolute values, 100 - means player
-                    // wins no matter X or O. 0 means player looses;
-                    var score = scorer.score(board, new Move(r, c,
-                            player,
-                            null,
-                            Double.NaN, Double.NaN, Double.NaN));
-
-                    var scoreI = score.score;
-                    if (!score.gameEnded) {
-                        // Game did not end, do opponent move
-                        next = minimax(level + 1, !isMaxStep, player.opposite(),
-                                isMaxStep ? best.score : alpha,
-                                isMaxStep ? beta       : best.score
-                        );
-                        scoreI = next.score;
-                    }
-                    else {
-                        if (!isMaxStep) {
-                            scoreI = -scoreI;
-                        }
-                    }
-
-                    var candidate = new Move(r, c,
-                            player,
-                            next,
-                            scoreI,
-                            alpha, beta);
-
-                    if (isMaxStep) {
-                        // TODO: Random choice if score the same
-                        if (scoreI > best.score) {
-                            best = candidate;
-                        }
-                    } else {
-                        if (scoreI < best.score) {
-                            best = candidate;
-                        }
-                    }
-
-                    board.removeMark(r, c);
-                }
-            }
+        if (movesToCheck.isEmpty()) {
+            return Optional.empty();
         }
 
-        return best;
+        for (MoveProposal move : movesToCheck) {
+            // alpha beta pruning
+            if (isMaxStep && (best.score >= beta)) {
+                return Optional.of(best);
+            }
+            if (!isMaxStep && (best.score <= alpha)) {
+                return Optional.of(best);
+            }
+
+            // Try move
+            board.putMark(move.row, move.col, player);
+
+            Optional<Move> next = Optional.empty();
+
+            var score = scoreBoard(board, move, player, isMaxStep);
+            if (!score.gameEnded) {
+                // Game did not end, do opponent move.
+                // May return empty() due to e.g. search strategy limits
+                next = minimax(level + 1, !isMaxStep, player.opposite(),
+                        isMaxStep ? best.score : alpha,
+                        isMaxStep ? beta : best.score
+                );
+            }
+
+            var candidate = new Move(move.row, move.col,
+                    player,
+                    next.orElse(null),
+                    next.map(x -> x.score).orElse(score.score),
+                    alpha, beta);
+
+            if (isMaxStep) {
+                // TODO: Random choice if score the same
+                if (candidate.score > best.score) {
+                    best = candidate;
+                }
+            } else {
+                if (candidate.score < best.score) {
+                    best = candidate;
+                }
+            }
+
+            board.removeMark(move.row, move.col);
+        }
+
+        return Optional.of(best);
+    }
+
+    private Score scoreBoard(Board board,
+                             MoveProposal lastMove,
+                             BoardMark player,
+                             boolean isMaxStep) {
+        // Score is in absolute values, 100 - means player
+        // wins no matter X or O. 0 means player looses;
+        var score = scorer.score(board, new Move(lastMove.row, lastMove.col,
+                player,
+                null,
+                Double.NaN, Double.NaN, Double.NaN));
+
+        if (score.gameEnded && !isMaxStep) {
+            // Negate score for the min player
+            return new Score(true, -score.score);
+        }
+
+        return score;
+    }
+
+    private Score scoreUncompleted(Board board, BoardMark player, boolean isMaxStep) {
+        Score score = scorer.scoreUncompleted(board, player);
+        if (!isMaxStep) {
+            // TODO: Make method on score
+            return new Score(score.gameEnded, -score.score);
+        }
+        return score;
     }
 }

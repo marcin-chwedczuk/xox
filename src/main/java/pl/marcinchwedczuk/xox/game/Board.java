@@ -36,7 +36,8 @@ public class Board {
         return b;
     }
 
-    public int size() { return size; }
+    public int sideSize() { return size; }
+    public int numberOfFields() { return size*size; }
 
     public BoardMark get(int row, int col) {
         return board[row*size + col];

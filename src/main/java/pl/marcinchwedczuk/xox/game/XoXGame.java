@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.xox.game;
 
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.heuristic.BoardScorer;
+import pl.marcinchwedczuk.xox.game.search.FullSearch;
 
 import java.util.Optional;
 
@@ -27,7 +28,8 @@ public class XoXGame {
     public void makeAutomaticMove() {
         checkCanPerformMove();
 
-        var algo = new AlfaBetaAlgo(logger, board.copyOf(), scorer);
+        var algo = new AlfaBetaAlgo(logger, board.copyOf(), scorer,
+                new FullSearch());
         var move = algo.selectMove(currentPlayer);
 
         if (move.mark != currentPlayer) {

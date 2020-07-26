@@ -54,6 +54,8 @@ public class MainWindowModel {
     public final IntegerProperty progress = new SimpleIntegerProperty(0);
     public final BooleanProperty showProgress = new SimpleBooleanProperty(false);
 
+    private final Timer timer = new Timer(true);
+
     private final Dialogs dialogs;
     private final Logger logger;
 
@@ -158,7 +160,7 @@ public class MainWindowModel {
         t.start();
 
         // If task takes more than 1s show progress overlay
-        var timer = new Timer();
+
         timer.schedule(new TimerTask(){
             @Override
             public void run() {
