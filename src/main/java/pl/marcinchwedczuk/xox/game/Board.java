@@ -5,6 +5,20 @@ import java.util.Arrays;
 import static pl.marcinchwedczuk.xox.game.BoardMark.EMPTY;
 
 public class Board {
+    public static Board of(
+            BoardMark a00, BoardMark a01, BoardMark a02,
+            BoardMark a10, BoardMark a11, BoardMark a12,
+            BoardMark a20, BoardMark a21, BoardMark a22)
+    {
+        var board = new Board(3);
+
+        board.set(0, 0, a00); board.set(0, 1, a01); board.set(0, 2, a02);
+        board.set(1, 0, a10); board.set(1, 1, a11); board.set(1, 2, a12);
+        board.set(2, 0, a20); board.set(2, 1, a21); board.set(2, 2, a22);
+
+        return board;
+    }
+
     private final int size;
     private final BoardMark[] board;
 

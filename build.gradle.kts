@@ -43,3 +43,14 @@ application {
     mainClassName = "pl.marcinchwedczuk.xox.gui.App"
 }
 
+
+tasks.withType<Jar> {
+    manifest {
+        attributes("Main-Class" to "pl.marcinchwedczuk.xox.gui.App")
+    }
+    from(configurations.compileClasspath.map {
+        config -> config.map { if (it.isDirectory) it else zipTree(it) }
+    })
+}
+
+

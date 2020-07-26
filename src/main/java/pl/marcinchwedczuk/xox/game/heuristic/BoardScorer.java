@@ -1,5 +1,6 @@
 package pl.marcinchwedczuk.xox.game.heuristic;
 
+import com.google.common.annotations.VisibleForTesting;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.Move;
@@ -23,7 +24,7 @@ public class BoardScorer {
     public Score score(Board board, Move lastMove) {
 
         // TODO: Count "almost" wins
-        int wins = countWins(board, lastMove.mark);
+        int wins = countWinsImpl(board, lastMove);
         // the longer the game, the better
         int emptyPlaces = board.countEmpty();
         boolean endGame = (wins != 0) || (emptyPlaces == 0);
@@ -54,6 +55,103 @@ public class BoardScorer {
         if (wins > 0) return Optional.of(BoardMark.X);
         if (wins < 0) return Optional.of(BoardMark.O);
         return Optional.empty();
+    }
+
+    @VisibleForTesting
+    public int countWinsImpl(Board board, Move lastMove) {
+        final int N = board.size();
+        final int STRIDE = winningStride;
+        int totalWins = 0;
+
+        final int lastMoveRow = lastMove.row;
+        final int lastMoveCol = lastMove.col;
+        final BoardMark player = lastMove.mark;
+
+        // horizontal
+        {
+            int counts = -1; // we will count lastMove twice
+
+            // Count to the right
+            for (int i = lastMoveCol; i < N; i++) {
+               if (board.get(lastMoveRow, i) == player) {
+                   counts++;
+               }
+            }
+
+            // Count to the left
+            for (int i = lastMoveCol; i >= 0; i--) {
+                if (board.get(lastMoveRow, i) == player) {
+                    counts++;
+                }
+            }
+
+            totalWins += (counts >= STRIDE) ? (counts - STRIDE + 1) : 0;
+        }
+
+        // vertical
+        {
+            int counts = -1; // we will count lastMove twice
+
+            // Count to the bottom
+            for (int i = lastMoveRow; i < N; i++) {
+                if (board.get(i, lastMoveCol) == player) {
+                    counts++;
+                }
+            }
+
+            // Count to the top
+            for (int i = lastMoveRow; i >= 0; i--) {
+                if (board.get(i, lastMoveCol) == player) {
+                    counts++;
+                }
+            }
+
+            totalWins += (counts >= STRIDE) ? (counts - STRIDE + 1) : 0;
+        }
+
+        // diagonal \
+        {
+            int counts = -1; // we will count lastMove twice
+
+            // Count to the bottom-right
+            for (int r = lastMoveRow, c = lastMoveCol; r < N && c < N; r++, c++) {
+                if (board.get(r, c) == player) {
+                    counts++;
+                }
+            }
+
+            // Count to the top
+            for (int r = lastMoveRow, c = lastMoveCol; r >= 0 && c >= 0; r--, c--) {
+                if (board.get(r, c) == player) {
+                    counts++;
+                }
+            }
+
+            totalWins += (counts >= STRIDE) ? (counts - STRIDE + 1) : 0;
+        }
+
+        // diagonal /
+        {
+            int counts = -1; // we will count lastMove twice
+
+            // Count to the bottom-right
+            for (int r = lastMoveRow, c = lastMoveCol; r < N && c >= 0; r++, c--) {
+                if (board.get(r, c) == player) {
+                    counts++;
+                }
+            }
+
+            // Count to the top
+            for (int r = lastMoveRow, c = lastMoveCol; r >= 0 && c < N; r--, c++) {
+                if (board.get(r, c) == player) {
+                    counts++;
+                }
+            }
+
+            totalWins += (counts >= STRIDE) ? (counts - STRIDE + 1) : 0;
+        }
+
+        return totalWins;
     }
 
     // Returns number of player winds
