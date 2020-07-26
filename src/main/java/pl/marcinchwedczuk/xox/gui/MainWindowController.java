@@ -105,7 +105,7 @@ public class MainWindowController {
         });
 
         progressIndicator.progressProperty().bindBidirectional(model.progress);
-        progressIndicator.visibleProperty().bind(model.inputEnabled.not());
+        progressIndicator.visibleProperty().bind(model.showProgress);
         tabPane.disableProperty().bind(model.inputEnabled.not());
 
         model.setModelChangedListener(this::draw);
