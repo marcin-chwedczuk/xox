@@ -1,19 +1,13 @@
 package pl.marcinchwedczuk.xox.gui;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.BoardMark;
-import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 
 import java.util.Optional;
 
@@ -127,7 +121,6 @@ public class MainWindowController implements Dialogs, Logger {
     }
 
     @FXML private void resetX() {
-        model.extraLogging = true;
         info("extra logging enabled");
     }
 
@@ -140,7 +133,8 @@ public class MainWindowController implements Dialogs, Logger {
         final Color colorBg = Color.rgb(242, 242, 242);
         final Color colorLine = Color.GRAY;
 
-        int rows = model.board.size();
+        Board board = model.board();
+        int rows = board.size();
         double width = boardCanvas.getWidth();
         double height = boardCanvas.getHeight();
         debug("canvas width = %f, height = %f", width, height);
@@ -181,7 +175,7 @@ public class MainWindowController implements Dialogs, Logger {
                 gc.fillRect(xStart, yStart, xEnd - xStart, yEnd - yStart);
 
 
-                switch (model.board.get(r, c)) {
+                switch (board.get(r, c)) {
                     case X:
                         gc.setStroke(colorX);
                         gc.beginPath();
@@ -214,17 +208,17 @@ public class MainWindowController implements Dialogs, Logger {
     }
 
     private void boardClicked(double x, double y) {
-        int rows = model.board.size();
+        int rows = model.board().size();
         double cellWidth = boardCanvas.getWidth() / rows;
         double cellHeight = boardCanvas.getHeight() / rows;
 
         int rr = -1, cc = -1;
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < rows; c++) {
-                double xStart = cellWidth*r;
-                double yStart = cellHeight*c;
-                double xEnd = cellWidth*(r+1) - 1;
-                double yEnd = cellHeight*(c+1) - 1;
+                double xStart = cellWidth*c;
+                double yStart = cellHeight*r;
+                double xEnd = cellWidth*(c+1) - 1;
+                double yEnd = cellHeight*(r+1) - 1;
 
                 if (xStart <= x && x <= xEnd &&
                     yStart <= y && y <= yEnd) {
@@ -234,14 +228,7 @@ public class MainWindowController implements Dialogs, Logger {
         }
 
         if (rr != -1) {
-            /*Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Information Dialog");
-            alert.setHeaderText(null);
-            alert.setContentText(String.format("row=%d col=%d", rr, cc));
-
-            alert.showAndWait();*/
-            model.board.set(rr, cc, BoardMark.O);
-            drawBoard();
+            model.onBoardClicked(rr, cc);
         }
     }
 
@@ -250,18 +237,18 @@ public class MainWindowController implements Dialogs, Logger {
     @FXML private RadioButton computerComputerRadio;
 
     @FXML private void gameModeChanged() {
-        GameMode gameMode = null;
+        GameModeType gameModeType = null;
         if (humanComputerRadio.isSelected()) {
-            gameMode = GameMode.HUMAN_COMPUTER;
+            gameModeType = GameModeType.HUMAN_COMPUTER;
         }
         else if (computerHumanRadio.isSelected()) {
-            gameMode = GameMode.COMPUTER_HUMAN;
+            gameModeType = GameModeType.COMPUTER_HUMAN;
         }
         else if (computerComputerRadio.isSelected()){
-            gameMode = GameMode.COMPUTER_COMPUTER;
+            gameModeType = GameModeType.COMPUTER_COMPUTER;
         }
 
-        model.gameModeChanged(gameMode);
+        model.gameModeChanged(gameModeType);
     }
 
     @Override

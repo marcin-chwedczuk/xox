@@ -4,10 +4,21 @@ import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.Move;
 
+import java.util.Optional;
+
 import static pl.marcinchwedczuk.xox.game.BoardMark.EMPTY;
 
 public class BoardScorer {
-    public int winningStride = 3;
+    public final int boardSize;
+    public final int winningStride;
+
+    public BoardScorer(int boardSize, int winningStride) {
+        if (winningStride > boardSize)
+            throw new IllegalArgumentException("winningStride");
+
+        this.boardSize = boardSize;
+        this.winningStride = winningStride;
+    }
 
     public Score score(Board board, Move lastMove) {
 
@@ -32,6 +43,17 @@ public class BoardScorer {
             // Draw or game inconclusive
             return Score.gameOngoing(0);
         }
+    }
+
+    public boolean gameEnded(Board board) {
+        return board.countEmpty() == 0;
+    }
+
+    public Optional<BoardMark> getWinner(Board board) {
+        int wins = countWins(board, BoardMark.X);
+        if (wins > 0) return Optional.of(BoardMark.X);
+        if (wins < 0) return Optional.of(BoardMark.O);
+        return Optional.empty();
     }
 
     // Returns number of player winds

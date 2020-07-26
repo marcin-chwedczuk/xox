@@ -6,13 +6,14 @@ import pl.marcinchwedczuk.xox.game.heuristic.BoardScorer;
 public class AlfaBetaAlgo {
     private final Logger logger;
     private final Board board;
-    private final BoardScorer scorer = new BoardScorer();
+    private final BoardScorer scorer;
 
     public boolean extraLogging = false;
 
-    public AlfaBetaAlgo(Logger logger, Board board) {
+    public AlfaBetaAlgo(Logger logger, Board board, BoardScorer scorer) {
         this.logger = logger;
         this.board = board;
+        this.scorer = scorer;
     }
 
     public Move selectMove(BoardMark mark) {

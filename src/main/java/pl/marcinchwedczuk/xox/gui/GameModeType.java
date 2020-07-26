@@ -1,6 +1,6 @@
 package pl.marcinchwedczuk.xox.gui;
 
-public enum GameMode {
+public enum GameModeType {
     // Human makes first move
     HUMAN_COMPUTER,
 
