@@ -1,5 +1,9 @@
 package pl.marcinchwedczuk.xox.gui;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.XoXGame;
@@ -8,12 +12,22 @@ import pl.marcinchwedczuk.xox.gui.gamemode.GameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.HumanComputerGameMode;
 
 public class MainWindowModel {
+    public final ObservableList<GameGeometry> gameGeometries = FXCollections.observableArrayList(
+            new GameGeometry(3, 3),
+            new GameGeometry(4, 3),
+            new GameGeometry(4, 4),
+            new GameGeometry(5, 3),
+            new GameGeometry(5, 4),
+            new GameGeometry(5, 5)
+    );
+    public final ObjectProperty<GameGeometry> gameGeometryProperty =
+            new SimpleObjectProperty<>(gameGeometries.get(0));
+
+    public final ObjectProperty<GameModeType> gameModeProperty =
+            new SimpleObjectProperty<>(GameModeType.HUMAN_COMPUTER);
+
     private final Dialogs dialogs;
     private final Logger logger;
-
-    private int boardSize;
-    private int winningStride;
-    private GameModeType gameModeType;
 
     private XoXGame game;
     private GameMode gameMode;
@@ -24,9 +38,13 @@ public class MainWindowModel {
         this.dialogs = dialogs;
         this.logger = logger;
 
-        this.boardSize = 3;
-        this.winningStride = 3;
-        this.gameModeType = GameModeType.COMPUTER_COMPUTER;
+        this.gameGeometryProperty.addListener((observable, oldValue, newValue) -> {
+            reset();
+        });
+
+        this.gameModeProperty.addListener((observable, oldValue, newValue) -> {
+            reset();
+        });
 
         reset();
     }
@@ -37,18 +55,6 @@ public class MainWindowModel {
 
     private void notifyModelChanged() {
         modelChangedListener.run();
-    }
-
-    public void gameModeChanged(GameModeType gameModeType) {
-        this.gameModeType = gameModeType;
-        reset();
-    }
-
-    public void boardSizeChanged(int boardSize, int winningStride) {
-        this.boardSize = boardSize;
-        this.winningStride = winningStride;
-
-        reset();
     }
 
     public void searchStrategyChanged(SearchStrategyData type) {
@@ -77,9 +83,12 @@ public class MainWindowModel {
     }
 
     public void reset() {
-        game = new XoXGame(logger, boardSize, winningStride);
+        var gameGeometry = gameGeometryProperty.get();
+        game = new XoXGame(logger,
+                gameGeometry.boardSize,
+                gameGeometry.winningStride);
 
-        this.gameMode = switch (gameModeType) {
+        gameMode = switch (gameModeProperty.get()) {
             case COMPUTER_COMPUTER ->
                     new ComputerComputerGameMode(logger, game);
             case HUMAN_COMPUTER ->

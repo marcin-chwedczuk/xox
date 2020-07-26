@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class App extends Application {
 
@@ -16,6 +18,10 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            new JfxDialogs().exception(e);
+        });
+
         Parent root = FXMLLoader.load(
             getClass().getResource("/pl/marcinchwedczuk/xox.gui/MainWindow.fxml"));
 

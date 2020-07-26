@@ -1,23 +1,35 @@
 package pl.marcinchwedczuk.xox.gui;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
+import jfxtras.labs.scene.control.ToggleGroupValue;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
-import pl.marcinchwedczuk.xox.game.BoardMark;
 
 import java.util.Optional;
 
-public class MainWindowController implements Dialogs, Logger {
-    private final MainWindowModel model = new MainWindowModel(this, this);
+public class MainWindowController {
+    private final Logger logger = new Logger() {
+        @Override
+        public void debug(String fmt, Object... args) {
+            String formatted = String.format(fmt, args);
+            debugLogTextArea.appendText(formatted);
+            debugLogTextArea.appendText(System.lineSeparator());
+        }
+    };
+
+    private final Dialogs dialogs = new JfxDialogs();
+    private final MainWindowModel model = new MainWindowModel(dialogs, logger);
 
     @FXML private TextArea debugLogTextArea;
 
     @FXML private Canvas boardCanvas;
-    @FXML private ChoiceBox<BoardSizeItem> boardSizeCombo;
+    @FXML private ChoiceBox<GameGeometry> boardSizeCombo;
 
     @FXML private ToggleGroup searchSettings;
     @FXML private RadioButton probibalisticSearchRadio;
@@ -32,9 +44,14 @@ public class MainWindowController implements Dialogs, Logger {
     @FXML private Label percentageSearchSpaceLabel;
     @FXML private Slider percentageSearchSpaceSlider;
 
+    private ToggleGroupValue<GameModeType> gameModeChanged = new ToggleGroupValue<>();
+    @FXML private RadioButton humanComputerRadio;
+    @FXML private RadioButton computerComputerRadio;
+    @FXML private RadioButton computerHumanRadio;
+
     @FXML private CheckBox emptyFieldsLoseCheck;
-    @FXML private CheckBox emptyFieldsWinCheck;
     @FXML private CheckBox countAlmostWinsCheck;
+    @FXML private CheckBox emptyFieldsWinCheck;
 
     @FXML private Button nextMoveBtn;
     @FXML private Button redoBtn;
@@ -42,20 +59,8 @@ public class MainWindowController implements Dialogs, Logger {
 
     @FXML
     public void initialize() {
-        var boardSizeItems = FXCollections.observableArrayList(
-                new BoardSizeItem(3, 3),
-                new BoardSizeItem(4, 3),
-                new BoardSizeItem(4, 4),
-                new BoardSizeItem(5, 3),
-                new BoardSizeItem(5, 4),
-                new BoardSizeItem(5, 5)
-        );
-        boardSizeCombo.setItems(boardSizeItems);
-        boardSizeCombo.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            BoardSizeItem selectedItem = boardSizeItems.get(newValue.intValue());
-            model.boardSizeChanged(selectedItem.boardSize, selectedItem.winningStride);
-        });
-        boardSizeCombo.setValue(boardSizeItems.get(0));
+        boardSizeCombo.setItems(model.gameGeometries);
+        boardSizeCombo.valueProperty().bindBidirectional(model.gameGeometryProperty);
 
         boardCanvas.setOnMouseClicked(event -> {
             double x = event.getX();
@@ -89,15 +94,10 @@ public class MainWindowController implements Dialogs, Logger {
             model.searchStrategyChanged(data);
         });
 
-        emptyFieldsLoseCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            onHeuristicPropsChange();
-        });
-        emptyFieldsWinCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            onHeuristicPropsChange();
-        });
-        countAlmostWinsCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            onHeuristicPropsChange();
-        });
+        gameModeChanged.add(computerComputerRadio, GameModeType.COMPUTER_COMPUTER);
+        gameModeChanged.add(humanComputerRadio, GameModeType.HUMAN_COMPUTER);
+        gameModeChanged.add(computerHumanRadio, GameModeType.COMPUTER_HUMAN);
+        gameModeChanged.valueProperty().bindBidirectional(model.gameModeProperty);
 
         nextMoveBtn.setOnAction(event -> {
             model.nextMove();
@@ -120,10 +120,6 @@ public class MainWindowController implements Dialogs, Logger {
         model.heuristicSettingsChanged(emptyFieldsLose, emptyFieldsWins, countAlmostWins);
     }
 
-    @FXML private void resetX() {
-        info("extra logging enabled");
-    }
-
     private void draw() {
         final int LINE_WIDTH = 4;
         final int MARK_LINE_WIDTH = 16;
@@ -137,7 +133,7 @@ public class MainWindowController implements Dialogs, Logger {
         int rows = board.size();
         double width = boardCanvas.getWidth();
         double height = boardCanvas.getHeight();
-        debug("canvas width = %f, height = %f", width, height);
+        logger.debug("canvas width = %f, height = %f", width, height);
 
         // Clear board
         var gc = boardCanvas.getGraphicsContext2D();
@@ -232,65 +228,8 @@ public class MainWindowController implements Dialogs, Logger {
         }
     }
 
-    @FXML private RadioButton humanComputerRadio;
-    @FXML private RadioButton computerHumanRadio;
-    @FXML private RadioButton computerComputerRadio;
 
-    @FXML private void gameModeChanged() {
-        GameModeType gameModeType = null;
-        if (humanComputerRadio.isSelected()) {
-            gameModeType = GameModeType.HUMAN_COMPUTER;
-        }
-        else if (computerHumanRadio.isSelected()) {
-            gameModeType = GameModeType.COMPUTER_HUMAN;
-        }
-        else if (computerComputerRadio.isSelected()){
-            gameModeType = GameModeType.COMPUTER_COMPUTER;
-        }
 
-        model.gameModeChanged(gameModeType);
-    }
 
-    @Override
-    public void debug(String fmt, Object... args) {
-        String formatted = String.format(fmt, args);
-        debugLogTextArea.appendText(formatted);
-        debugLogTextArea.appendText(System.lineSeparator());
-    }
 
-    @Override
-    public boolean ask(String question) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Question");
-        alert.setHeaderText(null);
-        alert.setContentText(question);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        return result.get() == ButtonType.OK;
-    }
-
-    @Override
-    public void info(String text) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Info");
-        alert.setHeaderText(null);
-        alert.setContentText(text);
-
-        alert.showAndWait();
-    }
-
-    private static class BoardSizeItem {
-        public final int boardSize;
-        public final int winningStride;
-
-        public BoardSizeItem(int boardSize, int winningStride) {
-            this.boardSize = boardSize;
-            this.winningStride = winningStride;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("%dx%d - %d wins", boardSize, boardSize, winningStride);
-        }
-    }
 }
