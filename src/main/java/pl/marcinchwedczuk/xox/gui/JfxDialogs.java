@@ -43,6 +43,7 @@ public class JfxDialogs implements Dialogs {
         alert.showAndWait();
     }
 
+    @Override
     public void exception(Throwable ex) {
         // from: https://code.makery.ch/blog/javafx-dialogs-official/
         Alert alert = new Alert(Alert.AlertType.ERROR);

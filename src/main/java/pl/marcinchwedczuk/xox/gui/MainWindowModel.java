@@ -3,6 +3,9 @@ package pl.marcinchwedczuk.xox.gui;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.XoXGame;
@@ -11,6 +14,8 @@ import pl.marcinchwedczuk.xox.gui.gamemode.ComputerComputerGameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.ComputerHumanGameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.GameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.HumanComputerGameMode;
+
+import java.util.concurrent.CompletableFuture;
 
 public class MainWindowModel {
     public final ObservableList<GameGeometry> gameGeometries = FXCollections.observableArrayList(
@@ -41,6 +46,9 @@ public class MainWindowModel {
     public final BooleanProperty emptyFieldsLoseProperty = new SimpleBooleanProperty(true);
     public final BooleanProperty emptyFieldsWinsProperty = new SimpleBooleanProperty(true);
     public final BooleanProperty countAlmostWinsProperty = new SimpleBooleanProperty(false);
+
+    public final BooleanProperty inputEnabled = new SimpleBooleanProperty(true);
+    public final IntegerProperty progress = new SimpleIntegerProperty(0);
 
     private final Dialogs dialogs;
     private final Logger logger;
@@ -73,26 +81,7 @@ public class MainWindowModel {
         modelChangedListener.run();
     }
 
-    public void searchStrategyChanged(SearchStrategyData type) {
-    }
 
-    public void heuristicSettingsChanged(boolean emptyFieldsLose,
-                                         boolean emptyFieldsWins,
-                                         boolean countAlmostWins) {
-
-    }
-
-    public void nextMove() {
-        logger.debug("========== %s =============", game.currentPlayer());
-        try {
-            gameMode.nextMove();
-        }
-        catch (Exception e) {
-            dialogs.info(e.getMessage());
-        }
-
-        notifyModelChanged();
-    }
 
     public void redoMove() {
 
@@ -108,9 +97,9 @@ public class MainWindowModel {
             case COMPUTER_COMPUTER ->
                     new ComputerComputerGameMode(logger, game);
             case HUMAN_COMPUTER ->
-                    new HumanComputerGameMode(logger, dialogs, game);
+                    new HumanComputerGameMode(logger, game);
             case COMPUTER_HUMAN ->
-                    new ComputerHumanGameMode(logger, dialogs, game);
+                    new ComputerHumanGameMode(logger, game);
             default ->
                     throw new IllegalArgumentException();
         };
@@ -121,6 +110,44 @@ public class MainWindowModel {
 
     public Board board() {
         return game.board();
+    }
+
+    public void nextMove() {
+        logger.debug("========== %s =============", game.currentPlayer());
+
+        // CompletableFuture == poor's man Try[V]
+        Task<CompletableFuture<Void>> nextMoveTask = new Task<>() {
+            @Override
+            protected CompletableFuture<Void> call() {
+                try {
+                    gameMode.nextMove();
+                    return CompletableFuture.completedFuture(null);
+                }
+                catch (Exception ex) {
+                    return CompletableFuture.failedFuture(ex);
+                }
+            }
+        };
+
+        progress.bind(nextMoveTask.progressProperty());
+        inputEnabled.setValue(false);
+
+        nextMoveTask.setOnSucceeded(event -> {
+            progress.unbind();
+            inputEnabled.setValue(true);
+
+            notifyModelChanged();
+
+            nextMoveTask.getValue().exceptionally(ex -> {
+                dialogs.exception(ex);
+                return null;
+            });
+        });
+
+        var t = new Thread(nextMoveTask);
+        t.setDaemon(true);
+        t.setName("compute-next-move-thread");
+        t.start();
     }
 
     public void onBoardClicked(int row, int col) {

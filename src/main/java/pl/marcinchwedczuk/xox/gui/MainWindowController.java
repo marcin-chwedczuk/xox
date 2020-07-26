@@ -1,5 +1,6 @@
 package pl.marcinchwedczuk.xox.gui;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -14,8 +15,12 @@ public class MainWindowController {
         @Override
         public void debug(String fmt, Object... args) {
             String formatted = String.format(fmt, args);
-            debugLogTextArea.appendText(formatted);
-            debugLogTextArea.appendText(System.lineSeparator());
+
+            // GUI components can be only accessed form the main thread
+            Platform.runLater(() -> {
+                debugLogTextArea.appendText(formatted);
+                debugLogTextArea.appendText(System.lineSeparator());
+            });
         }
     };
 
@@ -52,6 +57,9 @@ public class MainWindowController {
     @FXML private Button nextMoveBtn;
     @FXML private Button redoBtn;
     @FXML private Button resetBtn;
+
+    @FXML private ProgressIndicator progressIndicator;
+    @FXML private TabPane tabPane;
 
     @FXML
     public void initialize() {
@@ -97,6 +105,10 @@ public class MainWindowController {
             boardClicked(x, y);
         });
 
+        progressIndicator.progressProperty().bindBidirectional(model.progress);
+        progressIndicator.visibleProperty().bind(model.inputEnabled.not());
+        tabPane.disableProperty().bind(model.inputEnabled.not());
+
         model.setModelChangedListener(this::draw);
         draw();
     }
@@ -114,7 +126,6 @@ public class MainWindowController {
         int rows = board.size();
         double width = boardCanvas.getWidth();
         double height = boardCanvas.getHeight();
-        logger.debug("canvas width = %f, height = %f", width, height);
 
         // Clear board
         var gc = boardCanvas.getGraphicsContext2D();
@@ -178,10 +189,6 @@ public class MainWindowController {
 
             }
         }
-    }
-
-    @FXML private void drawBoard() {
-        draw();
     }
 
     private void boardClicked(double x, double y) {

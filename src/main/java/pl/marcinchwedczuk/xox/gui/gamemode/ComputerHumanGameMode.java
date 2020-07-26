@@ -9,12 +9,10 @@ public class ComputerHumanGameMode implements GameMode {
     private final BoardMark computerPlayer = BoardMark.X;
 
     private final Logger logger;
-    private final Dialogs dialogs;
     private final XoXGame game;
 
-    public ComputerHumanGameMode(Logger logger, Dialogs dialogs, XoXGame game) {
+    public ComputerHumanGameMode(Logger logger, XoXGame game) {
         this.logger = logger;
-        this.dialogs = dialogs;
         this.game = game;
     }
 
@@ -37,7 +35,7 @@ public class ComputerHumanGameMode implements GameMode {
             game.makeManualMove(row, col);
         }
         else {
-            dialogs.info("Now it's computer turn! Please click next move button!");
+            // TODO: Return value instead
         }
     }
 }

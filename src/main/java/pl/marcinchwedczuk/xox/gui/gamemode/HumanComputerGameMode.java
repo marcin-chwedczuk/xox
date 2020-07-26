@@ -10,12 +10,10 @@ public class HumanComputerGameMode implements GameMode {
     private final BoardMark humanPlayer = BoardMark.X;
 
     private final Logger logger;
-    private final Dialogs dialogs;
     private final XoXGame game;
 
-    public HumanComputerGameMode(Logger logger, Dialogs dialogs, XoXGame game) {
+    public HumanComputerGameMode(Logger logger, XoXGame game) {
         this.logger = logger;
-        this.dialogs = dialogs;
         this.game = game;
     }
 
@@ -30,7 +28,7 @@ public class HumanComputerGameMode implements GameMode {
             game.makeAutomaticMove();
         }
         else {
-            dialogs.info("Now it's human turn!");
+            // TODO: Return value instead
         }
     }
 
