@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.ToggleSwitch?>
 
 <AnchorPane prefHeight="790.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.marcinchwedczuk.xox.gui.MainWindowController">
    <children>
@@ -66,6 +67,7 @@
                         <Button fx:id="nextMoveBtn" layoutX="539.0" layoutY="239.0" mnemonicParsing="false" onAction="#drawBoard" prefHeight="64.0" prefWidth="174.0" text="Next Move" />
                         <Button fx:id="resetBtn" layoutX="539.0" layoutY="675.0" mnemonicParsing="false" onAction="#resetX" prefHeight="64.0" prefWidth="174.0" text="Restart" />
                         <Button fx:id="redoBtn" layoutX="539.0" layoutY="315.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Redo" />
+                        <ToggleSwitch layoutX="65.0" layoutY="197.0" text="Foo enabled" />
                      </children>
                   </AnchorPane>
             </content>
