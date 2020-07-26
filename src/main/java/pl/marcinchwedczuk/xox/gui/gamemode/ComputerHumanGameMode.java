@@ -4,6 +4,9 @@ import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.XoXGame;
 import pl.marcinchwedczuk.xox.gui.Dialogs;
+import pl.marcinchwedczuk.xox.util.Either;
+import pl.marcinchwedczuk.xox.util.ErrorMessage;
+import pl.marcinchwedczuk.xox.util.Unit;
 
 public class ComputerHumanGameMode implements GameMode {
     private final BoardMark computerPlayer = BoardMark.X;
@@ -22,20 +25,29 @@ public class ComputerHumanGameMode implements GameMode {
     }
 
     @Override
-    public void nextMove() {
+    public Either<ErrorMessage, Unit> performComputerMove() {
         if (game.currentPlayer() == computerPlayer) {
             game.makeAutomaticMove();
+            return Either.right(Unit.instance);
+        }
+        else {
+            return Either.left(ErrorMessage.of(
+                    "This is human move turn. Please click on the board."
+            ));
         }
 
     }
 
     @Override
-    public void userClickedOnBoard(int row, int col) {
+    public Either<ErrorMessage, Unit> performHumanMove(int row, int col) {
         if (game.currentPlayer() != computerPlayer) {
             game.makeManualMove(row, col);
+            return Either.right(Unit.instance);
         }
         else {
-            // TODO: Return value instead
+            return Either.left(ErrorMessage.of(
+                    "This is computer move turn."
+            ));
         }
     }
 }

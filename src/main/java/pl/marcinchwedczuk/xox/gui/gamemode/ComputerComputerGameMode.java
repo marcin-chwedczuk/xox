@@ -4,6 +4,9 @@ import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.GameResult;
 import pl.marcinchwedczuk.xox.game.XoXGame;
+import pl.marcinchwedczuk.xox.util.Either;
+import pl.marcinchwedczuk.xox.util.ErrorMessage;
+import pl.marcinchwedczuk.xox.util.Unit;
 
 public class ComputerComputerGameMode implements GameMode {
     private final Logger logger;
@@ -15,17 +18,20 @@ public class ComputerComputerGameMode implements GameMode {
     }
 
     @Override
-    public void nextMove() {
-        game.makeAutomaticMove();
-    }
-
-    @Override
     public void init() {
         // Do Nothing
     }
 
     @Override
-    public void userClickedOnBoard(int row, int col) {
-        // Do Nothing
+    public Either<ErrorMessage, Unit> performComputerMove() {
+        game.makeAutomaticMove();
+        return Either.right(Unit.instance);
+    }
+
+    @Override
+    public Either<ErrorMessage, Unit> performHumanMove(int row, int col) {
+        return Either.left(ErrorMessage.of(
+                "In this game mode user input is not accepted."
+        ));
     }
 }

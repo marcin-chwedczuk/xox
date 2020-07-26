@@ -4,16 +4,16 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.XoXGame;
-import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 import pl.marcinchwedczuk.xox.gui.gamemode.ComputerComputerGameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.ComputerHumanGameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.GameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.HumanComputerGameMode;
+import pl.marcinchwedczuk.xox.util.Either;
+import pl.marcinchwedczuk.xox.util.ErrorMessage;
+import pl.marcinchwedczuk.xox.util.Unit;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -115,16 +115,20 @@ public class MainWindowModel {
     public void nextMove() {
         logger.debug("========== %s =============", game.currentPlayer());
 
-        // CompletableFuture == poor's man Try[V]
-        Task<CompletableFuture<Void>> nextMoveTask = new Task<>() {
+        Task<Either<ErrorMessage, Unit>> nextMoveTask = new Task<>() {
             @Override
-            protected CompletableFuture<Void> call() {
+            protected Either<ErrorMessage, Unit> call() {
                 try {
-                    gameMode.nextMove();
-                    return CompletableFuture.completedFuture(null);
+                    return gameMode.performComputerMove();
                 }
                 catch (Exception ex) {
-                    return CompletableFuture.failedFuture(ex);
+                    logger.debug("Unhandled exception: %s\n%s",
+                            ex.getClass().getSimpleName(), ex.getMessage());
+
+                    return Either.left(ErrorMessage.of(
+                            "Unhandled exception during program execution. " +
+                            "See logs for details."
+                    ));
                 }
             }
         };
@@ -138,9 +142,8 @@ public class MainWindowModel {
 
             notifyModelChanged();
 
-            nextMoveTask.getValue().exceptionally(ex -> {
-                dialogs.exception(ex);
-                return null;
+            nextMoveTask.getValue().onLeft(errorMessage -> {
+                dialogs.info(errorMessage.message);
             });
         });
 
@@ -152,7 +155,7 @@ public class MainWindowModel {
 
     public void onBoardClicked(int row, int col) {
         try {
-            gameMode.userClickedOnBoard(row, col);
+            gameMode.performHumanMove(row, col);
         }
         catch (Exception e) {
             dialogs.info(e.getMessage());

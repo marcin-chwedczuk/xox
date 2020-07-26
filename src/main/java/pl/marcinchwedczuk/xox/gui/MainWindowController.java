@@ -15,8 +15,7 @@ public class MainWindowController {
         @Override
         public void debug(String fmt, Object... args) {
             String formatted = String.format(fmt, args);
-
-            // GUI components can be only accessed form the main thread
+            // Must be thread-safe
             Platform.runLater(() -> {
                 debugLogTextArea.appendText(formatted);
                 debugLogTextArea.appendText(System.lineSeparator());
