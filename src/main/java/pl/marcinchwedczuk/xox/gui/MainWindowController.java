@@ -1,7 +1,5 @@
 package pl.marcinchwedczuk.xox.gui;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -10,8 +8,6 @@ import javafx.scene.paint.Color;
 import jfxtras.labs.scene.control.ToggleGroupValue;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
-
-import java.util.Optional;
 
 public class MainWindowController {
     private final Logger logger = new Logger() {
@@ -31,12 +27,15 @@ public class MainWindowController {
     @FXML private Canvas boardCanvas;
     @FXML private ChoiceBox<GameGeometry> boardSizeCombo;
 
-    @FXML private ToggleGroup searchSettings;
-    @FXML private RadioButton probibalisticSearchRadio;
+    private ToggleGroupValue<GameModeType> gameModeToggleGroup = new ToggleGroupValue<>();
+    @FXML private RadioButton humanComputerRadio;
+    @FXML private RadioButton computerComputerRadio;
+    @FXML private RadioButton computerHumanRadio;
+
+    private ToggleGroupValue<SearchStrategyType> searchStrategyToggleGroup = new ToggleGroupValue<>();
+    @FXML private RadioButton probabilisticSearchRadio;
     @FXML private RadioButton cutOffRadio;
     @FXML private RadioButton fullSearchRadio;
-
-    @FXML private ChoiceBox<Integer> cutOffLevelCombo;
 
     @FXML private Label minNumberOfMovesLbl;
     @FXML private Slider minNumberOfMovesSlider;
@@ -44,10 +43,7 @@ public class MainWindowController {
     @FXML private Label percentageSearchSpaceLabel;
     @FXML private Slider percentageSearchSpaceSlider;
 
-    private ToggleGroupValue<GameModeType> gameModeChanged = new ToggleGroupValue<>();
-    @FXML private RadioButton humanComputerRadio;
-    @FXML private RadioButton computerComputerRadio;
-    @FXML private RadioButton computerHumanRadio;
+    @FXML private ChoiceBox<Integer> cutOffLevelCombo;
 
     @FXML private CheckBox emptyFieldsLoseCheck;
     @FXML private CheckBox countAlmostWinsCheck;
@@ -62,42 +58,28 @@ public class MainWindowController {
         boardSizeCombo.setItems(model.gameGeometries);
         boardSizeCombo.valueProperty().bindBidirectional(model.gameGeometryProperty);
 
-        boardCanvas.setOnMouseClicked(event -> {
-            double x = event.getX();
-            double y = event.getY();
-            boardClicked(x, y);
-        });
+        gameModeToggleGroup.add(computerComputerRadio, GameModeType.COMPUTER_COMPUTER);
+        gameModeToggleGroup.add(humanComputerRadio, GameModeType.HUMAN_COMPUTER);
+        gameModeToggleGroup.add(computerHumanRadio, GameModeType.COMPUTER_HUMAN);
+        gameModeToggleGroup.valueProperty().bindBidirectional(model.gameModeProperty);
 
-        cutOffLevelCombo.setItems(FXCollections.observableArrayList(3, 4, 5));
-        cutOffLevelCombo.setValue(4);
+        searchStrategyToggleGroup.add(probabilisticSearchRadio, SearchStrategyType.PROBABILISTIC);
+        searchStrategyToggleGroup.add(cutOffRadio, SearchStrategyType.CUT_OFF);
+        searchStrategyToggleGroup.add(fullSearchRadio, SearchStrategyType.FULL_SEARCH);
+        searchStrategyToggleGroup.valueProperty().bindBidirectional(model.searchStrategyProperty);
 
-        minNumberOfMovesSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            minNumberOfMovesLbl.setText(Integer.toString(newValue.intValue()));
-        });
-        minNumberOfMovesSlider.setValue(17);
+        minNumberOfMovesSlider.valueProperty().bindBidirectional(model.minNumberOfMoves);
+        minNumberOfMovesLbl.textProperty().bind(model.minNumberOfMoves.asString());
 
-        percentageSearchSpaceSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            percentageSearchSpaceLabel.setText(Integer.toString(newValue.intValue()));
-        });
-        percentageSearchSpaceSlider.setValue(30);
+        percentageSearchSpaceSlider.valueProperty().bindBidirectional(model.percentageOfMoves);
+        percentageSearchSpaceLabel.textProperty().bind(model.percentageOfMoves.asString());
 
-        probibalisticSearchRadio.setUserData(SearchStrategyType.PROBABILISTIC);
-        cutOffRadio.setUserData(SearchStrategyType.CUT_OFF);
-        fullSearchRadio.setUserData(SearchStrategyType.FULL_SEARCH);
-        searchSettings.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            var type = (SearchStrategyType)newValue.getUserData();
-            var data = new SearchStrategyData(type,
-                    cutOffLevelCombo.getValue(),
-                    (int) minNumberOfMovesSlider.getValue(),
-                    (int) percentageSearchSpaceSlider.getValue());
+        cutOffLevelCombo.setItems(model.cutoffLevels);
+        cutOffLevelCombo.valueProperty().bindBidirectional(model.cutoffLevel);
 
-            model.searchStrategyChanged(data);
-        });
-
-        gameModeChanged.add(computerComputerRadio, GameModeType.COMPUTER_COMPUTER);
-        gameModeChanged.add(humanComputerRadio, GameModeType.HUMAN_COMPUTER);
-        gameModeChanged.add(computerHumanRadio, GameModeType.COMPUTER_HUMAN);
-        gameModeChanged.valueProperty().bindBidirectional(model.gameModeProperty);
+        emptyFieldsLoseCheck.selectedProperty().bindBidirectional(model.emptyFieldsLoseProperty);
+        emptyFieldsWinCheck.selectedProperty().bindBidirectional(model.emptyFieldsWinsProperty);
+        countAlmostWinsCheck.selectedProperty().bindBidirectional(model.countAlmostWinsProperty);
 
         nextMoveBtn.setOnAction(event -> {
             model.nextMove();
@@ -109,15 +91,14 @@ public class MainWindowController {
         //    model.reset();
         // });
 
+        boardCanvas.setOnMouseClicked(event -> {
+            double x = event.getX();
+            double y = event.getY();
+            boardClicked(x, y);
+        });
+
         model.setModelChangedListener(this::draw);
-    }
-
-    private void onHeuristicPropsChange() {
-        boolean emptyFieldsLose = emptyFieldsLoseCheck.isSelected();
-        boolean emptyFieldsWins = emptyFieldsWinCheck.isSelected();
-        boolean countAlmostWins = countAlmostWinsCheck.isSelected();
-
-        model.heuristicSettingsChanged(emptyFieldsLose, emptyFieldsWins, countAlmostWins);
+        draw();
     }
 
     private void draw() {

@@ -1,13 +1,14 @@
 package pl.marcinchwedczuk.xox.gui;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.XoXGame;
+import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 import pl.marcinchwedczuk.xox.gui.gamemode.ComputerComputerGameMode;
+import pl.marcinchwedczuk.xox.gui.gamemode.ComputerHumanGameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.GameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.HumanComputerGameMode;
 
@@ -25,6 +26,21 @@ public class MainWindowModel {
 
     public final ObjectProperty<GameModeType> gameModeProperty =
             new SimpleObjectProperty<>(GameModeType.HUMAN_COMPUTER);
+
+    public final ObjectProperty<SearchStrategyType> searchStrategyProperty =
+            new SimpleObjectProperty<>(SearchStrategyType.FULL_SEARCH);
+
+    public final IntegerProperty minNumberOfMoves = new SimpleIntegerProperty(17);
+    public final IntegerProperty percentageOfMoves = new SimpleIntegerProperty(40);
+
+    public final ObservableList<Integer> cutoffLevels = FXCollections.observableArrayList(
+            3, 4, 5
+    );
+    public final ObjectProperty<Integer> cutoffLevel = new SimpleObjectProperty<>(cutoffLevels.get(0));
+
+    public final BooleanProperty emptyFieldsLoseProperty = new SimpleBooleanProperty(true);
+    public final BooleanProperty emptyFieldsWinsProperty = new SimpleBooleanProperty(true);
+    public final BooleanProperty countAlmostWinsProperty = new SimpleBooleanProperty(false);
 
     private final Dialogs dialogs;
     private final Logger logger;
@@ -92,7 +108,9 @@ public class MainWindowModel {
             case COMPUTER_COMPUTER ->
                     new ComputerComputerGameMode(logger, game);
             case HUMAN_COMPUTER ->
-                    new HumanComputerGameMode(logger, game);
+                    new HumanComputerGameMode(logger, dialogs, game);
+            case COMPUTER_HUMAN ->
+                    new ComputerHumanGameMode(logger, dialogs, game);
             default ->
                     throw new IllegalArgumentException();
         };

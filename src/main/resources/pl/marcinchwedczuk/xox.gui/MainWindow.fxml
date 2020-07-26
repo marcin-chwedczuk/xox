@@ -49,9 +49,9 @@
                         <CheckBox fx:id="emptyFieldsWinCheck" layoutX="499.0" layoutY="69.0" mnemonicParsing="false" selected="true" text="Maximize empty fields when winning" />
                         <CheckBox fx:id="countAlmostWinsCheck" layoutX="499.0" layoutY="95.0" mnemonicParsing="false" text="Count almost wins e.g. X _ X" />
                         <Label layoutX="260.0" layoutY="14.0" text="Search Settings:" />
-                        <RadioButton fx:id="probibalisticSearchRadio" layoutX="264.0" layoutY="45.0" mnemonicParsing="false" text="Use probabilistic search">
+                        <RadioButton fx:id="probabilisticSearchRadio" layoutX="264.0" layoutY="45.0" mnemonicParsing="false" text="Use probabilistic search">
                            <toggleGroup>
-                              <ToggleGroup fx:id="searchSettings" />
+                              <ToggleGroup fx:id="searchStrategyToggleGroup" />
                            </toggleGroup>
                         </RadioButton>
                         <Slider fx:id="minNumberOfMovesSlider" layoutX="291.0" layoutY="96.0" max="25.0" min="10.0" prefHeight="16.0" prefWidth="180.0" />
@@ -60,9 +60,9 @@
                         <Label layoutX="293.0" layoutY="122.0" text="Perentage of the search space:" />
                         <Label fx:id="percentageSearchSpaceLabel" layoutX="468.0" layoutY="122.0" prefHeight="17.0" prefWidth="41.0" text="99" />
                         <Slider fx:id="percentageSearchSpaceSlider" layoutX="293.0" layoutY="145.0" min="10.0" prefHeight="16.0" prefWidth="180.0" />
-                        <RadioButton fx:id="cutOffRadio" layoutX="264.0" layoutY="173.0" mnemonicParsing="false" text="Use cut-off level" toggleGroup="$searchSettings" />
+                        <RadioButton fx:id="cutOffRadio" layoutX="264.0" layoutY="173.0" mnemonicParsing="false" text="Use cut-off level" toggleGroup="$searchStrategyToggleGroup" />
                         <ChoiceBox fx:id="cutOffLevelCombo" layoutX="386.0" layoutY="168.0" prefHeight="27.0" prefWidth="82.0" />
-                        <RadioButton fx:id="fullSearchRadio" layoutX="264.0" layoutY="207.0" mnemonicParsing="false" selected="true" text="Full search" toggleGroup="$searchSettings" />
+                        <RadioButton fx:id="fullSearchRadio" layoutX="264.0" layoutY="207.0" mnemonicParsing="false" selected="true" text="Full search" toggleGroup="$searchStrategyToggleGroup" />
                         <Button fx:id="nextMoveBtn" layoutX="539.0" layoutY="239.0" mnemonicParsing="false" onAction="#drawBoard" prefHeight="64.0" prefWidth="174.0" text="Next Move" />
                         <Button fx:id="resetBtn" layoutX="539.0" layoutY="675.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Restart" />
                         <Button fx:id="redoBtn" layoutX="539.0" layoutY="315.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Redo" />
