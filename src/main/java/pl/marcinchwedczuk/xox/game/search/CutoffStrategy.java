@@ -21,6 +21,7 @@ public class CutoffStrategy implements SearchStrategy {
             return Collections.emptyList();
         }
 
+        // TODO: Requires heuristic with almostWins counting enabled
         return innerStrategy.movesToCheck(board, player, level);
     }
 }

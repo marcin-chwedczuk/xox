@@ -63,6 +63,11 @@ public class AlfaBetaAlgo {
             Optional<Move> next = Optional.empty();
 
             var score = scoreBoard(board, move, player, isMaxStep);
+            if (level == 1 && (score.score > 1 || score.score < -1)) {
+                logger.debug("SCORE: %f\nBOARD:%s\n\n",
+                        score.score, board.asText());
+                scoreBoard(board, move, player, isMaxStep);
+            }
             if (!score.gameEnded) {
                 // Game did not end, do opponent move.
                 // May return empty() due to e.g. search strategy limits
@@ -106,7 +111,7 @@ public class AlfaBetaAlgo {
                 null,
                 Double.NaN, Double.NaN, Double.NaN));
 
-        if (score.gameEnded && !isMaxStep) {
+        if (!isMaxStep) {
             // Negate score for the min player
             return new Score(true, -score.score);
         }

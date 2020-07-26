@@ -100,12 +100,18 @@ public class BoardScorer {
                if (board.get(lastMoveRow, i) == player) {
                    counts++;
                }
+               else {
+                   break;
+               }
             }
 
             // Count to the left
             for (int i = lastMoveCol; i >= 0; i--) {
                 if (board.get(lastMoveRow, i) == player) {
                     counts++;
+                }
+                else {
+                    break;
                 }
             }
 
@@ -121,12 +127,18 @@ public class BoardScorer {
                 if (board.get(i, lastMoveCol) == player) {
                     counts++;
                 }
+                else {
+                    break;
+                }
             }
 
             // Count to the top
             for (int i = lastMoveRow; i >= 0; i--) {
                 if (board.get(i, lastMoveCol) == player) {
                     counts++;
+                }
+                else {
+                    break;
                 }
             }
 
@@ -142,12 +154,18 @@ public class BoardScorer {
                 if (board.get(r, c) == player) {
                     counts++;
                 }
+                else {
+                    break;
+                }
             }
 
             // Count to the top
             for (int r = lastMoveRow, c = lastMoveCol; r >= 0 && c >= 0; r--, c--) {
                 if (board.get(r, c) == player) {
                     counts++;
+                }
+                else {
+                    break;
                 }
             }
 
@@ -163,12 +181,18 @@ public class BoardScorer {
                 if (board.get(r, c) == player) {
                     counts++;
                 }
+                else {
+                    break;
+                }
             }
 
             // Count to the top
             for (int r = lastMoveRow, c = lastMoveCol; r >= 0 && c < N; r--, c++) {
                 if (board.get(r, c) == player) {
                     counts++;
+                }
+                else {
+                    break;
                 }
             }
 
