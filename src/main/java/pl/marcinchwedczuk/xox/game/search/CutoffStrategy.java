@@ -8,11 +8,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CutoffStrategy implements SearchStrategy {
-    private final SearchStrategy innerStrategy = new FullSearch();
+    public static CutoffStrategy basedOn(SearchStrategy strategy) {
+        return new CutoffStrategy(strategy);
+    }
+
+    private final SearchStrategy innerStrategy;
     private int cutoff = 5;
 
-    public void setCutoff(int level) {
-        this.cutoff = level;
+    private CutoffStrategy(SearchStrategy innerStrategy) {
+        this.innerStrategy = innerStrategy;
     }
 
     @Override
@@ -23,5 +27,13 @@ public class CutoffStrategy implements SearchStrategy {
 
         // TODO: Requires heuristic with almostWins counting enabled
         return innerStrategy.movesToCheck(board, player, level);
+    }
+
+    public void setCutoff(int level) {
+        if (cutoff <= 0) {
+            throw new IllegalArgumentException("level");
+        }
+
+        this.cutoff = level;
     }
 }

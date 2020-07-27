@@ -47,6 +47,7 @@ import javafx.scene.control.ToggleGroup;
  *
  * @param <T>
  */
+@SuppressWarnings("unchecked")
 public class ToggleGroupValue<T> extends ToggleGroup
 {
     /**
@@ -99,7 +100,6 @@ public class ToggleGroupValue<T> extends ToggleGroup
     {
         public void set(T value)
         {
-//System.out.println("set " + value);			
             // do it
             super.set(value);
 

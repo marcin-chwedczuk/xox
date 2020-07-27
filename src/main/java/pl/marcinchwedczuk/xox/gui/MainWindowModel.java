@@ -10,6 +10,7 @@ import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.XoXGame;
 import pl.marcinchwedczuk.xox.game.search.CutoffStrategy;
 import pl.marcinchwedczuk.xox.game.search.FullSearch;
+import pl.marcinchwedczuk.xox.game.search.ProbabilisticSearch;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 import pl.marcinchwedczuk.xox.gui.gamemode.ComputerComputerGameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.ComputerHumanGameMode;
@@ -102,8 +103,14 @@ public class MainWindowModel {
             case FULL_SEARCH ->
                 new FullSearch();
             case CUT_OFF -> {
-                var strategy = new CutoffStrategy();
+                var strategy = CutoffStrategy.basedOn(new FullSearch());
                 strategy.setCutoff(cutoffLevel.get());
+                yield strategy;
+            }
+            case PROBABILISTIC -> {
+                var strategy = ProbabilisticSearch.basedOn(new FullSearch());
+                strategy.setMinNumberOfMoves(minNumberOfMoves.get());
+                strategy.setPercentageOfMovesToCheck(percentageOfMoves.get());
                 yield strategy;
             }
             default ->
