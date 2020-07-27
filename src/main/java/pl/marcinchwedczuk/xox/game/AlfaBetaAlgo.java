@@ -1,6 +1,5 @@
 package pl.marcinchwedczuk.xox.game;
 
-import org.checkerframework.checker.nullness.Opt;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.heuristic.BoardScorer;
 import pl.marcinchwedczuk.xox.game.heuristic.Score;
@@ -63,11 +62,8 @@ public class AlfaBetaAlgo {
             Optional<Move> next = Optional.empty();
 
             var score = scoreBoard(board, move, player, isMaxStep);
-            if (level == 1 && (score.score > 1 || score.score < -1)) {
-                logger.debug("SCORE: %f\nBOARD:%s\n\n",
-                        score.score, board.asText());
-                scoreBoard(board, move, player, isMaxStep);
-            }
+
+
             if (!score.gameEnded) {
                 // Game did not end, do opponent move.
                 // May return empty() due to e.g. search strategy limits
@@ -112,8 +108,7 @@ public class AlfaBetaAlgo {
                 Double.NaN, Double.NaN, Double.NaN));
 
         if (!isMaxStep) {
-            // Negate score for the min player
-            return new Score(true, -score.score);
+            return score.negate();
         }
 
         return score;

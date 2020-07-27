@@ -7,15 +7,15 @@ import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.Move;
 
 import static org.junit.Assert.assertEquals;
-import static pl.marcinchwedczuk.xox.game.BoardMark.EMPTY;
-import static pl.marcinchwedczuk.xox.game.BoardMark.X;
+import static org.junit.Assert.assertFalse;
+import static pl.marcinchwedczuk.xox.game.BoardMark.*;
 
 public class BoardScorerTest {
     private final BoardMark E = EMPTY;
 
     private final BoardScorer scorer = new BoardScorer(3, 3);
 
-    @Test public void scoringOnLastMoveWorks_not_stride() {
+    @Test public void scoringOnLastMoveWorks_no_stride() {
         var board = Board.of(
                 X, X, E,
                 E, E, E,
@@ -27,7 +27,7 @@ public class BoardScorerTest {
         assertScore(0, board, move(0, 2, X));
     }
 
-    @Test public void scoringOnLastMoveWorks_horizontal() {
+    @Test public void scoringOnLastMoveWorks_horizontal_stride() {
         var board = Board.of(
                 X, X, X,
                 E, E, E,
@@ -43,7 +43,7 @@ public class BoardScorerTest {
         assertScore(0, board, move(1, 0, X));
     }
 
-    @Test public void scoringOnLastMoveWorks_vertical() {
+    @Test public void scoringOnLastMoveWorks_vertical_stride() {
         var board = Board.of(
                 E, E, X,
                 E, E, X,
@@ -60,7 +60,7 @@ public class BoardScorerTest {
         assertScore(0, board, move(2, 1, X));
     }
 
-    @Test public void scoringOnLastMoveWorks_diagonal_backslash() {
+    @Test public void scoringOnLastMoveWorks_backslash_stride() {
         var board = Board.of(
                 X, E, E,
                 E, X, E,
@@ -77,7 +77,7 @@ public class BoardScorerTest {
         assertScore(0, board, move(0, 2, X));
     }
 
-    @Test public void scoringOnLastMoveWorks_diagonal_slash() {
+    @Test public void scoringOnLastMoveWorks_slash_stride() {
         var board = Board.of(
                 E, E, X,
                 E, X, E,
@@ -91,6 +91,26 @@ public class BoardScorerTest {
         assertScore(0, board, move(0, 0, X));
         assertScore(0, board, move(1, 0, X));
         assertScore(0, board, move(2, 2, X));
+    }
+
+    @Test public void scoringOnLastMove_returns_false_when_game_did_not_end() {
+        var board = Board.of(
+                X, O, E,
+                E, E, E,
+                E, E, E
+        );
+
+        for (int row = 0; row < board.sideSize(); row++) {
+            for (int col = 0; col < board.sideSize(); col++) {
+                if (board.isEmpty(row, col)) {
+                    board.putMark(row, col, X);
+                    var score = scorer.score(board, move(row, col, X));
+                    assertFalse(score.gameEnded);
+                    board.removeMark(row, col);
+                }
+            }
+        }
+
     }
 
     private void assertScore(int expected, Board board, Move lastMove) {

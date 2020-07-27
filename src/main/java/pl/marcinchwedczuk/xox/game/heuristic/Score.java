@@ -20,4 +20,8 @@ public class Score {
         this.gameEnded = gameEnded;
         this.score = score;
     }
+
+    public Score negate() {
+        return new Score(gameEnded, -score);
+    }
 }
