@@ -111,6 +111,10 @@ public class MainWindowController {
         draw();
     }
 
+    @FXML private void clearLogs() {
+        debugLogTextArea.setText("");
+    }
+
     private void draw() {
         final int LINE_WIDTH = 4;
         final int MARK_LINE_WIDTH = 16;
