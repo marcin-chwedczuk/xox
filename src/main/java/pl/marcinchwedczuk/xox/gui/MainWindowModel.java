@@ -16,6 +16,7 @@ import pl.marcinchwedczuk.xox.gui.gamemode.ComputerComputerGameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.ComputerHumanGameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.GameMode;
 import pl.marcinchwedczuk.xox.gui.gamemode.HumanComputerGameMode;
+import pl.marcinchwedczuk.xox.mvvm.AsyncCommand;
 import pl.marcinchwedczuk.xox.util.Either;
 import pl.marcinchwedczuk.xox.util.ErrorMessage;
 import pl.marcinchwedczuk.xox.util.Unit;
@@ -54,11 +55,7 @@ public class MainWindowModel {
     public final BooleanProperty emptyFieldsWinsProperty = new SimpleBooleanProperty(true);
     public final BooleanProperty countAlmostWinsProperty = new SimpleBooleanProperty(false);
 
-    public final BooleanProperty inputEnabled = new SimpleBooleanProperty(true);
-    public final IntegerProperty progress = new SimpleIntegerProperty(0);
-    public final BooleanProperty showProgress = new SimpleBooleanProperty(false);
-
-    private final Timer timer = new Timer(true);
+    public final AsyncCommand<Either<ErrorMessage, Unit>> nextMoveCommand;
 
     private final Dialogs dialogs;
     private final Logger logger;
@@ -80,6 +77,15 @@ public class MainWindowModel {
         this.gameModeProperty.addListener((observable, oldValue, newValue) -> {
             reset();
         });
+
+        this.nextMoveCommand = new AsyncCommand<Either<ErrorMessage, Unit>>(c -> {
+            return gameMode.performComputerMove();
+        },
+            new SimpleBooleanProperty(true));
+
+        nextMoveCommand.resultProperty()
+                .addListener((observable, oldValue, newValue) -> notifyModelChanged());
+
 
         reset();
     }
@@ -141,61 +147,6 @@ public class MainWindowModel {
 
     public Board board() {
         return game.board();
-    }
-
-    public void nextMove() {
-        logger.debug("========== %s =============", game.currentPlayer());
-
-        Task<Either<ErrorMessage, Unit>> nextMoveTask = new Task<>() {
-            @Override
-            protected Either<ErrorMessage, Unit> call() {
-                try {
-                    return gameMode.performComputerMove();
-                }
-                catch (Exception ex) {
-                    logger.debug("Unhandled exception: %s\n%s",
-                            ex.getClass().getSimpleName(), ex.getMessage());
-
-                    return Either.left(ErrorMessage.of(
-                            "Unhandled exception during program execution. " +
-                            "See logs for details."
-                    ));
-                }
-            }
-        };
-
-        progress.bind(nextMoveTask.progressProperty());
-        inputEnabled.setValue(false);
-
-        nextMoveTask.setOnSucceeded(event -> {
-            progress.unbind();
-            inputEnabled.setValue(true);
-            showProgress.setValue(false);
-
-            notifyModelChanged();
-
-            nextMoveTask.getValue().onLeft(errorMessage -> {
-                dialogs.info(errorMessage.message);
-            });
-        });
-
-        var t = new Thread(nextMoveTask);
-        t.setDaemon(true);
-        t.setName("compute-next-move-thread");
-        t.start();
-
-        // If task takes more than 1s show progress overlay
-
-        timer.schedule(new TimerTask(){
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    if (nextMoveTask.isRunning()) {
-                        showProgress.setValue(true);
-                    }
-                });
-            }
-        }, 1000);
     }
 
     public void onBoardClicked(int row, int col) {

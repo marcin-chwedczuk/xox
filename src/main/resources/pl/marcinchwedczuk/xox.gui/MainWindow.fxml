@@ -103,6 +103,16 @@
             </Tab>
         </tabs>
       </TabPane>
-      <ProgressIndicator fx:id="progressIndicator" disable="true" progress="0.0" visible="false" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="200.0" />
+      <Pane fx:id="waitCurtain" style="-fx-background-color: #c2c2c2#c2c2c2;" visible="false" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
+         <children>
+            <Label layoutX="90.0" layoutY="45.0" text="Please wait...">
+               <font>
+                  <Font size="70.0" />
+               </font>
+            </Label>
+            <Button fx:id="curtainCancelBtn" layoutX="531.0" layoutY="511.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="161.0" text="Cancel" />
+            <ProgressIndicator fx:id="progressIndicator" layoutX="222.0" layoutY="177.0" minHeight="250.0" minWidth="250.0" />
+         </children>
+      </Pane>
    </children>
 </AnchorPane>

@@ -1,15 +1,27 @@
 package pl.marcinchwedczuk.xox.gui;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import jfxtras.labs.scene.control.ToggleGroupValue;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
+import pl.marcinchwedczuk.xox.mvvm.JfxTimer;
+import pl.marcinchwedczuk.xox.util.Either;
+import pl.marcinchwedczuk.xox.util.ErrorMessage;
+import pl.marcinchwedczuk.xox.util.Unit;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainWindowController {
+    private final JfxTimer timer = new JfxTimer();
+
     private final Logger logger = new Logger() {
         @Override
         public void debug(String fmt, Object... args) {
@@ -58,6 +70,7 @@ public class MainWindowController {
 
     @FXML private ProgressIndicator progressIndicator;
     @FXML private TabPane tabPane;
+    @FXML private Pane waitCurtain;
 
     @FXML
     public void initialize() {
@@ -88,7 +101,7 @@ public class MainWindowController {
         countAlmostWinsCheck.selectedProperty().bindBidirectional(model.countAlmostWinsProperty);
 
         nextMoveBtn.setOnAction(event -> {
-            model.nextMove();
+            model.nextMoveCommand.execute();
         });
         redoBtn.setOnAction(event -> {
             model.redoMove();
@@ -103,9 +116,21 @@ public class MainWindowController {
             boardClicked(x, y);
         });
 
-        progressIndicator.progressProperty().bindBidirectional(model.progress);
-        progressIndicator.visibleProperty().bind(model.showProgress);
-        tabPane.disableProperty().bind(model.inputEnabled.not());
+        tabPane.disableProperty()
+                .bind(model.nextMoveCommand.isRunningProperty());
+
+        model.nextMoveCommand.isRunningProperty().addListener((observable, oldValue, newValue) -> {
+            // Extract to custom binding
+            timer.scheduleAfterMilliseconds(1000, () -> {
+                if (model.nextMoveCommand.isRunningProperty().get()) {
+                    waitCurtain.visibleProperty().set(true);
+                }
+            });
+
+            if (!model.nextMoveCommand.isRunningProperty().get()) {
+                waitCurtain.visibleProperty().set(false);
+            }
+        });
 
         model.setModelChangedListener(this::draw);
         draw();
@@ -219,7 +244,8 @@ public class MainWindowController {
     }
 
 
+    private void foo() {
 
-
+    }
 
 }
