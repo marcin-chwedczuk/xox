@@ -1,16 +1,9 @@
 package pl.marcinchwedczuk.xox.gui.controls;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.ButtonBase;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import pl.marcinchwedczuk.xox.game.Board;
@@ -19,9 +12,16 @@ import java.util.function.BiConsumer;
 
 // Based on: https://stackoverflow.com/a/31761362
 public class GameBoard extends Pane {
+    private final int LINE_WIDTH = 4;
+    private final int MARK_LINE_WIDTH = 16;
+
+    private final Color colorX = Color.BLACK;
+    private final Color colorO = Color.RED;
+    private final Color colorBg = Color.rgb(242, 242, 242);
+    private final Color colorLine = Color.GRAY;
+
     private final Canvas canvas;
     private BiConsumer<Integer, Integer> onBoardClicked = (row, col) -> { };
-
     public ObjectProperty<Board> boardProperty = new SimpleObjectProperty<>();
 
     public GameBoard() { this(0, 0); }
@@ -61,45 +61,25 @@ public class GameBoard extends Pane {
     }
 
     private void draw() {
-        final int LINE_WIDTH = 4;
-        final int MARK_LINE_WIDTH = 16;
-        final int SPACING = 4;
-        final Color colorX = Color.BLACK;
-        final Color colorO = Color.RED;
-        final Color colorBg = Color.rgb(242, 242, 242);
-        final Color colorLine = Color.GRAY;
-
         Board board = boardProperty.get();
         if (board == null) {
             return;
         }
 
-        int rows = board.sideSize();
         double width = canvas.getWidth();
         double height = canvas.getHeight();
-
-        // Clear board
         var gc = canvas.getGraphicsContext2D();
-        gc.setFill(colorBg);
-        gc.fillRect(0, 0, width, height);
 
-        // Draw lines
-        gc.setLineWidth(LINE_WIDTH);
-        gc.setFill(colorLine);
-        for (int i = 0; i <= rows; i++) {
-            // Vertical
-            double xCenter = (width / rows) * i;
-            double xStart = xCenter - LINE_WIDTH / 2.0;
-            gc.fillRect(xStart, 0, LINE_WIDTH, height);
+        clearBoard(gc, width, height);
+        drawGrid(gc, board, width, height);
+        drawMarks(gc, board, width, height);
+    }
 
-            // Horizontal
-            double yCenter = (height / rows) * i;
-            double yStart = yCenter - LINE_WIDTH / 2.0;
-            gc.fillRect(0, yStart, width, LINE_WIDTH);
-        }
+    private void drawMarks(GraphicsContext gc, Board board, double width, double height) {
+        final int rows = board.sideSize();
 
-        // Draw board
         gc.setLineWidth(MARK_LINE_WIDTH);
+
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < rows; c++) {
                 double xStart = (width / rows) * c + LINE_WIDTH/2.0;
@@ -107,12 +87,6 @@ public class GameBoard extends Pane {
 
                 double xEnd = (width / rows) * (c + 1) - LINE_WIDTH/2.0;
                 double yEnd = (height / rows) * (r + 1) - LINE_WIDTH/2.0;
-
-
-                // Clear
-                gc.setFill(colorBg);
-                gc.fillRect(xStart, yStart, xEnd - xStart, yEnd - yStart);
-
 
                 switch (board.get(r, c)) {
                     case X:
@@ -139,6 +113,30 @@ public class GameBoard extends Pane {
                 }
 
             }
+        }
+    }
+
+    private void clearBoard(GraphicsContext gc, double width, double height) {
+        gc.setFill(colorBg);
+        gc.fillRect(0, 0, width, height);
+    }
+
+    private void drawGrid(GraphicsContext gc, Board board, double width, double height) {
+        gc.setLineWidth(LINE_WIDTH);
+        gc.setFill(colorLine);
+
+        final int rows = board.sideSize();
+
+        for (int i = 0; i <= rows; i++) {
+            // Vertical
+            double xCenter = (width / rows) * i;
+            double xStart = xCenter - LINE_WIDTH / 2.0;
+            gc.fillRect(xStart, 0, LINE_WIDTH, height);
+
+            // Horizontal
+            double yCenter = (height / rows) * i;
+            double yStart = yCenter - LINE_WIDTH / 2.0;
+            gc.fillRect(0, yStart, width, LINE_WIDTH);
         }
     }
 
