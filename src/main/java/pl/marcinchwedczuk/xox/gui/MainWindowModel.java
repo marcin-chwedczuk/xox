@@ -1,10 +1,8 @@
 package pl.marcinchwedczuk.xox.gui;
 
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.XoXGame;
@@ -12,18 +10,11 @@ import pl.marcinchwedczuk.xox.game.search.CutoffStrategy;
 import pl.marcinchwedczuk.xox.game.search.FullSearch;
 import pl.marcinchwedczuk.xox.game.search.ProbabilisticSearch;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
-import pl.marcinchwedczuk.xox.gui.gamemode.ComputerComputerGameMode;
-import pl.marcinchwedczuk.xox.gui.gamemode.ComputerHumanGameMode;
-import pl.marcinchwedczuk.xox.gui.gamemode.GameMode;
-import pl.marcinchwedczuk.xox.gui.gamemode.HumanComputerGameMode;
+import pl.marcinchwedczuk.xox.gui.gamemode.*;
 import pl.marcinchwedczuk.xox.mvvm.AsyncCommand;
 import pl.marcinchwedczuk.xox.util.Either;
 import pl.marcinchwedczuk.xox.util.ErrorMessage;
 import pl.marcinchwedczuk.xox.util.Unit;
-
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CompletableFuture;
 
 public class MainWindowModel {
     public final ObservableList<GameGeometry> gameGeometries = FXCollections.observableArrayList(
@@ -54,6 +45,8 @@ public class MainWindowModel {
     public final BooleanProperty emptyFieldsLoseProperty = new SimpleBooleanProperty(true);
     public final BooleanProperty emptyFieldsWinsProperty = new SimpleBooleanProperty(true);
     public final BooleanProperty countAlmostWinsProperty = new SimpleBooleanProperty(false);
+
+    public final ObjectProperty<Board> gameStateProperty = new SimpleObjectProperty<>(null);
 
     public final AsyncCommand<Either<ErrorMessage, Unit>> nextMoveCommand;
 
@@ -94,6 +87,7 @@ public class MainWindowModel {
     }
 
     private void notifyModelChanged() {
+        gameStateProperty.set(game.board());
         modelChangedListener.run();
     }
 

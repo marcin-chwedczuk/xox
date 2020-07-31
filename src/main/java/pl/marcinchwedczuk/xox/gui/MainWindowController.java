@@ -1,9 +1,6 @@
 package pl.marcinchwedczuk.xox.gui;
 
-import com.sun.javafx.cursor.CursorType;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
@@ -13,13 +10,9 @@ import javafx.scene.paint.Color;
 import jfxtras.labs.scene.control.ToggleGroupValue;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
+import pl.marcinchwedczuk.xox.gui.controls.GameBoard;
+import pl.marcinchwedczuk.xox.gui.gamemode.GameModeType;
 import pl.marcinchwedczuk.xox.mvvm.JfxTimer;
-import pl.marcinchwedczuk.xox.util.Either;
-import pl.marcinchwedczuk.xox.util.ErrorMessage;
-import pl.marcinchwedczuk.xox.util.Unit;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainWindowController {
     private final JfxTimer timer = new JfxTimer();
@@ -41,7 +34,7 @@ public class MainWindowController {
 
     @FXML private TextArea debugLogTextArea;
 
-    @FXML private Canvas boardCanvas;
+    //@FXML private Canvas boardCanvas;
     @FXML private ChoiceBox<GameGeometry> boardSizeCombo;
 
     private ToggleGroupValue<GameModeType> gameModeToggleGroup = new ToggleGroupValue<>();
@@ -74,6 +67,8 @@ public class MainWindowController {
     @FXML private TabPane tabPane;
     @FXML private Pane waitCurtain;
     @FXML private Button curtainCancelBtn;
+
+    @FXML private GameBoard gameBoard;
 
     @FXML
     public void initialize() {
@@ -113,11 +108,13 @@ public class MainWindowController {
             model.reset();
         });
 
+        /*
         boardCanvas.setOnMouseClicked(event -> {
             double x = event.getX();
             double y = event.getY();
             boardClicked(x, y);
         });
+         */
 
         tabPane.disableProperty()
                 .bind(model.nextMoveCommand.isRunningProperty());
@@ -140,115 +137,17 @@ public class MainWindowController {
             model.nextMoveCommand.cancel();
         });
 
-        model.setModelChangedListener(this::draw);
-        draw();
+        model.gameStateProperty.bindBidirectional(gameBoard.boardProperty);
+
+        gameBoard.setOnBoardClicked(model::onBoardClicked);
+
+        model.reset();
+        // model.setModelChangedListener(this::draw);
+        // draw();
     }
 
     @FXML private void clearLogs() {
         debugLogTextArea.setText("");
-    }
-
-    private void draw() {
-        final int LINE_WIDTH = 4;
-        final int MARK_LINE_WIDTH = 16;
-        final int SPACING = 4;
-        final Color colorX = Color.BLACK;
-        final Color colorO = Color.RED;
-        final Color colorBg = Color.rgb(242, 242, 242);
-        final Color colorLine = Color.GRAY;
-
-        Board board = model.board();
-        int rows = board.sideSize();
-        double width = boardCanvas.getWidth();
-        double height = boardCanvas.getHeight();
-
-        // Clear board
-        var gc = boardCanvas.getGraphicsContext2D();
-        gc.setFill(colorBg);
-        gc.fillRect(0, 0, width, height);
-
-        // Draw lines
-        gc.setLineWidth(LINE_WIDTH);
-        gc.setFill(colorLine);
-        for (int i = 0; i <= rows; i++) {
-            // Vertical
-            double xCenter = (width / rows) * i;
-            double xStart = xCenter - LINE_WIDTH / 2.0;
-            gc.fillRect(xStart, 0, LINE_WIDTH, height);
-
-            // Horizontal
-            double yCenter = (height / rows) * i;
-            double yStart = yCenter - LINE_WIDTH / 2.0;
-            gc.fillRect(0, yStart, width, LINE_WIDTH);
-        }
-
-        // Draw board
-        gc.setLineWidth(MARK_LINE_WIDTH);
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < rows; c++) {
-                double xStart = (width / rows) * c + LINE_WIDTH/2.0;
-                double yStart = (height / rows) * r + LINE_WIDTH/2.0;
-
-                double xEnd = (width / rows) * (c + 1) - LINE_WIDTH/2.0;
-                double yEnd = (height / rows) * (r + 1) - LINE_WIDTH/2.0;
-
-
-                // Clear
-                gc.setFill(colorBg);
-                gc.fillRect(xStart, yStart, xEnd - xStart, yEnd - yStart);
-
-
-                switch (board.get(r, c)) {
-                    case X:
-                        gc.setStroke(colorX);
-                        gc.beginPath();
-                        gc.moveTo(xStart + MARK_LINE_WIDTH, yStart + MARK_LINE_WIDTH);
-                        gc.lineTo(xEnd - MARK_LINE_WIDTH, yEnd - MARK_LINE_WIDTH);
-                        gc.closePath();
-                        gc.stroke();
-                        gc.beginPath();
-                        gc.moveTo(xEnd - MARK_LINE_WIDTH, yStart + MARK_LINE_WIDTH);
-                        gc.lineTo(xStart + MARK_LINE_WIDTH, yEnd - MARK_LINE_WIDTH);
-                        gc.closePath();
-                        gc.stroke();
-                        break;
-                    case O:
-                        gc.setStroke(colorO);
-                        gc.strokeOval(
-                                xStart + MARK_LINE_WIDTH,
-                                yStart + MARK_LINE_WIDTH,
-                                xEnd - xStart - 2*MARK_LINE_WIDTH,
-                                yEnd - yStart - 2*MARK_LINE_WIDTH);
-                        break;
-                }
-
-            }
-        }
-    }
-
-    private void boardClicked(double x, double y) {
-        int rows = model.board().sideSize();
-        double cellWidth = boardCanvas.getWidth() / rows;
-        double cellHeight = boardCanvas.getHeight() / rows;
-
-        int rr = -1, cc = -1;
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < rows; c++) {
-                double xStart = cellWidth*c;
-                double yStart = cellHeight*r;
-                double xEnd = cellWidth*(c+1) - 1;
-                double yEnd = cellHeight*(r+1) - 1;
-
-                if (xStart <= x && x <= xEnd &&
-                    yStart <= y && y <= yEnd) {
-                    rr = r; cc = c;
-                }
-            }
-        }
-
-        if (rr != -1) {
-            model.onBoardClicked(rr, cc);
-        }
     }
 
     private void setCursor(Cursor cursor) {

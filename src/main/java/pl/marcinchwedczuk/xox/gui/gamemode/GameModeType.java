@@ -1,4 +1,4 @@
-package pl.marcinchwedczuk.xox.gui;
+package pl.marcinchwedczuk.xox.gui.gamemode;
 
 public enum GameModeType {
     // Human makes first move
