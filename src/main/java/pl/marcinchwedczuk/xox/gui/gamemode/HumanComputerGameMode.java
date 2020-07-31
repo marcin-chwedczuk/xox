@@ -5,6 +5,7 @@ import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.XoXGame;
 import pl.marcinchwedczuk.xox.gui.Dialogs;
+import pl.marcinchwedczuk.xox.util.CancelOperation;
 import pl.marcinchwedczuk.xox.util.Either;
 import pl.marcinchwedczuk.xox.util.ErrorMessage;
 import pl.marcinchwedczuk.xox.util.Unit;
@@ -26,9 +27,9 @@ public class HumanComputerGameMode implements GameMode {
     }
 
     @Override
-    public Either<ErrorMessage, Unit> performComputerMove() {
+    public Either<ErrorMessage, Unit> performComputerMove(CancelOperation cancelOperation) {
         if (game.currentPlayer() != humanPlayer) {
-            game.makeAutomaticMove();
+            game.makeAutomaticMove(cancelOperation);
             return Either.right(Unit.instance);
         }
         else {

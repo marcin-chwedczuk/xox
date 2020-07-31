@@ -78,10 +78,9 @@ public class MainWindowModel {
             reset();
         });
 
-        this.nextMoveCommand = new AsyncCommand<Either<ErrorMessage, Unit>>(c -> {
-            return gameMode.performComputerMove();
-        },
-            new SimpleBooleanProperty(true));
+        this.nextMoveCommand = new AsyncCommand<>(
+                cancelOp -> gameMode.performComputerMove(cancelOp),
+                new SimpleBooleanProperty(true));
 
         nextMoveCommand.resultProperty()
                 .addListener((observable, oldValue, newValue) -> notifyModelChanged());

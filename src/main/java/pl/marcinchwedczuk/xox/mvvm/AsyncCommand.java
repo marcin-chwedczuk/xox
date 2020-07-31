@@ -6,6 +6,7 @@ import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.concurrent.Task;
+import pl.marcinchwedczuk.xox.util.CancelOperation;
 import pl.marcinchwedczuk.xox.util.Either;
 import pl.marcinchwedczuk.xox.util.ErrorMessage;
 import pl.marcinchwedczuk.xox.util.Unit;
@@ -16,17 +17,17 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 
 public class AsyncCommand<R> {
-    private final Function<Cancelator, R> action;
+    private final Function<CancelOperation, R> action;
 
     private final BooleanProperty isRunningProperty = new SimpleBooleanProperty(false);
     private final BooleanProperty isEnabledProperty = new SimpleBooleanProperty();
 
-    private Cancelator cancelator = null;
+    private volatile CancelOperation cancelator = null;
 
     private final ObjectProperty<Either<Exception, R>> resultProperty =
             new SimpleObjectProperty<>();
 
-    public AsyncCommand(Function<Cancelator, R> action,
+    public AsyncCommand(Function<CancelOperation, R> action,
                         ReadOnlyBooleanProperty isEnabled) {
         this.action = action;
 
@@ -42,8 +43,8 @@ public class AsyncCommand<R> {
 
         isRunningProperty.setValue(true);
 
-        final var finalCancellator = new Cancelator();
-        this.cancelator = finalCancellator;
+        final var cancelOp = new CancelOperation();
+        this.cancelator = cancelOp;
 
         Task<Void> actionTask = new Task<>() {
             @Override
@@ -51,7 +52,7 @@ public class AsyncCommand<R> {
                 Either<Exception, R> result;
 
                 try {
-                    result = Either.right(action.apply(finalCancellator));
+                    result = Either.right(action.apply(cancelOp));
                 }
                 catch (OperationCancelledException ex) {
                     // TODO: Think about something better
@@ -78,7 +79,9 @@ public class AsyncCommand<R> {
     }
 
     public void cancel() {
-        cancelator.cancel();
+        if (cancelator != null) {
+            cancelator.cancel();
+        }
     }
 
     public ReadOnlyBooleanProperty isRunningProperty() {

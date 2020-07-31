@@ -4,6 +4,7 @@ import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.GameResult;
 import pl.marcinchwedczuk.xox.game.XoXGame;
+import pl.marcinchwedczuk.xox.util.CancelOperation;
 import pl.marcinchwedczuk.xox.util.Either;
 import pl.marcinchwedczuk.xox.util.ErrorMessage;
 import pl.marcinchwedczuk.xox.util.Unit;
@@ -23,8 +24,8 @@ public class ComputerComputerGameMode implements GameMode {
     }
 
     @Override
-    public Either<ErrorMessage, Unit> performComputerMove() {
-        game.makeAutomaticMove();
+    public Either<ErrorMessage, Unit> performComputerMove(CancelOperation cancelOperation) {
+        game.makeAutomaticMove(cancelOperation);
         return Either.right(Unit.instance);
     }
 

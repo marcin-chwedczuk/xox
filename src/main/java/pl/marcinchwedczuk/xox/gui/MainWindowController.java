@@ -71,6 +71,7 @@ public class MainWindowController {
     @FXML private ProgressIndicator progressIndicator;
     @FXML private TabPane tabPane;
     @FXML private Pane waitCurtain;
+    @FXML private Button curtainCancelBtn;
 
     @FXML
     public void initialize() {
@@ -130,6 +131,9 @@ public class MainWindowController {
             if (!model.nextMoveCommand.isRunningProperty().get()) {
                 waitCurtain.visibleProperty().set(false);
             }
+        });
+        curtainCancelBtn.setOnAction(event -> {
+            model.nextMoveCommand.cancel();
         });
 
         model.setModelChangedListener(this::draw);

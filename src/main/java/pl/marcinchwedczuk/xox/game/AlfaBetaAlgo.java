@@ -5,6 +5,10 @@ import pl.marcinchwedczuk.xox.game.heuristic.BoardScorer;
 import pl.marcinchwedczuk.xox.game.heuristic.Score;
 import pl.marcinchwedczuk.xox.game.search.MoveProposal;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
+import pl.marcinchwedczuk.xox.util.CancelOperation;
+import pl.marcinchwedczuk.xox.util.Either;
+import pl.marcinchwedczuk.xox.util.ErrorMessage;
+import pl.marcinchwedczuk.xox.util.OperationCanceledException;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,13 +31,28 @@ public class AlfaBetaAlgo {
         this.searchStrategy = searchStrategy;
     }
 
-    public Move selectMove(BoardMark mark) {
-        return minimax(0, true, mark, Short.MIN_VALUE, Short.MAX_VALUE).get();
+    public Either<ErrorMessage, Move> selectMove(BoardMark mark, CancelOperation cancelOperation) {
+        // TODO: ErrorMessage -> Enum
+        try {
+            var maybeMove = minimax(0, true, mark,
+                    Short.MIN_VALUE, Short.MAX_VALUE,
+                    cancelOperation);
+
+            return maybeMove
+                    .map(Either::<ErrorMessage, Move>right)
+                    .orElse(Either.left(ErrorMessage.of("No move possible!")));
+        }
+        catch (OperationCanceledException e) {
+            return Either.left(ErrorMessage.of("Computation cancelled"));
+        }
     }
 
     public Optional<Move> minimax(int level, boolean isMaxStep,
                                  BoardMark player,
-                                 double alpha, double beta) {
+                                 double alpha, double beta,
+                                 CancelOperation cancelOperation) {
+        cancelOperation.checkCancelled();
+
         Move best = new Move(-1, -1,
                 player,
                 null,
@@ -69,8 +88,8 @@ public class AlfaBetaAlgo {
                 // May return empty() due to e.g. search strategy limits
                 next = minimax(level + 1, !isMaxStep, player.opposite(),
                         isMaxStep ? best.score : alpha,
-                        isMaxStep ? beta : best.score
-                );
+                        isMaxStep ? beta : best.score,
+                        cancelOperation);
             }
 
             var candidate = new Move(move.row, move.col,
@@ -111,15 +130,6 @@ public class AlfaBetaAlgo {
             return score.negate();
         }
 
-        return score;
-    }
-
-    private Score scoreUncompleted(Board board, BoardMark player, boolean isMaxStep) {
-        Score score = scorer.scoreUncompleted(board, player);
-        if (!isMaxStep) {
-            // TODO: Make method on score
-            return new Score(score.gameEnded, -score.score);
-        }
         return score;
     }
 }
