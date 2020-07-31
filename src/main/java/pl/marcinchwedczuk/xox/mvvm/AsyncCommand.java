@@ -6,10 +6,7 @@ import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.concurrent.Task;
-import pl.marcinchwedczuk.xox.util.CancelOperation;
-import pl.marcinchwedczuk.xox.util.Either;
-import pl.marcinchwedczuk.xox.util.ErrorMessage;
-import pl.marcinchwedczuk.xox.util.Unit;
+import pl.marcinchwedczuk.xox.util.*;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -54,7 +51,7 @@ public class AsyncCommand<R> {
                 try {
                     result = Either.right(action.apply(cancelOp));
                 }
-                catch (OperationCancelledException ex) {
+                catch (OperationCanceledException ex) {
                     // TODO: Think about something better
                     result = null;
                 }
