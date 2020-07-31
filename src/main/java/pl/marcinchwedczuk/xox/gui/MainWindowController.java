@@ -1,9 +1,11 @@
 package pl.marcinchwedczuk.xox.gui;
 
+import com.sun.javafx.cursor.CursorType;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
@@ -131,6 +133,8 @@ public class MainWindowController {
             if (!model.nextMoveCommand.isRunningProperty().get()) {
                 waitCurtain.visibleProperty().set(false);
             }
+
+            setCursor(newValue ? Cursor.WAIT : Cursor.DEFAULT);
         });
         curtainCancelBtn.setOnAction(event -> {
             model.nextMoveCommand.cancel();
@@ -247,9 +251,7 @@ public class MainWindowController {
         }
     }
 
-
-    private void foo() {
-
+    private void setCursor(Cursor cursor) {
+        resetBtn.getScene().setCursor(cursor);
     }
-
 }
