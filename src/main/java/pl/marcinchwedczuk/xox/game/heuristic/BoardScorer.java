@@ -1,10 +1,10 @@
 package pl.marcinchwedczuk.xox.game.heuristic;
 
 import com.google.common.annotations.VisibleForTesting;
-import pl.marcinchwedczuk.xox.game.Board;
-import pl.marcinchwedczuk.xox.game.BoardMark;
-import pl.marcinchwedczuk.xox.game.Move;
+import pl.marcinchwedczuk.xox.game.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static pl.marcinchwedczuk.xox.game.BoardMark.EMPTY;
@@ -23,18 +23,19 @@ public class BoardScorer {
 
     public Score scoreUncompleted(Board board, BoardMark player) {
         // TODO: Count "almost" wins
-        int wins = countWins(board, player);
+        List<WinningStride> winsPlayer = findWinningStrides(board, player);
+        List<WinningStride> winsOpponent = findWinningStrides(board, player.opponent());
         // the longer the game, the better
         int emptyPlaces = board.countEmpty();
-        boolean endGame = (wins != 0) || (emptyPlaces == 0);
+        boolean endGame = !winsPlayer.isEmpty() || !winsOpponent.isEmpty() || (emptyPlaces == 0);
 
-        if (wins > 0) {
+        if (winsPlayer.size() > 0) {
             // The faster we win the better
-            return Score.gameEnded(wins*1000 + emptyPlaces);
+            return Score.gameEnded(winsPlayer.size()*1000 + emptyPlaces);
         }
-        else if (wins < 0) {
+        else if (winsOpponent.size() > 0) {
             // The slower (more places filled) we loose or draw the better
-            return Score.gameEnded(wins*1000 - emptyPlaces);
+            return Score.gameEnded(winsOpponent.size()*1000 - emptyPlaces);
         }
         else if (endGame) {
             return Score.draw(0);
@@ -70,14 +71,21 @@ public class BoardScorer {
         }
     }
 
-    public boolean gameEnded(Board board) {
+    public boolean isGameFinished(Board board) {
         return board.countEmpty() == 0;
     }
 
-    public Optional<BoardMark> getWinner(Board board) {
-        int wins = countWins(board, BoardMark.X);
-        if (wins > 0) return Optional.of(BoardMark.X);
-        if (wins < 0) return Optional.of(BoardMark.O);
+    public Optional<Winner> getWinner(Board board) {
+        List<WinningStride> xWinningStrides = findWinningStrides(board, BoardMark.X);
+        if (!xWinningStrides.isEmpty()) {
+            return Optional.of(new Winner(BoardMark.X, xWinningStrides));
+        }
+
+        List<WinningStride> oWinningStrides = findWinningStrides(board, BoardMark.O);
+        if (!oWinningStrides.isEmpty()) {
+            return Optional.of(new Winner(BoardMark.O, oWinningStrides));
+        }
+
         return Optional.empty();
     }
 
@@ -202,14 +210,13 @@ public class BoardScorer {
         return totalWins;
     }
 
-    // Returns number of player winds
-    private int countWins(Board board, BoardMark player) {
-        // Very crude scoring we ignore situations like
-        // X X _ <- empty field
+    /**
+     * Returns list of winning strides for a player.
+     */
+    private List<WinningStride> findWinningStrides(Board board, BoardMark player) {
+        List<WinningStride> winningStrides = new ArrayList<>();
 
         int N = board.sideSize();
-        int WINNING_STRIDE = winningStride;
-        int totalWins = 0;
 
         // Rows
         for (int r = 0; r < N; r++) {
@@ -223,8 +230,10 @@ public class BoardScorer {
                 }
                 else {
                     count++;
-                    if (count >= WINNING_STRIDE && (lastMark != EMPTY)) {
-                        totalWins += (player == lastMark) ? 1 : -1;
+                    if (count >= winningStride && (lastMark != EMPTY)) {
+                        winningStrides.add(new WinningStride(
+                                BoardPosition.of(r - winningStride + 1, c),
+                                BoardPosition.of(r, c)));
                     }
                 }
             }
@@ -242,20 +251,22 @@ public class BoardScorer {
                 }
                 else {
                     count++;
-                    if (count >= WINNING_STRIDE && lastMark != EMPTY) {
-                        totalWins += (player == lastMark) ? 1 : -1;
+                    if (count >= winningStride && (lastMark != EMPTY)) {
+                        winningStrides.add(new WinningStride(
+                                BoardPosition.of(r, c - winningStride + 1),
+                                BoardPosition.of(r, c)));
                     }
                 }
             }
         }
 
         // Diagnoals \
-        for (int r = 0; r <= N - WINNING_STRIDE; r++) {
-            for (int c = 0; c <= N - WINNING_STRIDE; c++) {
+        for (int r = 0; r <= N - winningStride; r++) {
+            for (int c = 0; c <= N - winningStride; c++) {
                 int count = 0;
                 BoardMark lastMark = EMPTY;
                 int rr = r, cc = c;
-                for (int k = 0; k < WINNING_STRIDE; k++) {
+                for (int k = 0; k < winningStride; k++) {
                     BoardMark tmp = board.get(rr, cc);
                     if (tmp != lastMark) {
                         lastMark = tmp;
@@ -263,8 +274,10 @@ public class BoardScorer {
                     }
                     else {
                         count++;
-                        if (count >= WINNING_STRIDE && lastMark != EMPTY) {
-                            totalWins += (player == lastMark) ? 1 : -1;
+                        if (count >= winningStride && (lastMark != EMPTY)) {
+                            winningStrides.add(new WinningStride(
+                                    BoardPosition.of(rr - winningStride + 1, cc - winningStride + 1),
+                                    BoardPosition.of(rr, cc)));
                         }
                     }
                     rr++; cc++;
@@ -273,12 +286,12 @@ public class BoardScorer {
         }
 
         // Diagonals /
-        for (int r = 0; r <= N - WINNING_STRIDE; r++) {
-            for (int c = WINNING_STRIDE-1; c < N; c++) {
+        for (int r = 0; r <= N - winningStride; r++) {
+            for (int c = winningStride-1; c < N; c++) {
                 int count = 0;
                 BoardMark lastMark = EMPTY;
                 int rr = r, cc = c;
-                for (int k = 0; k < WINNING_STRIDE; k++) {
+                for (int k = 0; k < winningStride; k++) {
                     BoardMark tmp = board.get(rr, cc);
                     if (tmp != lastMark) {
                         lastMark = tmp;
@@ -286,8 +299,10 @@ public class BoardScorer {
                     }
                     else {
                         count++;
-                        if (count >= WINNING_STRIDE && lastMark != EMPTY) {
-                            totalWins += (player == lastMark) ? 1 : -1;
+                        if (count >= winningStride && (lastMark != EMPTY)) {
+                            winningStrides.add(new WinningStride(
+                                    BoardPosition.of(rr - winningStride + 1, cc + winningStride - 1),
+                                    BoardPosition.of(rr, cc)));
                         }
                     }
                     rr++; cc--;
@@ -295,8 +310,6 @@ public class BoardScorer {
             }
         }
 
-        // No-one wins, the less empty places on
-        // board the better the game
-        return totalWins;
+        return winningStrides;
     }
 }

@@ -1,7 +1,5 @@
 package pl.marcinchwedczuk.xox.gui.gamemode;
 
-import pl.marcinchwedczuk.xox.game.BoardMark;
-import pl.marcinchwedczuk.xox.game.GameResult;
 import pl.marcinchwedczuk.xox.util.CancelOperation;
 import pl.marcinchwedczuk.xox.util.Either;
 import pl.marcinchwedczuk.xox.util.ErrorMessage;

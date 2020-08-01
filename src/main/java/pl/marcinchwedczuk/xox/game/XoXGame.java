@@ -2,7 +2,7 @@ package pl.marcinchwedczuk.xox.game;
 
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.heuristic.BoardScorer;
-import pl.marcinchwedczuk.xox.game.search.FullSearch;
+import pl.marcinchwedczuk.xox.game.heuristic.Winner;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 import pl.marcinchwedczuk.xox.util.CancelOperation;
 
@@ -13,10 +13,11 @@ public class XoXGame {
 
     private final Board board;
     private BoardMark currentPlayer;
+
     private SearchStrategy searchStrategy;
     private BoardScorer scorer;
 
-    private GameResult gameResult;
+    private GameState gameState;
 
     public XoXGame(Logger logger, int boardSize, int winningStride,
                    SearchStrategy searchStrategy) {
@@ -28,7 +29,8 @@ public class XoXGame {
         this.searchStrategy = searchStrategy;
         this.scorer = new BoardScorer(boardSize, winningStride);
 
-        this.gameResult = new GameResult(currentPlayer, false, BoardMark.EMPTY);
+        this.gameState = GameState
+                .forRunningGame(this.board.copyOf(), this.currentPlayer);
     }
 
     public void makeAutomaticMove(CancelOperation cancelOperation) {
@@ -71,28 +73,34 @@ public class XoXGame {
     }
 
     private void checkCanPerformMove() {
-        if (gameResult.gameEnded) {
+        if (gameState.isFinished) {
             throw new RuntimeException("game already ended");
         }
     }
 
     private void performMove(int row, int col) {
         board.putMark(row, col, currentPlayer);
-        currentPlayer = currentPlayer.opposite();
 
-        Optional<BoardMark> maybeWinner = scorer.getWinner(board);
-        boolean gameEnded = scorer.gameEnded(board);
-        this.gameResult = maybeWinner
-                .map(winner -> new GameResult(currentPlayer, true, winner))
-                .orElse(new GameResult(currentPlayer, gameEnded, BoardMark.EMPTY));
+        this.currentPlayer = currentPlayer.opponent();
+
+        boolean isFinished = scorer.isGameFinished(board);
+        if (isFinished) {
+            Optional<Winner> maybeWinner = scorer.getWinner(board);
+
+            this.gameState = GameState.forFinishedGame(
+                    board.copyOf(), maybeWinner);
+        }
+        else {
+            this.gameState = GameState.forRunningGame(board, currentPlayer);
+        }
     }
 
     public Board board() {
         return board.copyOf();
     }
 
-    public GameResult gameResult() {
-        return gameResult;
+    public GameState gameResult() {
+        return gameState;
     }
 
     public BoardMark currentPlayer() {

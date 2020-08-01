@@ -86,7 +86,7 @@ public class AlfaBetaAlgo {
             if (!score.gameEnded) {
                 // Game did not end, do opponent move.
                 // May return empty() due to e.g. search strategy limits
-                next = minimax(level + 1, !isMaxStep, player.opposite(),
+                next = minimax(level + 1, !isMaxStep, player.opponent(),
                         isMaxStep ? best.score : alpha,
                         isMaxStep ? beta : best.score,
                         cancelOperation);
