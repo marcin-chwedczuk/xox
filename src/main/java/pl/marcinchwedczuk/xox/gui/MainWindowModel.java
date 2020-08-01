@@ -1,5 +1,7 @@
 package pl.marcinchwedczuk.xox.gui;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +15,8 @@ import pl.marcinchwedczuk.xox.mvvm.AsyncCommand;
 import pl.marcinchwedczuk.xox.util.Either;
 import pl.marcinchwedczuk.xox.util.ErrorMessage;
 import pl.marcinchwedczuk.xox.util.Unit;
+
+import javax.naming.Binding;
 
 public class MainWindowModel {
     public final ObservableList<GameGeometry> gameGeometriesProperty = FXCollections.observableArrayList(
@@ -64,14 +68,23 @@ public class MainWindowModel {
             game.setSearchStrategy(newValue);
         });
 
+        heuristicsModel.heuristicsProperty().addListener((observable, oldValue, newValue) -> {
+            logger.debug("Set heuristics to %s", newValue);
+            game.setBoardScorer(newValue);
+        });
+
         // Commands
+        BooleanBinding nextMoveEnabled = Bindings.createBooleanBinding(() -> {
+            var gameState = gameStateProperty.get();
+            return (gameState != null) && !gameState.isFinished;
+        }, gameStateProperty);
+
         this.nextMoveCommand = new AsyncCommand<>(
                 cancelOp -> gameMode.performComputerMove(cancelOp),
-                new SimpleBooleanProperty(true));
+                nextMoveEnabled);
 
         nextMoveCommand.resultProperty()
                 .addListener((observable, oldValue, newValue) -> notifyModelChanged());
-
 
         reset();
     }
@@ -125,10 +138,5 @@ public class MainWindowModel {
         result.onLeft(msg -> dialogs.error("Error", msg.message));
 
         notifyModelChanged();
-    }
-
-
-    public Board board() {
-        return game.board();
     }
 }

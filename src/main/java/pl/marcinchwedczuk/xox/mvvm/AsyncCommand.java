@@ -5,6 +5,7 @@ import javafx.beans.Observable;
 import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import pl.marcinchwedczuk.xox.util.*;
 
@@ -25,11 +26,11 @@ public class AsyncCommand<R> {
             new SimpleObjectProperty<>();
 
     public AsyncCommand(Function<CancelOperation, R> action,
-                        ReadOnlyBooleanProperty isEnabled) {
+                        ObservableValue<Boolean> isEnabled) {
         this.action = action;
 
         isEnabledProperty.bind(Bindings.createBooleanBinding(
-                () -> !isRunningProperty.get() && isEnabled.get(),
+                () -> !isRunningProperty.get() && isEnabled.getValue(),
                 isEnabled, isRunningProperty));
     }
 

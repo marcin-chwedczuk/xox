@@ -331,6 +331,9 @@ public class BoardScorer {
 
     @Override
     public String toString() {
-        return "TODO";
+        return String.format(
+                "BoardScorer(%d, stride %d, almostWins %s, emptyWin %s, emptyLoose %s)",
+                boardSize, winningStride, countAlmostWins, countEmptyFieldsOnWin,
+                countEmptyFieldsOnLoose);
     }
 }

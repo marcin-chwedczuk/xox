@@ -1,6 +1,8 @@
 package pl.marcinchwedczuk.xox.gui;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
@@ -107,6 +109,10 @@ public class MainWindowController {
         nextMoveBtn.setOnAction(event -> {
             model.nextMoveCommand.execute();
         });
+        model.nextMoveCommand.isEnabledProperty().not().addListener((observable, oldValue, newValue) -> {
+            nextMoveBtn.setDisable(newValue);
+        });
+
         redoBtn.setOnAction(event -> {
             model.redoMove();
         });

@@ -111,4 +111,8 @@ public class XoXGame {
     public void setSearchStrategy(SearchStrategy searchStrategy) {
         this.searchStrategy = searchStrategy;
     }
+
+    public void setBoardScorer(BoardScorer boardScorer) {
+        this.scorer = boardScorer;
+    }
 }
