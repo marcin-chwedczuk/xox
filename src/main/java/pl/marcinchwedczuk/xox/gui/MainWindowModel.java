@@ -98,23 +98,26 @@ public class MainWindowModel {
     }
 
     public void reset() {
-        searchStrategy = switch (searchStrategyProperty.get()) {
-            case FULL_SEARCH ->
-                new FullSearch();
-            case CUT_OFF -> {
+        switch (searchStrategyProperty.get()) {
+            case FULL_SEARCH:
+                searchStrategy = new FullSearch();
+                break;
+            case CUT_OFF: {
                 var strategy = CutoffStrategy.basedOn(new FullSearch());
                 strategy.setCutoff(cutoffLevel.get());
-                yield strategy;
+                searchStrategy = strategy;
+                break;
             }
-            case PROBABILISTIC -> {
+            case PROBABILISTIC: {
                 var strategy = ProbabilisticSearch.basedOn(new FullSearch());
                 strategy.setMinNumberOfMoves(minNumberOfMoves.get());
                 strategy.setPercentageOfMovesToCheck(percentageOfMoves.get());
-                yield strategy;
+                searchStrategy = strategy;
+                break;
             }
-            default ->
-                    throw new IllegalArgumentException();
-        };
+            default:
+                throw new IllegalArgumentException();
+        }
 
         var gameGeometry = gameGeometryProperty.get();
         game = new XoXGame(logger,
@@ -123,16 +126,20 @@ public class MainWindowModel {
                 searchStrategy);
 
 
-        gameMode = switch (gameModeProperty.get()) {
-            case COMPUTER_COMPUTER ->
-                    new ComputerComputerGameMode(logger, game);
-            case HUMAN_COMPUTER ->
-                    new HumanComputerGameMode(logger, game);
-            case COMPUTER_HUMAN ->
-                    new ComputerHumanGameMode(logger, game);
-            default ->
-                    throw new IllegalArgumentException();
-        };
+        switch (gameModeProperty.get()) {
+            case COMPUTER_COMPUTER:
+                gameMode = new ComputerComputerGameMode(logger, game);
+                break;
+            case HUMAN_COMPUTER:
+                gameMode = new HumanComputerGameMode(logger, game);
+                break;
+            case COMPUTER_HUMAN:
+                gameMode = new ComputerHumanGameMode(logger, game);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+
         gameMode.init();
 
         notifyModelChanged();
