@@ -30,6 +30,10 @@ For example, I had to downgrade my project to v11 from v14 to be
 able to import my custom controls.
 
 II. Import JAR into SceneBuilder
+
+Be default Gradle will create `xox.jar` in
+`build/libs/` directory.
+
 ![Import Step 1](docs/import1.png)
 
 Select only `GameBoard` control:
