@@ -31,10 +31,11 @@ able to import my custom controls.
 
 II. Import JAR into SceneBuilder
 
+![Import Step 1](docs/import1.png)
+
+Select "Add library from file system" option.
 Be default Gradle will create `xox.jar` in
 `build/libs/` directory.
-
-![Import Step 1](docs/import1.png)
 
 Select only `GameBoard` control:
 ![Import Step 2](docs/import2.png)
