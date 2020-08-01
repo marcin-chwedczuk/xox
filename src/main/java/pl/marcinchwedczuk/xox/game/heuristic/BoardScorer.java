@@ -13,6 +13,10 @@ public class BoardScorer {
     public final int boardSize;
     public final int winningStride;
 
+    private boolean countEmptyFieldsOnWin = false;
+    private boolean countEmptyFieldsOnLoose = false;
+    private boolean countAlmostWins = false;
+
     public BoardScorer(int boardSize, int winningStride) {
         if (winningStride > boardSize)
             throw new IllegalArgumentException("winningStride");
@@ -230,7 +234,7 @@ public class BoardScorer {
                 }
                 else {
                     count++;
-                    if (count >= winningStride && (lastMark != EMPTY)) {
+                    if (count >= winningStride && (lastMark == player)) {
                         winningStrides.add(new WinningStride(
                                 BoardPosition.of(r, c - winningStride + 1),
                                 BoardPosition.of(r, c)));
@@ -251,7 +255,7 @@ public class BoardScorer {
                 }
                 else {
                     count++;
-                    if (count >= winningStride && (lastMark != EMPTY)) {
+                    if (count >= winningStride && (lastMark == player)) {
                         winningStrides.add(new WinningStride(
                                 BoardPosition.of(r - winningStride + 1, c),
                                 BoardPosition.of(r, c)));
@@ -274,7 +278,7 @@ public class BoardScorer {
                     }
                     else {
                         count++;
-                        if (count >= winningStride && (lastMark != EMPTY)) {
+                        if (count >= winningStride && (lastMark == player)) {
                             winningStrides.add(new WinningStride(
                                     BoardPosition.of(rr - winningStride + 1, cc - winningStride + 1),
                                     BoardPosition.of(rr, cc)));
@@ -299,7 +303,7 @@ public class BoardScorer {
                     }
                     else {
                         count++;
-                        if (count >= winningStride && (lastMark != EMPTY)) {
+                        if (count >= winningStride && (lastMark == player)) {
                             winningStrides.add(new WinningStride(
                                     BoardPosition.of(rr - winningStride + 1, cc + winningStride - 1),
                                     BoardPosition.of(rr, cc)));
@@ -311,5 +315,22 @@ public class BoardScorer {
         }
 
         return winningStrides;
+    }
+
+    public void setCountEmptyFieldsOnWin(boolean countEmptyFieldsOnWin) {
+        this.countEmptyFieldsOnWin = countEmptyFieldsOnWin;
+    }
+
+    public void setCountEmptyFieldsOnLoose(boolean countEmptyFieldsOnLoose) {
+        this.countEmptyFieldsOnLoose = countEmptyFieldsOnLoose;
+    }
+
+    public void setCountAlmostWins(boolean countAlmostWins) {
+        this.countAlmostWins = countAlmostWins;
+    }
+
+    @Override
+    public String toString() {
+        return "TODO";
     }
 }

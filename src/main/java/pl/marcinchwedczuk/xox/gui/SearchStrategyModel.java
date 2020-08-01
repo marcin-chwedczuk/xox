@@ -10,7 +10,7 @@ import pl.marcinchwedczuk.xox.game.search.FullSearch;
 import pl.marcinchwedczuk.xox.game.search.ProbabilisticSearch;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 
-public class StrategyModel {
+public class SearchStrategyModel {
     public final ObjectProperty<StrategyType> strategyTypeProperty =
             new SimpleObjectProperty<>(StrategyType.FULL_SEARCH);
 
@@ -32,7 +32,7 @@ public class StrategyModel {
     private final ObjectProperty<SearchStrategy> strategyProperty =
             new SimpleObjectProperty<>();
 
-    public StrategyModel() {
+    public SearchStrategyModel() {
         strategyTypeProperty.addListener((observable, oldValue, newValue) -> {
                 resetStrategy();
         });

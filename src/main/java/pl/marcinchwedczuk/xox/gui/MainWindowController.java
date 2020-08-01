@@ -81,25 +81,28 @@ public class MainWindowController {
         searchStrategyToggleGroup.add(cutOffRadio, StrategyType.CUT_OFF);
         searchStrategyToggleGroup.add(fullSearchRadio, StrategyType.FULL_SEARCH);
         searchStrategyToggleGroup.valueProperty()
-                .bindBidirectional(model.strategyModel.strategyTypeProperty);
+                .bindBidirectional(model.searchStrategyModel.strategyTypeProperty);
 
         minNumberOfMovesSlider.valueProperty()
-                .bindBidirectional(model.strategyModel.minNumberOfMovesProperty);
+                .bindBidirectional(model.searchStrategyModel.minNumberOfMovesProperty);
         minNumberOfMovesLbl.textProperty()
-                .bind(model.strategyModel.minNumberOfMovesProperty.asString());
+                .bind(model.searchStrategyModel.minNumberOfMovesProperty.asString());
 
         percentageSearchSpaceSlider.valueProperty()
-                .bindBidirectional(model.strategyModel.percentageOfMovesProperty);
+                .bindBidirectional(model.searchStrategyModel.percentageOfMovesProperty);
         percentageSearchSpaceLabel.textProperty()
-                .bind(model.strategyModel.percentageOfMovesProperty.asString());
+                .bind(model.searchStrategyModel.percentageOfMovesProperty.asString());
 
-        cutOffLevelCombo.setItems(model.strategyModel.cutoffLevelsProperty);
+        cutOffLevelCombo.setItems(model.searchStrategyModel.cutoffLevelsProperty);
         cutOffLevelCombo.valueProperty()
-                .bindBidirectional(model.strategyModel.cutoffLevelProperty);
+                .bindBidirectional(model.searchStrategyModel.cutoffLevelProperty);
 
-        emptyFieldsLoseCheck.selectedProperty().bindBidirectional(model.emptyFieldsLoseProperty);
-        emptyFieldsWinCheck.selectedProperty().bindBidirectional(model.emptyFieldsWinsProperty);
-        countAlmostWinsCheck.selectedProperty().bindBidirectional(model.countAlmostWinsProperty);
+        emptyFieldsLoseCheck.selectedProperty()
+                .bindBidirectional(model.heuristicsModel.countEmptyFieldsOnLooseProperty);
+        emptyFieldsWinCheck.selectedProperty()
+                .bindBidirectional(model.heuristicsModel.countEmptyFieldsOnWinProperty);
+        countAlmostWinsCheck.selectedProperty()
+                .bindBidirectional(model.heuristicsModel.countAlmostWinsProperty);
 
         nextMoveBtn.setOnAction(event -> {
             model.nextMoveCommand.execute();

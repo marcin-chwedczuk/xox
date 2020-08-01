@@ -20,6 +20,7 @@ public class XoXGame {
     private GameState state;
 
     public XoXGame(Logger logger, int boardSize, int winningStride,
+                   BoardScorer boardScorer,
                    SearchStrategy searchStrategy) {
         this.logger = logger;
 
@@ -27,7 +28,7 @@ public class XoXGame {
         this.currentPlayer = BoardMark.X;
 
         this.searchStrategy = searchStrategy;
-        this.scorer = new BoardScorer(boardSize, winningStride);
+        this.scorer = boardScorer;
 
         this.state = GameState
                 .forRunningGame(this.board.copyOf(), this.currentPlayer);

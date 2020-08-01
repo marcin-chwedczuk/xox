@@ -7,7 +7,7 @@ import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.GameState;
 import pl.marcinchwedczuk.xox.game.XoXGame;
-import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
+import pl.marcinchwedczuk.xox.game.heuristic.BoardScorer;
 import pl.marcinchwedczuk.xox.gui.gamemode.*;
 import pl.marcinchwedczuk.xox.mvvm.AsyncCommand;
 import pl.marcinchwedczuk.xox.util.Either;
@@ -29,13 +29,11 @@ public class MainWindowModel {
     public final ObjectProperty<GameModeType> gameModeProperty =
             new SimpleObjectProperty<>(GameModeType.HUMAN_COMPUTER);
 
-    public final StrategyModel strategyModel = new StrategyModel();
+    public final SearchStrategyModel searchStrategyModel = new SearchStrategyModel();
+    public final HeuristicsModel heuristicsModel = new HeuristicsModel();
 
-    public final BooleanProperty emptyFieldsLoseProperty = new SimpleBooleanProperty(true);
-    public final BooleanProperty emptyFieldsWinsProperty = new SimpleBooleanProperty(true);
-    public final BooleanProperty countAlmostWinsProperty = new SimpleBooleanProperty(false);
-
-    public final ObjectProperty<GameState> gameStateProperty = new SimpleObjectProperty<>(null);
+    public final ObjectProperty<GameState> gameStateProperty =
+            new SimpleObjectProperty<>(null);
 
     public final AsyncCommand<Either<ErrorMessage, Unit>> nextMoveCommand;
 
@@ -54,12 +52,14 @@ public class MainWindowModel {
         this.gameGeometryProperty.addListener((observable, oldValue, newValue) -> {
             reset();
         });
+        this.heuristicsModel.gameGeometryProperty
+                .bindBidirectional(this.gameGeometryProperty);
 
         this.gameModeProperty.addListener((observable, oldValue, newValue) -> {
             reset();
         });
 
-        strategyModel.strategyProperty().addListener((observable, oldValue, newValue) -> {
+        searchStrategyModel.strategyProperty().addListener((observable, oldValue, newValue) -> {
             logger.debug("Set search strategy to %s", newValue);
             game.setSearchStrategy(newValue);
         });
@@ -76,16 +76,10 @@ public class MainWindowModel {
         reset();
     }
 
-    public void setModelChangedListener(Runnable action) {
-        modelChangedListener = action;
-    }
-
     private void notifyModelChanged() {
         gameStateProperty.set(game.state());
         modelChangedListener.run();
     }
-
-
 
     public void redoMove() {
 
@@ -95,12 +89,15 @@ public class MainWindowModel {
         var gameGeometry = gameGeometryProperty.get();
         logger.debug("Game geometry: %s", gameGeometry);
 
-        var searchStrategy = strategyModel.strategyProperty().get();
+        var searchStrategy = searchStrategyModel.strategyProperty().get();
+        var boardScorer = heuristicsModel.heuristicsProperty().get();
+
         game = new XoXGame(logger,
                 gameGeometry.boardSize,
                 gameGeometry.winningStride,
-                searchStrategy);
+                boardScorer, searchStrategy);
         logger.debug("Search strategy: %s", searchStrategy);
+        logger.debug("Scorer is: %s", boardScorer);
 
 
         switch (gameModeProperty.get()) {
@@ -134,5 +131,4 @@ public class MainWindowModel {
     public Board board() {
         return game.board();
     }
-
 }
