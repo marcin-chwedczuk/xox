@@ -3,20 +3,18 @@ package pl.marcinchwedczuk.xox.gui;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import pl.marcinchwedczuk.xox.Logger;
-import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.GameState;
 import pl.marcinchwedczuk.xox.game.XoXGame;
-import pl.marcinchwedczuk.xox.game.heuristic.BoardScorer;
 import pl.marcinchwedczuk.xox.gui.gamemode.*;
 import pl.marcinchwedczuk.xox.mvvm.AsyncCommand;
 import pl.marcinchwedczuk.xox.util.Either;
 import pl.marcinchwedczuk.xox.util.ErrorMessage;
 import pl.marcinchwedczuk.xox.util.Unit;
-
-import javax.naming.Binding;
 
 public class MainWindowModel {
     public final ObservableList<GameGeometry> gameGeometriesProperty = FXCollections.observableArrayList(
@@ -40,6 +38,8 @@ public class MainWindowModel {
             new SimpleObjectProperty<>(null);
 
     public final AsyncCommand<Either<ErrorMessage, Unit>> nextMoveCommand;
+    public final BooleanProperty canUndo =
+            new SimpleBooleanProperty(false);
 
     private final Logger logger;
     private final Dialogs dialogs;
@@ -75,8 +75,8 @@ public class MainWindowModel {
 
         // Commands
         BooleanBinding nextMoveEnabled = Bindings.createBooleanBinding(() -> {
-            var gameState = gameStateProperty.get();
-            return (gameState != null) && !gameState.isFinished;
+            var gameState = gameStateProperty.getValue();
+            return (gameState == null) || !gameState.isFinished;
         }, gameStateProperty);
 
         this.nextMoveCommand = new AsyncCommand<>(
@@ -89,13 +89,9 @@ public class MainWindowModel {
         reset();
     }
 
-    private void notifyModelChanged() {
-        gameStateProperty.set(game.state());
-        modelChangedListener.run();
-    }
-
-    public void redoMove() {
-
+    public void undo() {
+        game.undoMove();
+        notifyModelChanged();
     }
 
     public void reset() {
@@ -103,16 +99,22 @@ public class MainWindowModel {
         logger.debug("Game geometry: %s", gameGeometry);
 
         var searchStrategy = searchStrategyModel.strategyProperty().get();
+        logger.debug("Search strategy: %s", searchStrategy);
+
         var boardScorer = heuristicsModel.heuristicsProperty().get();
+        logger.debug("Scorer is: %s", boardScorer);
 
         game = new XoXGame(logger,
                 gameGeometry.boardSize,
-                gameGeometry.winningStride,
                 boardScorer, searchStrategy);
-        logger.debug("Search strategy: %s", searchStrategy);
-        logger.debug("Scorer is: %s", boardScorer);
 
+        resetGameMode();
 
+        // Notify to redraw
+        notifyModelChanged();
+    }
+
+    private void resetGameMode() {
         switch (gameModeProperty.get()) {
             case COMPUTER_COMPUTER:
                 gameMode = new ComputerComputerGameMode(logger, game);
@@ -128,15 +130,18 @@ public class MainWindowModel {
         }
 
         gameMode.init();
-
-        notifyModelChanged();
     }
 
     public void onBoardClicked(int row, int col) {
         var result = gameMode.performHumanMove(row, col);
-
         result.onLeft(msg -> dialogs.error("Error", msg.message));
 
         notifyModelChanged();
+    }
+
+    private void notifyModelChanged() {
+        gameStateProperty.set(game.state());
+        modelChangedListener.run();
+        canUndo.set(game.canUndoMove());
     }
 }

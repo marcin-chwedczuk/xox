@@ -1,8 +1,6 @@
 package pl.marcinchwedczuk.xox.gui;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
@@ -59,7 +57,7 @@ public class MainWindowController {
     @FXML private CheckBox emptyFieldsWinCheck;
 
     @FXML private Button nextMoveBtn;
-    @FXML private Button redoBtn;
+    @FXML private Button undoBtn;
     @FXML private Button resetBtn;
 
     @FXML private ProgressIndicator progressIndicator;
@@ -109,13 +107,18 @@ public class MainWindowController {
         nextMoveBtn.setOnAction(event -> {
             model.nextMoveCommand.execute();
         });
-        model.nextMoveCommand.isEnabledProperty().not().addListener((observable, oldValue, newValue) -> {
-            nextMoveBtn.setDisable(newValue);
+        model.nextMoveCommand.isEnabledProperty().addListener((observable, oldValue, newValue) -> {
+            nextMoveBtn.setDisable(!newValue);
         });
 
-        redoBtn.setOnAction(event -> {
-            model.redoMove();
+        undoBtn.setOnAction(event -> {
+            model.undo();
         });
+        undoBtn.setDisable(true);
+        model.canUndo.addListener((observable, oldValue, newValue) -> {
+            undoBtn.setDisable(!newValue);
+        });
+
         resetBtn.setOnAction(event -> {
             model.reset();
         });

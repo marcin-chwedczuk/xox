@@ -7,37 +7,36 @@ import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 import pl.marcinchwedczuk.xox.util.CancelOperation;
 
 import java.util.Optional;
+import java.util.Stack;
 
 public class XoXGame {
     private final Logger logger;
 
-    private final Board board;
-    private BoardMark currentPlayer;
-
     private SearchStrategy searchStrategy;
     private BoardScorer scorer;
 
+    private Stack<GameState> undoStack = new Stack<>();
     private GameState state;
 
-    public XoXGame(Logger logger, int boardSize, int winningStride,
+    public XoXGame(Logger logger, int boardSize,
                    BoardScorer boardScorer,
                    SearchStrategy searchStrategy) {
         this.logger = logger;
 
-        this.board = new Board(boardSize);
-        this.currentPlayer = BoardMark.X;
-
         this.searchStrategy = searchStrategy;
         this.scorer = boardScorer;
 
-        this.state = GameState
-                .forRunningGame(this.board.copyOf(), this.currentPlayer);
+        var board = new Board(boardSize);
+        var currentPlayer = BoardMark.X;
+        this.state = GameState.forRunningGame(board, currentPlayer);
     }
 
     public void makeAutomaticMove(CancelOperation cancelOperation) {
         checkCanPerformMove();
 
-        var algo = new AlfaBetaAlgo(logger, board.copyOf(), scorer,
+        var currentPlayer = state.currentPlayer;
+
+        var algo = new AlfaBetaAlgo(logger, state.boardCopy(), scorer,
                 searchStrategy);
         var errorOrMove = algo.selectMove(currentPlayer, cancelOperation);
 
@@ -65,7 +64,7 @@ public class XoXGame {
     public void makeManualMove(int row, int col) {
         checkCanPerformMove();
 
-        if (!board.isEmpty(row, col)) {
+        if (!state.board.isEmpty(row, col)) {
             throw new RuntimeException(String.format(
                     "position (%d, %d) is already taken", row, col));
         }
@@ -80,32 +79,49 @@ public class XoXGame {
     }
 
     private void performMove(int row, int col) {
-        board.putMark(row, col, currentPlayer);
+        undoStack.push(state);
 
-        this.currentPlayer = currentPlayer.opponent();
+        var board = state.boardCopy();
+        board.putMark(row, col, state.currentPlayer);
 
         boolean isFinished = scorer.isGameFinished(board);
+        GameState newState;
         if (isFinished) {
             Optional<Winner> maybeWinner = scorer.getWinner(board);
 
-            this.state = GameState.forFinishedGame(
-                    board.copyOf(), maybeWinner);
+            newState = GameState.forFinishedGame(
+                    board, maybeWinner);
         }
         else {
-            this.state = GameState.forRunningGame(board, currentPlayer);
+            newState = GameState.forRunningGame(
+                    board, state.currentPlayer.opponent());
         }
+
+        this.state = newState;
     }
 
     public Board board() {
-        return board.copyOf();
+        return state.board.copyOf();
     }
 
     public GameState state() {
         return state;
     }
 
+    public boolean canUndoMove() {
+        return !undoStack.isEmpty();
+    }
+
+    public void undoMove() {
+        if (!canUndoMove()) {
+            return;
+        }
+
+        this.state = undoStack.pop();
+    }
+
     public BoardMark currentPlayer() {
-        return currentPlayer;
+        return this.state.currentPlayer;
     }
 
     public void setSearchStrategy(SearchStrategy searchStrategy) {
