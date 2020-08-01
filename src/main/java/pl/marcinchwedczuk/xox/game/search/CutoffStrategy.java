@@ -36,4 +36,9 @@ public class CutoffStrategy implements SearchStrategy {
 
         this.cutoff = level;
     }
+
+    @Override
+    public String toString() {
+        return String.format("CutoffStrategy(cutoff=%d)", cutoff);
+    }
 }

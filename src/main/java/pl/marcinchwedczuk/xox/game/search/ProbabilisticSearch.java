@@ -49,4 +49,10 @@ public class ProbabilisticSearch implements SearchStrategy {
 
         this.percentageOfMovesToCheck = percentageOfMovesToCheck;
     }
+
+    @Override
+    public String toString() {
+        return String.format("ProbabilisticSearch(min=%d, percentage=%d)",
+                minNumberOfMoves, percentageOfMovesToCheck);
+    }
 }

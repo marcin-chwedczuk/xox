@@ -7,9 +7,6 @@ import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.GameState;
 import pl.marcinchwedczuk.xox.game.XoXGame;
-import pl.marcinchwedczuk.xox.game.search.CutoffStrategy;
-import pl.marcinchwedczuk.xox.game.search.FullSearch;
-import pl.marcinchwedczuk.xox.game.search.ProbabilisticSearch;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 import pl.marcinchwedczuk.xox.gui.gamemode.*;
 import pl.marcinchwedczuk.xox.mvvm.AsyncCommand;
@@ -18,7 +15,7 @@ import pl.marcinchwedczuk.xox.util.ErrorMessage;
 import pl.marcinchwedczuk.xox.util.Unit;
 
 public class MainWindowModel {
-    public final ObservableList<GameGeometry> gameGeometries = FXCollections.observableArrayList(
+    public final ObservableList<GameGeometry> gameGeometriesProperty = FXCollections.observableArrayList(
             new GameGeometry(3, 3),
             new GameGeometry(4, 3),
             new GameGeometry(4, 4),
@@ -27,21 +24,12 @@ public class MainWindowModel {
             new GameGeometry(5, 5)
     );
     public final ObjectProperty<GameGeometry> gameGeometryProperty =
-            new SimpleObjectProperty<>(gameGeometries.get(0));
+            new SimpleObjectProperty<>(gameGeometriesProperty.get(0));
 
     public final ObjectProperty<GameModeType> gameModeProperty =
             new SimpleObjectProperty<>(GameModeType.HUMAN_COMPUTER);
 
-    public final ObjectProperty<SearchStrategyType> searchStrategyProperty =
-            new SimpleObjectProperty<>(SearchStrategyType.FULL_SEARCH);
-
-    public final IntegerProperty minNumberOfMoves = new SimpleIntegerProperty(17);
-    public final IntegerProperty percentageOfMoves = new SimpleIntegerProperty(40);
-
-    public final ObservableList<Integer> cutoffLevels = FXCollections.observableArrayList(
-            1, 2, 3, 4, 5
-    );
-    public final ObjectProperty<Integer> cutoffLevel = new SimpleObjectProperty<>(cutoffLevels.get(0));
+    public final StrategyModel strategyModel = new StrategyModel();
 
     public final BooleanProperty emptyFieldsLoseProperty = new SimpleBooleanProperty(true);
     public final BooleanProperty emptyFieldsWinsProperty = new SimpleBooleanProperty(true);
@@ -51,11 +39,10 @@ public class MainWindowModel {
 
     public final AsyncCommand<Either<ErrorMessage, Unit>> nextMoveCommand;
 
-    private final Dialogs dialogs;
     private final Logger logger;
+    private final Dialogs dialogs;
 
     private XoXGame game;
-    private SearchStrategy searchStrategy;
     private GameMode gameMode;
 
     public Runnable modelChangedListener = () -> { };
@@ -72,6 +59,12 @@ public class MainWindowModel {
             reset();
         });
 
+        strategyModel.strategyProperty().addListener((observable, oldValue, newValue) -> {
+            logger.debug("Set search strategy to %s", newValue);
+            game.setSearchStrategy(newValue);
+        });
+
+        // Commands
         this.nextMoveCommand = new AsyncCommand<>(
                 cancelOp -> gameMode.performComputerMove(cancelOp),
                 new SimpleBooleanProperty(true));
@@ -99,32 +92,15 @@ public class MainWindowModel {
     }
 
     public void reset() {
-        switch (searchStrategyProperty.get()) {
-            case FULL_SEARCH:
-                searchStrategy = new FullSearch();
-                break;
-            case CUT_OFF: {
-                var strategy = CutoffStrategy.basedOn(new FullSearch());
-                strategy.setCutoff(cutoffLevel.get());
-                searchStrategy = strategy;
-                break;
-            }
-            case PROBABILISTIC: {
-                var strategy = ProbabilisticSearch.basedOn(new FullSearch());
-                strategy.setMinNumberOfMoves(minNumberOfMoves.get());
-                strategy.setPercentageOfMovesToCheck(percentageOfMoves.get());
-                searchStrategy = strategy;
-                break;
-            }
-            default:
-                throw new IllegalArgumentException();
-        }
-
         var gameGeometry = gameGeometryProperty.get();
+        logger.debug("Game geometry: %s", gameGeometry);
+
+        var searchStrategy = strategyModel.strategyProperty().get();
         game = new XoXGame(logger,
                 gameGeometry.boardSize,
                 gameGeometry.winningStride,
                 searchStrategy);
+        logger.debug("Search strategy: %s", searchStrategy);
 
 
         switch (gameModeProperty.get()) {
@@ -146,18 +122,17 @@ public class MainWindowModel {
         notifyModelChanged();
     }
 
+    public void onBoardClicked(int row, int col) {
+        var result = gameMode.performHumanMove(row, col);
+
+        result.onLeft(msg -> dialogs.error("Error", msg.message));
+
+        notifyModelChanged();
+    }
+
+
     public Board board() {
         return game.board();
     }
 
-    public void onBoardClicked(int row, int col) {
-        try {
-            gameMode.performHumanMove(row, col);
-        }
-        catch (Exception e) {
-            dialogs.info(e.getMessage());
-        }
-
-        notifyModelChanged();
-    }
 }

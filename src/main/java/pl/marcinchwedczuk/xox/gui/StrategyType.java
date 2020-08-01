@@ -1,6 +1,6 @@
 package pl.marcinchwedczuk.xox.gui;
 
-public enum SearchStrategyType {
+public enum StrategyType {
     FULL_SEARCH,
     CUT_OFF,
     PROBABILISTIC

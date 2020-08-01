@@ -106,4 +106,8 @@ public class XoXGame {
     public BoardMark currentPlayer() {
         return currentPlayer;
     }
+
+    public void setSearchStrategy(SearchStrategy searchStrategy) {
+        this.searchStrategy = searchStrategy;
+    }
 }

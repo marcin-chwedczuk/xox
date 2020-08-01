@@ -22,4 +22,9 @@ public class FullSearch implements SearchStrategy {
 
         return moves;
     }
+
+    @Override
+    public String toString() {
+        return "FullSearch";
+    }
 }

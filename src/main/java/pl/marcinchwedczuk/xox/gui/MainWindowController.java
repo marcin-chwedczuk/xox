@@ -39,7 +39,7 @@ public class MainWindowController {
     @FXML private RadioButton computerComputerRadio;
     @FXML private RadioButton computerHumanRadio;
 
-    private ToggleGroupValue<SearchStrategyType> searchStrategyToggleGroup = new ToggleGroupValue<>();
+    private ToggleGroupValue<StrategyType> searchStrategyToggleGroup = new ToggleGroupValue<>();
     @FXML private RadioButton probabilisticSearchRadio;
     @FXML private RadioButton cutOffRadio;
     @FXML private RadioButton fullSearchRadio;
@@ -69,7 +69,7 @@ public class MainWindowController {
 
     @FXML
     public void initialize() {
-        boardSizeCombo.setItems(model.gameGeometries);
+        boardSizeCombo.setItems(model.gameGeometriesProperty);
         boardSizeCombo.valueProperty().bindBidirectional(model.gameGeometryProperty);
 
         gameModeToggleGroup.add(computerComputerRadio, GameModeType.COMPUTER_COMPUTER);
@@ -77,19 +77,25 @@ public class MainWindowController {
         gameModeToggleGroup.add(computerHumanRadio, GameModeType.COMPUTER_HUMAN);
         gameModeToggleGroup.valueProperty().bindBidirectional(model.gameModeProperty);
 
-        searchStrategyToggleGroup.add(probabilisticSearchRadio, SearchStrategyType.PROBABILISTIC);
-        searchStrategyToggleGroup.add(cutOffRadio, SearchStrategyType.CUT_OFF);
-        searchStrategyToggleGroup.add(fullSearchRadio, SearchStrategyType.FULL_SEARCH);
-        searchStrategyToggleGroup.valueProperty().bindBidirectional(model.searchStrategyProperty);
+        searchStrategyToggleGroup.add(probabilisticSearchRadio, StrategyType.PROBABILISTIC);
+        searchStrategyToggleGroup.add(cutOffRadio, StrategyType.CUT_OFF);
+        searchStrategyToggleGroup.add(fullSearchRadio, StrategyType.FULL_SEARCH);
+        searchStrategyToggleGroup.valueProperty()
+                .bindBidirectional(model.strategyModel.strategyTypeProperty);
 
-        minNumberOfMovesSlider.valueProperty().bindBidirectional(model.minNumberOfMoves);
-        minNumberOfMovesLbl.textProperty().bind(model.minNumberOfMoves.asString());
+        minNumberOfMovesSlider.valueProperty()
+                .bindBidirectional(model.strategyModel.minNumberOfMovesProperty);
+        minNumberOfMovesLbl.textProperty()
+                .bind(model.strategyModel.minNumberOfMovesProperty.asString());
 
-        percentageSearchSpaceSlider.valueProperty().bindBidirectional(model.percentageOfMoves);
-        percentageSearchSpaceLabel.textProperty().bind(model.percentageOfMoves.asString());
+        percentageSearchSpaceSlider.valueProperty()
+                .bindBidirectional(model.strategyModel.percentageOfMovesProperty);
+        percentageSearchSpaceLabel.textProperty()
+                .bind(model.strategyModel.percentageOfMovesProperty.asString());
 
-        cutOffLevelCombo.setItems(model.cutoffLevels);
-        cutOffLevelCombo.valueProperty().bindBidirectional(model.cutoffLevel);
+        cutOffLevelCombo.setItems(model.strategyModel.cutoffLevelsProperty);
+        cutOffLevelCombo.valueProperty()
+                .bindBidirectional(model.strategyModel.cutoffLevelProperty);
 
         emptyFieldsLoseCheck.selectedProperty().bindBidirectional(model.emptyFieldsLoseProperty);
         emptyFieldsWinCheck.selectedProperty().bindBidirectional(model.emptyFieldsWinsProperty);
@@ -104,14 +110,6 @@ public class MainWindowController {
         resetBtn.setOnAction(event -> {
             model.reset();
         });
-
-        /*
-        boardCanvas.setOnMouseClicked(event -> {
-            double x = event.getX();
-            double y = event.getY();
-            boardClicked(x, y);
-        });
-         */
 
         tabPane.disableProperty()
                 .bind(model.nextMoveCommand.isRunningProperty());
@@ -139,8 +137,6 @@ public class MainWindowController {
         gameBoard.setOnBoardClicked(model::onBoardClicked);
 
         model.reset();
-        // model.setModelChangedListener(this::draw);
-        // draw();
     }
 
     @FXML private void clearLogs() {
