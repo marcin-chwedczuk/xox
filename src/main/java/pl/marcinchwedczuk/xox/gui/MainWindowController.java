@@ -3,13 +3,10 @@ package pl.marcinchwedczuk.xox.gui;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import jfxtras.labs.scene.control.ToggleGroupValue;
 import pl.marcinchwedczuk.xox.Logger;
-import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.gui.controls.GameBoard;
 import pl.marcinchwedczuk.xox.gui.gamemode.GameModeType;
 import pl.marcinchwedczuk.xox.mvvm.JfxTimer;
@@ -137,7 +134,7 @@ public class MainWindowController {
             model.nextMoveCommand.cancel();
         });
 
-        model.gameStateProperty.bindBidirectional(gameBoard.boardProperty);
+        model.gameStateProperty.bindBidirectional(gameBoard.gameStateProperty);
 
         gameBoard.setOnBoardClicked(model::onBoardClicked);
 

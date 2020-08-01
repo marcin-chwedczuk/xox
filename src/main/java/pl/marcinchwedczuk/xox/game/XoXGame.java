@@ -17,7 +17,7 @@ public class XoXGame {
     private SearchStrategy searchStrategy;
     private BoardScorer scorer;
 
-    private GameState gameState;
+    private GameState state;
 
     public XoXGame(Logger logger, int boardSize, int winningStride,
                    SearchStrategy searchStrategy) {
@@ -29,7 +29,7 @@ public class XoXGame {
         this.searchStrategy = searchStrategy;
         this.scorer = new BoardScorer(boardSize, winningStride);
 
-        this.gameState = GameState
+        this.state = GameState
                 .forRunningGame(this.board.copyOf(), this.currentPlayer);
     }
 
@@ -73,7 +73,7 @@ public class XoXGame {
     }
 
     private void checkCanPerformMove() {
-        if (gameState.isFinished) {
+        if (state.isFinished) {
             throw new RuntimeException("game already ended");
         }
     }
@@ -87,11 +87,11 @@ public class XoXGame {
         if (isFinished) {
             Optional<Winner> maybeWinner = scorer.getWinner(board);
 
-            this.gameState = GameState.forFinishedGame(
+            this.state = GameState.forFinishedGame(
                     board.copyOf(), maybeWinner);
         }
         else {
-            this.gameState = GameState.forRunningGame(board, currentPlayer);
+            this.state = GameState.forRunningGame(board, currentPlayer);
         }
     }
 
@@ -99,8 +99,8 @@ public class XoXGame {
         return board.copyOf();
     }
 
-    public GameState gameResult() {
-        return gameState;
+    public GameState state() {
+        return state;
     }
 
     public BoardMark currentPlayer() {

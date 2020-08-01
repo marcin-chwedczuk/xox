@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import pl.marcinchwedczuk.xox.Logger;
 import pl.marcinchwedczuk.xox.game.Board;
+import pl.marcinchwedczuk.xox.game.GameState;
 import pl.marcinchwedczuk.xox.game.XoXGame;
 import pl.marcinchwedczuk.xox.game.search.CutoffStrategy;
 import pl.marcinchwedczuk.xox.game.search.FullSearch;
@@ -46,7 +47,7 @@ public class MainWindowModel {
     public final BooleanProperty emptyFieldsWinsProperty = new SimpleBooleanProperty(true);
     public final BooleanProperty countAlmostWinsProperty = new SimpleBooleanProperty(false);
 
-    public final ObjectProperty<Board> gameStateProperty = new SimpleObjectProperty<>(null);
+    public final ObjectProperty<GameState> gameStateProperty = new SimpleObjectProperty<>(null);
 
     public final AsyncCommand<Either<ErrorMessage, Unit>> nextMoveCommand;
 
@@ -87,7 +88,7 @@ public class MainWindowModel {
     }
 
     private void notifyModelChanged() {
-        gameStateProperty.set(game.board());
+        gameStateProperty.set(game.state());
         modelChangedListener.run();
     }
 

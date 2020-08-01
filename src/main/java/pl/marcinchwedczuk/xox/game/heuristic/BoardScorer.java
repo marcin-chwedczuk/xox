@@ -72,7 +72,7 @@ public class BoardScorer {
     }
 
     public boolean isGameFinished(Board board) {
-        return board.countEmpty() == 0;
+        return (board.countEmpty() == 0) || getWinner(board).isPresent();
     }
 
     public Optional<Winner> getWinner(Board board) {
@@ -232,7 +232,7 @@ public class BoardScorer {
                     count++;
                     if (count >= winningStride && (lastMark != EMPTY)) {
                         winningStrides.add(new WinningStride(
-                                BoardPosition.of(r - winningStride + 1, c),
+                                BoardPosition.of(r, c - winningStride + 1),
                                 BoardPosition.of(r, c)));
                     }
                 }
@@ -253,7 +253,7 @@ public class BoardScorer {
                     count++;
                     if (count >= winningStride && (lastMark != EMPTY)) {
                         winningStrides.add(new WinningStride(
-                                BoardPosition.of(r, c - winningStride + 1),
+                                BoardPosition.of(r - winningStride + 1, c),
                                 BoardPosition.of(r, c)));
                     }
                 }

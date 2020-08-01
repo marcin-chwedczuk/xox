@@ -2,12 +2,9 @@ package pl.marcinchwedczuk.xox.game.heuristic;
 
 import junit.framework.TestCase;
 import org.junit.Test;
-import pl.marcinchwedczuk.xox.game.Board;
-import pl.marcinchwedczuk.xox.game.BoardMark;
-import pl.marcinchwedczuk.xox.game.Move;
+import pl.marcinchwedczuk.xox.game.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static pl.marcinchwedczuk.xox.game.BoardMark.*;
 
 public class BoardScorerTest {
@@ -111,6 +108,90 @@ public class BoardScorerTest {
             }
         }
 
+    }
+
+    @Test public void properly_gets_winner_row() {
+        var board = Board.of(
+                X, X, X,
+                O, O, E,
+                E, E, E
+        );
+
+        var winner = scorer.getWinner(board);
+
+        assertTrue(winner.isPresent());
+        assertEquals(X, winner.get().winner);
+
+        var winningStrides = winner.get().winningStrides;
+        assertEquals(1, winningStrides.size());
+
+        var expected = new WinningStride(
+                BoardPosition.of(0, 0),
+                BoardPosition.of(0, 2));
+        assertEquals(expected, winningStrides.get(0));
+    }
+
+    @Test public void properly_gets_winner_column() {
+        var board = Board.of(
+                E, E, X,
+                O, O, X,
+                E, E, X
+        );
+
+        var winner = scorer.getWinner(board);
+
+        assertTrue(winner.isPresent());
+        assertEquals(X, winner.get().winner);
+
+        var winningStrides = winner.get().winningStrides;
+        assertEquals(1, winningStrides.size());
+
+        var expected = new WinningStride(
+                BoardPosition.of(0, 2),
+                BoardPosition.of(2, 2));
+        assertEquals(expected, winningStrides.get(0));
+    }
+
+    @Test public void properly_gets_winner_slash_diag() {
+        var board = Board.of(
+                O, E, X,
+                O, X, E,
+                X, E, E
+        );
+
+        var winner = scorer.getWinner(board);
+
+        assertTrue(winner.isPresent());
+        assertEquals(X, winner.get().winner);
+
+        var winningStrides = winner.get().winningStrides;
+        assertEquals(1, winningStrides.size());
+
+        var expected = new WinningStride(
+                BoardPosition.of(0, 2),
+                BoardPosition.of(2, 0));
+        assertEquals(expected, winningStrides.get(0));
+    }
+
+    @Test public void properly_gets_winner_backslash_diag() {
+        var board = Board.of(
+                X, E, E,
+                O, X, E,
+                O, E, X
+        );
+
+        var winner = scorer.getWinner(board);
+
+        assertTrue(winner.isPresent());
+        assertEquals(X, winner.get().winner);
+
+        var winningStrides = winner.get().winningStrides;
+        assertEquals(1, winningStrides.size());
+
+        var expected = new WinningStride(
+                BoardPosition.of(0, 0),
+                BoardPosition.of(2, 2));
+        assertEquals(expected, winningStrides.get(0));
     }
 
     private void assertScore(int expected, Board board, Move lastMove) {

@@ -1,13 +1,20 @@
 package pl.marcinchwedczuk.xox.gui.controls;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import pl.marcinchwedczuk.xox.game.Board;
+import pl.marcinchwedczuk.xox.game.GameState;
+import pl.marcinchwedczuk.xox.game.WinningStride;
+import pl.marcinchwedczuk.xox.game.heuristic.Winner;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 // Based on: https://stackoverflow.com/a/31761362
@@ -22,7 +29,7 @@ public class GameBoard extends Pane {
 
     private final Canvas canvas;
     private BiConsumer<Integer, Integer> onBoardClicked = (row, col) -> { };
-    public ObjectProperty<Board> boardProperty = new SimpleObjectProperty<>();
+    public ObjectProperty<GameState> gameStateProperty = new SimpleObjectProperty<>();
 
     public GameBoard() { this(0, 0); }
 
@@ -36,7 +43,7 @@ public class GameBoard extends Pane {
             boardClicked(x, y);
         });
 
-        boardProperty.addListener((observable, oldValue, newValue) -> draw());
+        gameStateProperty.addListener((observable, oldValue, newValue) -> draw());
     }
 
     public void setOnBoardClicked(BiConsumer<Integer, Integer> action) {
@@ -61,19 +68,25 @@ public class GameBoard extends Pane {
     }
 
     private void draw() {
-        Board board = boardProperty.get();
-        if (board == null) {
+        draw(gameStateProperty.get());
+    }
+
+    private void draw(GameState gameState) {
+        if (gameState == null) {
             return;
         }
 
+        Board board = gameState.board;
         double width = canvas.getWidth();
         double height = canvas.getHeight();
         var gc = canvas.getGraphicsContext2D();
 
         clearBoard(gc, width, height);
+        highlightWinningStrides(gc, gameState.winner);
         drawGrid(gc, board, width, height);
         drawMarks(gc, board, width, height);
     }
+
 
     private void drawMarks(GraphicsContext gc, Board board, double width, double height) {
         final int rows = board.sideSize();
@@ -140,13 +153,47 @@ public class GameBoard extends Pane {
         }
     }
 
+    private void highlightWinningStrides(GraphicsContext gc, Optional<Winner> winner) {
+        if (winner.isEmpty()) return;
+
+        gc.setFill(Color.AQUA);
+
+        List<WinningStride> winningStrides = winner.get().winningStrides;
+        for (WinningStride stride: winningStrides) {
+
+            int r = stride.from.row;
+            int c = stride.from.col;
+
+            int toR = stride.to.row;
+            int toC = stride.to.col;
+
+            do {
+                highlightCell(gc, r, c);
+
+                r += Integer.signum(toR - r);
+                c += Integer.signum(toC - c);
+            }
+            while ((r != toR) || (c != toC));
+
+            highlightCell(gc, r, c);
+        }
+    }
+
+    private void highlightCell(GraphicsContext gc, int r, int c) {
+        Point2D cellStart = cellTopLeft(r, c);
+        Point2D cellEnd = cellBottomRight(r, c);
+        gc.fillRect(cellStart.getX(), cellStart.getY(),
+                cellEnd.getX() - cellStart.getX(),
+                cellEnd.getY() - cellStart.getY());
+    }
+
     private void boardClicked(double x, double y) {
-        Board board = boardProperty.get();
-        if (board == null) {
+        GameState gameState = gameStateProperty.get();
+        if (gameState == null) {
             return;
         }
 
-        int rows = board.sideSize();
+        int rows = gameState.board.sideSize();
         double cellWidth = canvas.getWidth() / rows;
         double cellHeight = canvas.getHeight() / rows;
 
@@ -168,5 +215,26 @@ public class GameBoard extends Pane {
         if (rr != -1) {
             onBoardClicked.accept(rr, cc);
         }
+    }
+
+    private Point2D cellTopLeft(int row, int col) {
+        GameState gameState = gameStateProperty.get();
+        if (gameState == null) {
+            return null;
+        }
+
+        int rows = gameState.board.sideSize();
+
+        double cellWidth = canvas.getWidth() / rows;
+        double cellHeight = canvas.getHeight() / rows;
+
+        double xStart = cellWidth*col;
+        double yStart = cellHeight*row;
+
+        return new Point2D(xStart, yStart);
+    }
+
+    private Point2D cellBottomRight(int row, int col) {
+        return cellTopLeft(row + 1, col + 1);
     }
 }
