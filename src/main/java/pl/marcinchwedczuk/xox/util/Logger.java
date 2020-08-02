@@ -1,4 +1,4 @@
-package pl.marcinchwedczuk.xox;
+package pl.marcinchwedczuk.xox.util;
 
 public interface Logger {
     void debug(String fmt, Object... args);

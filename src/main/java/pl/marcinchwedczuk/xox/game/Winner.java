@@ -1,4 +1,4 @@
-package pl.marcinchwedczuk.xox.game.heuristic;
+package pl.marcinchwedczuk.xox.game;
 
 import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.WinningStride;

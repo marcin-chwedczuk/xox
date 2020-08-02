@@ -1,6 +1,5 @@
 package pl.marcinchwedczuk.xox.gui.controls;
 
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
@@ -11,7 +10,7 @@ import javafx.scene.paint.Color;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.GameState;
 import pl.marcinchwedczuk.xox.game.WinningStride;
-import pl.marcinchwedczuk.xox.game.heuristic.Winner;
+import pl.marcinchwedczuk.xox.game.Winner;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,9 +1,8 @@
 package pl.marcinchwedczuk.xox.game;
 
-import pl.marcinchwedczuk.xox.Logger;
+import pl.marcinchwedczuk.xox.util.Logger;
 import pl.marcinchwedczuk.xox.game.heuristic.Heuristics;
 import pl.marcinchwedczuk.xox.game.heuristic.HeuristicsImpl;
-import pl.marcinchwedczuk.xox.game.heuristic.Winner;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 import pl.marcinchwedczuk.xox.util.CancelOperation;
 

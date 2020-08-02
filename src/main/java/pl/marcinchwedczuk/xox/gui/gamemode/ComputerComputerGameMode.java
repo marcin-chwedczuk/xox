@@ -1,6 +1,6 @@
 package pl.marcinchwedczuk.xox.gui.gamemode;
 
-import pl.marcinchwedczuk.xox.Logger;
+import pl.marcinchwedczuk.xox.util.Logger;
 import pl.marcinchwedczuk.xox.game.XoXGame;
 import pl.marcinchwedczuk.xox.util.CancelOperation;
 import pl.marcinchwedczuk.xox.util.Either;

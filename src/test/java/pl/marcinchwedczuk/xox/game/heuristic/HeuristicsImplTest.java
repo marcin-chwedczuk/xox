@@ -7,5 +7,5 @@ import static org.junit.Assert.*;
 import static pl.marcinchwedczuk.xox.game.BoardMark.*;
 
 public class HeuristicsImplTest {
-
+    // TODO: Add tests
 }

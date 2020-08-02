@@ -1,9 +1,5 @@
 package pl.marcinchwedczuk.xox.game;
 
-import pl.marcinchwedczuk.xox.game.heuristic.Winner;
-
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 public class GameState {

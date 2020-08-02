@@ -1,8 +1,6 @@
 package pl.marcinchwedczuk.xox.game;
 
 import com.google.common.annotations.VisibleForTesting;
-import pl.marcinchwedczuk.xox.game.heuristic.Score;
-import pl.marcinchwedczuk.xox.game.heuristic.Winner;
 
 import java.util.ArrayList;
 import java.util.List;
