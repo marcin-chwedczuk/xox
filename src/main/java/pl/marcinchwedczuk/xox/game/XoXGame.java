@@ -2,7 +2,7 @@ package pl.marcinchwedczuk.xox.game;
 
 import pl.marcinchwedczuk.xox.util.Logger;
 import pl.marcinchwedczuk.xox.game.heuristic.Heuristics;
-import pl.marcinchwedczuk.xox.game.heuristic.HeuristicsImpl;
+import pl.marcinchwedczuk.xox.game.heuristic.RationalPlayerHeuristics;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 import pl.marcinchwedczuk.xox.util.CancelOperation;
 
@@ -130,7 +130,7 @@ public class XoXGame {
         this.searchStrategy = searchStrategy;
     }
 
-    public void setBoardScorer(HeuristicsImpl heuristics) {
+    public void setBoardScorer(RationalPlayerHeuristics heuristics) {
         this.scorer = heuristics;
     }
 }

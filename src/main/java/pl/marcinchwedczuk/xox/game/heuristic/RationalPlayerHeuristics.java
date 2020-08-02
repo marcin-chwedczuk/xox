@@ -2,14 +2,14 @@ package pl.marcinchwedczuk.xox.game.heuristic;
 
 import pl.marcinchwedczuk.xox.game.*;
 
-public class HeuristicsImpl implements Heuristics {
+public class RationalPlayerHeuristics implements Heuristics {
     public final XoXGameRules gameRules;
 
     private boolean countEmptyFieldsOnWin = false;
     private boolean countEmptyFieldsOnLoose = false;
     private boolean countAlmostWins = false;
 
-    public HeuristicsImpl(XoXGameRules gameRules) {
+    public RationalPlayerHeuristics(XoXGameRules gameRules) {
         this.gameRules = gameRules;
     }
 
