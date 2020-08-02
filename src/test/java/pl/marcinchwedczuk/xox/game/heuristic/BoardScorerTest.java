@@ -219,6 +219,81 @@ public class BoardScorerTest {
         assertEquals(stride(pos(1,1), pos(3, 3)), strides.get(0));
     }
 
+    @Test public void findWinningStrides_multiple_5x5_3() {
+        var board5 = Board.of(
+                E, E, E, E, E,
+                E, X, X, X, E,
+                E, X, X, O, E,
+                E, X, E, X, O,
+                E, E, E, O, E
+        );
+
+        var strides = scorer_5x5_3.findWinningStrides(board5, X);
+
+        assertEquals(4, strides.size());
+        assertEquals(stride(pos(1,1), pos(1, 3)), strides.get(0));
+        assertEquals(stride(pos(1,1), pos(3, 1)), strides.get(1));
+        assertEquals(stride(pos(1,1), pos(3, 3)), strides.get(2));
+        assertEquals(stride(pos(1,3), pos(3, 1)), strides.get(3));
+    }
+
+
+    @Test public void getWinner_x_wins_5x5_3() {
+        var xWinsBoard = Board.of(
+                E, E, E, E, E,
+                E, E, E, X, E,
+                E, E, X, O, E,
+                E, X, E, E, O,
+                E, E, E, O, E
+        );
+
+        var maybeWinner = scorer_5x5_3.getWinner(xWinsBoard);
+
+        assertTrue(maybeWinner.isPresent());
+        assertEquals(X, maybeWinner.get().winner);
+        assertEquals(1, maybeWinner.get().winningStrides.size());
+        assertEquals(stride(pos(1, 3), pos(3, 1)), maybeWinner.get().winningStrides.get(0));
+    }
+
+    @Test public void getWinner_x_loses_5x5_3() {
+        var xLosesBoard = Board.of(
+                E, E, E, E, E,
+                E, E, E, X, E,
+                E, E, E, O, E,
+                E, X, E, O, E,
+                X, E, E, O, E
+        );
+
+        var maybeWinner = scorer_5x5_3.getWinner(xLosesBoard);
+
+        assertTrue(maybeWinner.isPresent());
+        assertEquals(O, maybeWinner.get().winner);
+        assertEquals(1, maybeWinner.get().winningStrides.size());
+        assertEquals(stride(pos(2, 3), pos(4, 3)), maybeWinner.get().winningStrides.get(0));
+    }
+
+    @Test public void getWinner_draw_3x3_3() {
+        var xLosesBoard = Board.of(
+                O, O, X,
+                X, X, O,
+                O, O, X
+        );
+
+        var maybeWinner = scorer_5x5_3.getWinner(xLosesBoard);
+        assertTrue(maybeWinner.isEmpty());
+    }
+
+    @Test public void getWinner_not_finished_game_3x3_3() {
+        var xLosesBoard = Board.of(
+                O, E, X,
+                X, E, O,
+                O, E, X
+        );
+
+        var maybeWinner = scorer_5x5_3.getWinner(xLosesBoard);
+        assertTrue(maybeWinner.isEmpty());
+    }
+
     @Test public void scoringOnLastMove_returns_false_when_game_did_not_end() {
         var board = Board.of(
                 X, O, E,
