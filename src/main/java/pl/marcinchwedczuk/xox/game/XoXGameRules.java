@@ -1,7 +1,8 @@
-package pl.marcinchwedczuk.xox.game.heuristic;
+package pl.marcinchwedczuk.xox.game;
 
 import com.google.common.annotations.VisibleForTesting;
-import pl.marcinchwedczuk.xox.game.*;
+import pl.marcinchwedczuk.xox.game.heuristic.Score;
+import pl.marcinchwedczuk.xox.game.heuristic.Winner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,70 +10,16 @@ import java.util.Optional;
 
 import static pl.marcinchwedczuk.xox.game.BoardMark.EMPTY;
 
-public class BoardScorer {
+public class XoXGameRules {
     public final int boardSize;
     public final int winningStride;
 
-    private boolean countEmptyFieldsOnWin = false;
-    private boolean countEmptyFieldsOnLoose = false;
-    private boolean countAlmostWins = false;
-
-    public BoardScorer(int boardSize, int winningStride) {
+    public XoXGameRules(int boardSize, int winningStride) {
         if (winningStride > boardSize)
             throw new IllegalArgumentException("winningStride");
 
         this.boardSize = boardSize;
         this.winningStride = winningStride;
-    }
-
-    public Score scoreUncompleted(Board board, BoardMark player) {
-        // TODO: Count "almost" wins
-        List<WinningStride> winsPlayer = findWinningStrides(board, player);
-        List<WinningStride> winsOpponent = findWinningStrides(board, player.opponent());
-        // the longer the game, the better
-        int emptyPlaces = board.countEmpty();
-        boolean endGame = !winsPlayer.isEmpty() || !winsOpponent.isEmpty() || (emptyPlaces == 0);
-
-        if (winsPlayer.size() > 0) {
-            // The faster we win the better
-            return Score.gameEnded(winsPlayer.size()*1000 + emptyPlaces);
-        }
-        else if (winsOpponent.size() > 0) {
-            // The slower (more places filled) we loose or draw the better
-            return Score.gameEnded(winsOpponent.size()*1000 - emptyPlaces);
-        }
-        else if (endGame) {
-            return Score.draw(0);
-        }
-        else {
-            // Draw or game inconclusive
-            return Score.gameOngoing(0);
-        }
-    }
-
-    public Score score(Board board, Move lastMove) {
-
-        // TODO: Count "almost" wins
-        int wins = countWinsImpl(board, lastMove);
-        // the longer the game, the better
-        int emptyPlaces = board.countEmpty();
-        boolean endGame = (wins != 0) || (emptyPlaces == 0);
-
-        if (wins > 0) {
-            // The faster we win the better
-            return Score.gameEnded(wins*1000 + emptyPlaces);
-        }
-        else if (wins < 0) {
-            // The slower (more places filled) we loose or draw the better
-            return Score.gameEnded(wins*1000 - emptyPlaces);
-        }
-        else if (endGame) {
-            return Score.draw(0);
-        }
-        else {
-            // Draw or game inconclusive
-            return Score.gameOngoing(0);
-        }
     }
 
     public boolean isGameFinished(Board board) {
@@ -93,8 +40,7 @@ public class BoardScorer {
         return Optional.empty();
     }
 
-    @VisibleForTesting
-    int countWinsImpl(Board board, Move lastMove) {
+    public int countWinsForLastMove(Board board, Move lastMove) {
         final int N = board.sideSize();
         final int STRIDE = winningStride;
         int totalWins = 0;
@@ -109,12 +55,12 @@ public class BoardScorer {
 
             // Count to the right
             for (int i = lastMoveCol; i < N; i++) {
-               if (board.get(lastMoveRow, i) == player) {
-                   counts++;
-               }
-               else {
-                   break;
-               }
+                if (board.get(lastMoveRow, i) == player) {
+                    counts++;
+                }
+                else {
+                    break;
+                }
             }
 
             // Count to the left
@@ -316,25 +262,5 @@ public class BoardScorer {
         }
 
         return winningStrides;
-    }
-
-    public void setCountEmptyFieldsOnWin(boolean countEmptyFieldsOnWin) {
-        this.countEmptyFieldsOnWin = countEmptyFieldsOnWin;
-    }
-
-    public void setCountEmptyFieldsOnLoose(boolean countEmptyFieldsOnLoose) {
-        this.countEmptyFieldsOnLoose = countEmptyFieldsOnLoose;
-    }
-
-    public void setCountAlmostWins(boolean countAlmostWins) {
-        this.countAlmostWins = countAlmostWins;
-    }
-
-    @Override
-    public String toString() {
-        return String.format(
-                "BoardScorer(%d, stride %d, almostWins %s, emptyWin %s, emptyLoose %s)",
-                boardSize, winningStride, countAlmostWins, countEmptyFieldsOnWin,
-                countEmptyFieldsOnLoose);
     }
 }

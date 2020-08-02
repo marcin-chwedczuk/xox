@@ -1,7 +1,8 @@
 package pl.marcinchwedczuk.xox.game;
 
 import pl.marcinchwedczuk.xox.Logger;
-import pl.marcinchwedczuk.xox.game.heuristic.BoardScorer;
+import pl.marcinchwedczuk.xox.game.heuristic.Heuristics;
+import pl.marcinchwedczuk.xox.game.heuristic.HeuristicsImpl;
 import pl.marcinchwedczuk.xox.game.heuristic.Winner;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 import pl.marcinchwedczuk.xox.util.CancelOperation;
@@ -11,20 +12,22 @@ import java.util.Stack;
 
 public class XoXGame {
     private final Logger logger;
+    private final XoXGameRules gameRules;
 
     private SearchStrategy searchStrategy;
-    private BoardScorer scorer;
+    private Heuristics scorer;
 
     private Stack<GameState> undoStack = new Stack<>();
     private GameState state;
 
-    public XoXGame(Logger logger, int boardSize,
-                   BoardScorer boardScorer,
+    public XoXGame(Logger logger, int boardSize, int winningStride,
+                   Heuristics heuristics,
                    SearchStrategy searchStrategy) {
         this.logger = logger;
 
+        this.gameRules = new XoXGameRules(boardSize, winningStride);
         this.searchStrategy = searchStrategy;
-        this.scorer = boardScorer;
+        this.scorer = heuristics;
 
         var board = new Board(boardSize);
         var currentPlayer = BoardMark.X;
@@ -84,10 +87,10 @@ public class XoXGame {
         var board = state.boardCopy();
         board.putMark(row, col, state.currentPlayer);
 
-        boolean isFinished = scorer.isGameFinished(board);
+        boolean isFinished = gameRules.isGameFinished(board);
         GameState newState;
         if (isFinished) {
-            Optional<Winner> maybeWinner = scorer.getWinner(board);
+            Optional<Winner> maybeWinner = gameRules.getWinner(board);
 
             newState = GameState.forFinishedGame(
                     board, maybeWinner);
@@ -128,7 +131,7 @@ public class XoXGame {
         this.searchStrategy = searchStrategy;
     }
 
-    public void setBoardScorer(BoardScorer boardScorer) {
-        this.scorer = boardScorer;
+    public void setBoardScorer(HeuristicsImpl heuristics) {
+        this.scorer = heuristics;
     }
 }

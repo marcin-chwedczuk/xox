@@ -1,7 +1,8 @@
 package pl.marcinchwedczuk.xox.game;
 
 import pl.marcinchwedczuk.xox.Logger;
-import pl.marcinchwedczuk.xox.game.heuristic.BoardScorer;
+import pl.marcinchwedczuk.xox.game.heuristic.Heuristics;
+import pl.marcinchwedczuk.xox.game.heuristic.HeuristicsImpl;
 import pl.marcinchwedczuk.xox.game.heuristic.Score;
 import pl.marcinchwedczuk.xox.game.search.MoveProposal;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
@@ -16,14 +17,14 @@ import java.util.Optional;
 public class AlphaBetaAlgo {
     private final Logger logger;
     private final Board board;
-    private final BoardScorer scorer;
+    private final Heuristics scorer;
     private final SearchStrategy searchStrategy;
 
     public boolean extraLogging = false;
 
     public AlphaBetaAlgo(Logger logger,
                          Board board,
-                         BoardScorer scorer,
+                         Heuristics scorer,
                          SearchStrategy searchStrategy) {
         this.logger = logger;
         this.board = board;
@@ -80,7 +81,7 @@ public class AlphaBetaAlgo {
             var score = scoreBoard(board, move, player, maximize);
 
             Optional<Move> next = Optional.empty();
-            if (!score.gameEnded) {
+            if (!score.isFinished) {
                 // Game did not end, do opponent move.
                 // May return empty() due to e.g. search strategy limits
                 next = minimax(level + 1, !maximize, player.opponent(),

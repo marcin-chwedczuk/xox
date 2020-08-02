@@ -34,7 +34,6 @@ public class Board {
         board.set(3, 0, a30); board.set(3, 1, a31); board.set(3, 2, a32); board.set(3, 3, a33); board.set(3, 4, a34);
         board.set(4, 0, a40); board.set(4, 1, a41); board.set(4, 2, a42); board.set(4, 3, a43); board.set(4, 4, a44);
 
-
         return board;
     }
 
@@ -62,7 +61,7 @@ public class Board {
         return board[row*size + col];
     }
 
-    public void set(int row, int col, BoardMark mark) {
+    private void set(int row, int col, BoardMark mark) {
         board[row*size + col] = mark;
     }
 

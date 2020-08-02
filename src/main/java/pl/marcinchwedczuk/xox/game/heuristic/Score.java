@@ -9,19 +9,20 @@ public class Score {
         return new Score(false, score);
     }
 
-    public static Score draw(double score) {
-        return new Score(true, score);
-    }
-
-    public final boolean gameEnded;
+    public final boolean isFinished;
     public final double score;
 
-    public Score(boolean gameEnded, double score) {
-        this.gameEnded = gameEnded;
+    private Score(boolean isFinished, double score) {
+        this.isFinished = isFinished;
         this.score = score;
     }
 
     public Score negate() {
-        return new Score(gameEnded, -score);
+        return new Score(isFinished, -score);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("(score: %f, isFinished: %s)", score, isFinished);
     }
 }

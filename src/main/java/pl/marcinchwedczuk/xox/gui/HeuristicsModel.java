@@ -1,7 +1,8 @@
 package pl.marcinchwedczuk.xox.gui;
 
 import javafx.beans.property.*;
-import pl.marcinchwedczuk.xox.game.heuristic.BoardScorer;
+import pl.marcinchwedczuk.xox.game.XoXGameRules;
+import pl.marcinchwedczuk.xox.game.heuristic.HeuristicsImpl;
 
 public class HeuristicsModel {
     public final ObjectProperty<GameGeometry> gameGeometryProperty =
@@ -16,7 +17,7 @@ public class HeuristicsModel {
     public final BooleanProperty countAlmostWinsProperty =
             new SimpleBooleanProperty(false);
 
-    private final ObjectProperty<BoardScorer> heuristicsProperty =
+    private final ObjectProperty<HeuristicsImpl> heuristicsProperty =
             new SimpleObjectProperty<>();
 
     public HeuristicsModel() {
@@ -44,7 +45,8 @@ public class HeuristicsModel {
             return;
         }
 
-        var scorer = new BoardScorer(geometry.boardSize, geometry.winningStride);
+        var scorer = new HeuristicsImpl(
+                new XoXGameRules(geometry.boardSize, geometry.winningStride));
 
         scorer.setCountEmptyFieldsOnLoose(countEmptyFieldsOnLooseProperty.get());
         scorer.setCountEmptyFieldsOnWin(countEmptyFieldsOnWinProperty.get());
@@ -53,7 +55,7 @@ public class HeuristicsModel {
         heuristicsProperty.set(scorer);
     }
 
-    public ReadOnlyObjectProperty<BoardScorer> heuristicsProperty() {
+    public ReadOnlyObjectProperty<HeuristicsImpl> heuristicsProperty() {
         return heuristicsProperty;
     }
 }

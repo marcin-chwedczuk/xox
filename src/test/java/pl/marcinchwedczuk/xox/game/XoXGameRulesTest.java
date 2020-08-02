@@ -1,18 +1,19 @@
-package pl.marcinchwedczuk.xox.game.heuristic;
+package pl.marcinchwedczuk.xox.game;
 
 import org.junit.Test;
-import pl.marcinchwedczuk.xox.game.*;
 
 import static org.junit.Assert.*;
 import static pl.marcinchwedczuk.xox.game.BoardMark.*;
+import static pl.marcinchwedczuk.xox.game.BoardMark.X;
 
-public class BoardScorerTest {
+public class XoXGameRulesTest {
     private final BoardMark E = EMPTY;
 
-    private final BoardScorer scorer_3x3_3 = new BoardScorer(3, 3);
-    private final BoardScorer scorer_5x5_3 = new BoardScorer(5, 3);
+    private final XoXGameRules scorer_3x3_3 = new XoXGameRules(3, 3);
+    private final XoXGameRules scorer_5x5_3 = new XoXGameRules(5, 3);
 
-    @Test public void countWinsOnLastMove_no_stride_3x3() {
+    @Test
+    public void countWinsOnLastMove_no_stride_3x3() {
         var board = Board.of(
                 X, X, O,
                 O, O, X,
@@ -20,10 +21,10 @@ public class BoardScorerTest {
         );
 
         for (int row = 0; row < 3; row++)
-        for (int col = 0; col < 3; col++) {
-            Move lastMove = move(row, col, board.get(row, col));
-            assertCountWinsOnLastMoveIs_3x3_3(0, board, lastMove);
-        }
+            for (int col = 0; col < 3; col++) {
+                Move lastMove = move(row, col, board.get(row, col));
+                assertCountWinsOnLastMoveIs_3x3_3(0, board, lastMove);
+            }
     }
 
     @Test public void countWinsOnLastMove_no_stride_5x5() {
@@ -294,26 +295,6 @@ public class BoardScorerTest {
         assertTrue(maybeWinner.isEmpty());
     }
 
-    @Test public void scoringOnLastMove_returns_false_when_game_did_not_end() {
-        var board = Board.of(
-                X, O, E,
-                E, E, E,
-                E, E, E
-        );
-
-        for (int row = 0; row < board.sideSize(); row++) {
-            for (int col = 0; col < board.sideSize(); col++) {
-                if (board.isEmpty(row, col)) {
-                    board.putMark(row, col, X);
-                    var score = scorer_3x3_3.score(board, move(row, col, X));
-                    assertFalse(score.gameEnded);
-                    board.removeMark(row, col);
-                }
-            }
-        }
-
-    }
-
     @Test public void properly_gets_winner_row() {
         var board = Board.of(
                 X, X, X,
@@ -401,14 +382,14 @@ public class BoardScorerTest {
     private void assertCountWinsOnLastMoveIs_3x3_3(int expected, Board board, Move lastMove) {
         assertEquals(
                 expected,
-                scorer_3x3_3.countWinsImpl(board, lastMove));
+                scorer_3x3_3.countWinsForLastMove(board, lastMove));
     }
 
     private void assertCountWinsOnLastMoveIs_5x5_3(int expected, Board board, Move lastMove) {
         assertEquals(
                 String.format("Failed on move (%d, %d).", lastMove.row, lastMove.col),
                 expected,
-                scorer_5x5_3.countWinsImpl(board, lastMove));
+                scorer_5x5_3.countWinsForLastMove(board, lastMove));
     }
 
     private WinningStride stride(BoardPosition from, BoardPosition to) {

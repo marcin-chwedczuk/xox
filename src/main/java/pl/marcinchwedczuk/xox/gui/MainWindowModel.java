@@ -105,7 +105,7 @@ public class MainWindowModel {
         logger.debug("Scorer is: %s", boardScorer);
 
         game = new XoXGame(logger,
-                gameGeometry.boardSize,
+                gameGeometry.boardSize, gameGeometry.winningStride,
                 boardScorer, searchStrategy);
 
         resetGameMode();
