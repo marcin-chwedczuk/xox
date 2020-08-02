@@ -94,7 +94,7 @@ public class BoardScorer {
     }
 
     @VisibleForTesting
-    public int countWinsImpl(Board board, Move lastMove) {
+    int countWinsImpl(Board board, Move lastMove) {
         final int N = board.sideSize();
         final int STRIDE = winningStride;
         int totalWins = 0;
@@ -127,7 +127,7 @@ public class BoardScorer {
                 }
             }
 
-            totalWins += (counts >= STRIDE) ? (counts - STRIDE + 1) : 0;
+            totalWins += (counts >= STRIDE) ? 1 : 0;
         }
 
         // vertical
@@ -154,7 +154,7 @@ public class BoardScorer {
                 }
             }
 
-            totalWins += (counts >= STRIDE) ? (counts - STRIDE + 1) : 0;
+            totalWins += (counts >= STRIDE) ? 1 : 0;
         }
 
         // diagonal \
@@ -181,7 +181,7 @@ public class BoardScorer {
                 }
             }
 
-            totalWins += (counts >= STRIDE) ? (counts - STRIDE + 1) : 0;
+            totalWins += (counts >= STRIDE) ? 1 : 0;
         }
 
         // diagonal /
@@ -208,7 +208,7 @@ public class BoardScorer {
                 }
             }
 
-            totalWins += (counts >= STRIDE) ? (counts - STRIDE + 1) : 0;
+            totalWins += (counts >= STRIDE) ? 1 : 0;
         }
 
         return totalWins;
@@ -217,7 +217,8 @@ public class BoardScorer {
     /**
      * Returns list of winning strides for a player.
      */
-    private List<WinningStride> findWinningStrides(Board board, BoardMark player) {
+    @VisibleForTesting
+    List<WinningStride> findWinningStrides(Board board, BoardMark player) {
         List<WinningStride> winningStrides = new ArrayList<>();
 
         int N = board.sideSize();

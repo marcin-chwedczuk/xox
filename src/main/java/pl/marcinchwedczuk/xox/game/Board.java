@@ -19,6 +19,25 @@ public class Board {
         return board;
     }
 
+    public static Board of(
+            BoardMark a00, BoardMark a01, BoardMark a02, BoardMark a03, BoardMark a04,
+            BoardMark a10, BoardMark a11, BoardMark a12, BoardMark a13, BoardMark a14,
+            BoardMark a20, BoardMark a21, BoardMark a22, BoardMark a23, BoardMark a24,
+            BoardMark a30, BoardMark a31, BoardMark a32, BoardMark a33, BoardMark a34,
+            BoardMark a40, BoardMark a41, BoardMark a42, BoardMark a43, BoardMark a44)
+    {
+        var board = new Board(5);
+
+        board.set(0, 0, a00); board.set(0, 1, a01); board.set(0, 2, a02); board.set(0, 3, a03); board.set(0, 4, a04);
+        board.set(1, 0, a10); board.set(1, 1, a11); board.set(1, 2, a12); board.set(1, 3, a13); board.set(1, 4, a14);
+        board.set(2, 0, a20); board.set(2, 1, a21); board.set(2, 2, a22); board.set(2, 3, a23); board.set(2, 4, a24);
+        board.set(3, 0, a30); board.set(3, 1, a31); board.set(3, 2, a32); board.set(3, 3, a33); board.set(3, 4, a34);
+        board.set(4, 0, a40); board.set(4, 1, a41); board.set(4, 2, a42); board.set(4, 3, a43); board.set(4, 4, a44);
+
+
+        return board;
+    }
+
     private final int size;
     private final BoardMark[] board;
 
