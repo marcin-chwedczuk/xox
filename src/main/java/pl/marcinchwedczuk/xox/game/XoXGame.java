@@ -36,7 +36,7 @@ public class XoXGame {
 
         var currentPlayer = state.currentPlayer;
 
-        var algo = new AlfaBetaAlgo(logger, state.boardCopy(), scorer,
+        var algo = new AlphaBetaAlgo(logger, state.boardCopy(), scorer,
                 searchStrategy);
         var errorOrMove = algo.selectMove(currentPlayer, cancelOperation);
 

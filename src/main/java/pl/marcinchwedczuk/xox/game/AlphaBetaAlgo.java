@@ -13,7 +13,7 @@ import pl.marcinchwedczuk.xox.util.OperationCanceledException;
 import java.util.List;
 import java.util.Optional;
 
-public class AlfaBetaAlgo {
+public class AlphaBetaAlgo {
     private final Logger logger;
     private final Board board;
     private final BoardScorer scorer;
@@ -21,10 +21,10 @@ public class AlfaBetaAlgo {
 
     public boolean extraLogging = false;
 
-    public AlfaBetaAlgo(Logger logger,
-                        Board board,
-                        BoardScorer scorer,
-                        SearchStrategy searchStrategy) {
+    public AlphaBetaAlgo(Logger logger,
+                         Board board,
+                         BoardScorer scorer,
+                         SearchStrategy searchStrategy) {
         this.logger = logger;
         this.board = board;
         this.scorer = scorer;
@@ -47,7 +47,7 @@ public class AlfaBetaAlgo {
         }
     }
 
-    public Optional<Move> minimax(int level, boolean isMaxStep,
+    public Optional<Move> minimax(int level, boolean maximize,
                                  BoardMark player,
                                  double alpha, double beta,
                                  CancelOperation cancelOperation) {
@@ -56,7 +56,7 @@ public class AlfaBetaAlgo {
         Move best = new Move(-1, -1,
                 player,
                 null,
-                isMaxStep ? alpha : beta,
+                maximize ? alpha : beta,
                 alpha, beta);
 
         List<MoveProposal> movesToCheck =
@@ -68,27 +68,24 @@ public class AlfaBetaAlgo {
 
         for (MoveProposal move : movesToCheck) {
             // alpha beta pruning
-            if (isMaxStep && (best.score >= beta)) {
+            if (maximize && (best.score >= beta)) {
                 return Optional.of(best);
             }
-            if (!isMaxStep && (best.score <= alpha)) {
+            if (!maximize && (best.score <= alpha)) {
                 return Optional.of(best);
             }
 
             // Try move
             board.putMark(move.row, move.col, player);
+            var score = scoreBoard(board, move, player, maximize);
 
             Optional<Move> next = Optional.empty();
-
-            var score = scoreBoard(board, move, player, isMaxStep);
-
-
             if (!score.gameEnded) {
                 // Game did not end, do opponent move.
                 // May return empty() due to e.g. search strategy limits
-                next = minimax(level + 1, !isMaxStep, player.opponent(),
-                        isMaxStep ? best.score : alpha,
-                        isMaxStep ? beta : best.score,
+                next = minimax(level + 1, !maximize, player.opponent(),
+                        maximize ? best.score : alpha,
+                        maximize ? beta : best.score,
                         cancelOperation);
             }
 
@@ -98,8 +95,7 @@ public class AlfaBetaAlgo {
                     next.map(x -> x.score).orElse(score.score),
                     alpha, beta);
 
-            if (isMaxStep) {
-                // TODO: Random choice if score the same
+            if (maximize) {
                 if (candidate.score > best.score) {
                     best = candidate;
                 }
@@ -118,7 +114,7 @@ public class AlfaBetaAlgo {
     private Score scoreBoard(Board board,
                              MoveProposal lastMove,
                              BoardMark player,
-                             boolean isMaxStep) {
+                             boolean maximize) {
         // Score is in absolute values, 100 - means player
         // wins no matter X or O. 0 means player looses;
         var score = scorer.score(board, new Move(lastMove.row, lastMove.col,
@@ -126,7 +122,7 @@ public class AlfaBetaAlgo {
                 null,
                 Double.NaN, Double.NaN, Double.NaN));
 
-        if (!isMaxStep) {
+        if (!maximize) {
             return score.negate();
         }
 
