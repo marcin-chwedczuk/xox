@@ -401,6 +401,6 @@ public class XoXGameRulesTest {
     }
 
     private Move move(int row, int col, BoardMark mark) {
-        return new Move(row, col, mark, null, 0, 0, 0);
+        return new Move(row, col, mark);
     }
 }

@@ -87,6 +87,19 @@ public class Board {
         board[row*size + col] = EMPTY;
     }
 
+    public boolean isEquivalent(Board other) {
+        if (this.size != other.size) {
+            return false;
+        }
+
+        for (int i = 0; i < size*size; i++) {
+            if (board[i] != other.board[i]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     public String asText() {
         StringBuilder text = new StringBuilder();

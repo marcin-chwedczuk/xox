@@ -38,12 +38,14 @@ public class AlphaBetaAlgoTest {
         BoardMark player = X;
         List<Move> moves = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            Either<ErrorMessage, Move> errorOrMove =
+            Either<ErrorMessage, ScoredMove> errorOrMove =
                     alphaBeta.selectMove(player, new CancelOperation());
 
-            errorOrMove.onRight(move -> {
-                moves.add(move);
-                board.putMark(move.row, move.col, move.mark);
+            errorOrMove.onRight(scoredMove -> {
+                moves.add(scoredMove.move);
+                board.putMark(
+                        scoredMove.move.row, scoredMove.move.col,
+                        scoredMove.move.mark);
             });
             errorOrMove.onLeft(err -> fail(err.message));
 

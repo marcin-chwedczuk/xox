@@ -42,20 +42,13 @@ public class XoXGame {
                 searchStrategy);
         var errorOrMove = algo.selectMove(currentPlayer, cancelOperation);
 
-        errorOrMove.onRight(move -> {
-            if (move.mark != currentPlayer) {
+        errorOrMove.onRight(scoredMove -> {
+            if (scoredMove.move.mark != currentPlayer) {
                 throw new AssertionError();
             }
 
-            logger.debug("Move ladder");
-            var m = move;
-            while (m != null) {
-                logger.debug("Move (%d, %d) set %s gives %f%n", m.row, m.col, m.mark, m.score);
-                // logger.debug("%s", m.boardTxt);
-                m = m.next;
-            }
-
-            performMove(move.row, move.col);
+            logger.debug(scoredMove.debugInfo.toString());
+            performMove(scoredMove.move.row, scoredMove.move.col);
         });
 
         errorOrMove.onLeft(error -> {
