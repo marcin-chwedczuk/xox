@@ -54,6 +54,9 @@ public class MainWindowController {
     @FXML private CheckBox countAlmostWinsCheckbox;
     @FXML private CheckBox countEmptyFieldsCheckbox;
 
+    @FXML private Label turnLabel;
+    @FXML private Label markLabel;
+
     @FXML private Button nextMoveBtn;
     @FXML private Button undoBtn;
     @FXML private Button resetBtn;
@@ -98,6 +101,9 @@ public class MainWindowController {
                 .bindBidirectional(model.heuristicsModel.countEmptyFieldsProperty);
         countAlmostWinsCheckbox.selectedProperty()
                 .bindBidirectional(model.heuristicsModel.countAlmostWinsProperty);
+
+        turnLabel.textProperty().bindBidirectional(model.turnProperty);
+        markLabel.textProperty().bindBidirectional(model.markProperty);
 
         nextMoveBtn.setOnAction(event -> {
             model.nextMoveCommand.execute();

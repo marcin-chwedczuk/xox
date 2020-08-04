@@ -2,10 +2,7 @@ package pl.marcinchwedczuk.xox.gui;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import pl.marcinchwedczuk.xox.game.GameState;
@@ -35,12 +32,14 @@ public class MainWindowModel {
     public final SearchStrategyModel searchStrategyModel = new SearchStrategyModel();
     public final HeuristicsModel heuristicsModel = new HeuristicsModel();
 
+    public final StringProperty turnProperty = new SimpleStringProperty();
+    public final StringProperty markProperty = new SimpleStringProperty();
+
     public final ObjectProperty<GameState> gameStateProperty =
             new SimpleObjectProperty<>(null);
 
     public final AsyncCommand<Either<ErrorMessage, Unit>> nextMoveCommand;
-    public final BooleanProperty canUndo =
-            new SimpleBooleanProperty(false);
+    public final BooleanProperty canUndo = new SimpleBooleanProperty(false);
 
     private final Logger logger;
     private final Dialogs dialogs;
@@ -85,14 +84,14 @@ public class MainWindowModel {
                 nextMoveEnabled);
 
         nextMoveCommand.resultProperty()
-                .addListener((observable, oldValue, newValue) -> notifyModelChanged());
+                .addListener((observable, oldValue, newValue) -> handleModelChanges());
 
         reset();
     }
 
     public void undo() {
         game.undoMove();
-        notifyModelChanged();
+        handleModelChanges();
     }
 
     public void reset() {
@@ -112,7 +111,7 @@ public class MainWindowModel {
         resetGameMode();
 
         // Notify to redraw
-        notifyModelChanged();
+        handleModelChanges();
     }
 
     private void resetGameMode() {
@@ -131,18 +130,25 @@ public class MainWindowModel {
         }
 
         gameMode.init();
+        updateGameModeProperties();
     }
 
     public void onBoardClicked(int row, int col) {
         var result = gameMode.performHumanMove(row, col);
         result.onLeft(msg -> dialogs.error("Error", msg.message));
 
-        notifyModelChanged();
+        handleModelChanges();
     }
 
-    private void notifyModelChanged() {
+    private void handleModelChanges() {
         gameStateProperty.set(game.state());
-        modelChangedListener.run();
         canUndo.set(game.canUndoMove());
+        updateGameModeProperties();
+        modelChangedListener.run();
+    }
+
+    private void updateGameModeProperties() {
+        turnProperty.set(gameMode.currentPlayer());
+        markProperty.set(gameMode.currentPlayerMark().toString());
     }
 }

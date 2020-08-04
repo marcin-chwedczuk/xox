@@ -1,5 +1,6 @@
 package pl.marcinchwedczuk.xox.gui.gamemode;
 
+import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.XoXGame;
 import pl.marcinchwedczuk.xox.util.*;
 
@@ -15,6 +16,16 @@ public class ComputerComputerGameMode implements GameMode {
     @Override
     public void init() {
         // Do Nothing
+    }
+
+    @Override
+    public String currentPlayer() {
+        return String.format("COMPUTER %s", game.currentPlayer());
+    }
+
+    @Override
+    public BoardMark currentPlayerMark() {
+        return game.currentPlayer();
     }
 
     @Override

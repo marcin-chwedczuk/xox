@@ -21,6 +21,17 @@ public class HumanComputerGameMode implements GameMode {
     }
 
     @Override
+    public String currentPlayer() {
+        return game.currentPlayer() == humanPlayer
+                ? "HUMAN" : "COMPUTER";
+    }
+
+    @Override
+    public BoardMark currentPlayerMark() {
+        return game.currentPlayer();
+    }
+
+    @Override
     public Either<ErrorMessage, Unit> performComputerMove(CancelOperation cancelOperation) {
         if (game.currentPlayer() != humanPlayer) {
             game.makeAutomaticMove(cancelOperation);

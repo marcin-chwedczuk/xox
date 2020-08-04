@@ -64,6 +64,26 @@
                         <Button fx:id="nextMoveBtn" layoutX="539.0" layoutY="239.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Next Move" />
                         <Button fx:id="resetBtn" layoutX="539.0" layoutY="675.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Restart" />
                         <Button fx:id="undoBtn" layoutX="539.0" layoutY="315.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Redo" />
+                        <Label layoutX="499.0" layoutY="130.0" prefHeight="17.0" prefWidth="61.0" text="TURN:">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="499.0" layoutY="164.0" prefHeight="17.0" prefWidth="61.0" text="MARK:">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="turnLabel" layoutX="558.0" layoutY="130.0" prefHeight="18.0" prefWidth="124.0">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="markLabel" layoutX="558.0" layoutY="164.0" prefHeight="18.0" prefWidth="140.0">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                   </AnchorPane>
             </content>
