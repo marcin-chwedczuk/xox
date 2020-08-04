@@ -9,8 +9,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.GameState;
-import pl.marcinchwedczuk.xox.game.WinningStride;
 import pl.marcinchwedczuk.xox.game.Winner;
+import pl.marcinchwedczuk.xox.game.WinningStride;
 
 import java.util.List;
 import java.util.Optional;

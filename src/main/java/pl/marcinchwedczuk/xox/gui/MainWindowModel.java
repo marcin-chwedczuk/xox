@@ -2,16 +2,19 @@ package pl.marcinchwedczuk.xox.gui;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import pl.marcinchwedczuk.xox.util.Logger;
 import pl.marcinchwedczuk.xox.game.GameState;
 import pl.marcinchwedczuk.xox.game.XoXGame;
 import pl.marcinchwedczuk.xox.gui.gamemode.*;
 import pl.marcinchwedczuk.xox.mvvm.AsyncCommand;
 import pl.marcinchwedczuk.xox.util.Either;
 import pl.marcinchwedczuk.xox.util.ErrorMessage;
+import pl.marcinchwedczuk.xox.util.Logger;
 import pl.marcinchwedczuk.xox.util.Unit;
 
 public class MainWindowModel {

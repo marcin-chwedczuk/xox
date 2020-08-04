@@ -1,7 +1,6 @@
 package pl.marcinchwedczuk.xox.game.util;
 
 import pl.marcinchwedczuk.xox.game.Board;
-import pl.marcinchwedczuk.xox.game.Move;
 import pl.marcinchwedczuk.xox.game.ScoredMove;
 
 public class MoveDebugInfo {

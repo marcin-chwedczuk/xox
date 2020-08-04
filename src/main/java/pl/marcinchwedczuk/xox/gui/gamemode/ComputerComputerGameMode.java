@@ -1,11 +1,7 @@
 package pl.marcinchwedczuk.xox.gui.gamemode;
 
-import pl.marcinchwedczuk.xox.util.Logger;
 import pl.marcinchwedczuk.xox.game.XoXGame;
-import pl.marcinchwedczuk.xox.util.CancelOperation;
-import pl.marcinchwedczuk.xox.util.Either;
-import pl.marcinchwedczuk.xox.util.ErrorMessage;
-import pl.marcinchwedczuk.xox.util.Unit;
+import pl.marcinchwedczuk.xox.util.*;
 
 public class ComputerComputerGameMode implements GameMode {
     private final Logger logger;

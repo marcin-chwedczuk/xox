@@ -6,10 +6,10 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import jfxtras.labs.scene.control.ToggleGroupValue;
-import pl.marcinchwedczuk.xox.util.Logger;
 import pl.marcinchwedczuk.xox.gui.controls.GameBoard;
 import pl.marcinchwedczuk.xox.gui.gamemode.GameModeType;
 import pl.marcinchwedczuk.xox.mvvm.JfxTimer;
+import pl.marcinchwedczuk.xox.util.Logger;
 
 public class MainWindowController {
     private final JfxTimer timer = new JfxTimer();

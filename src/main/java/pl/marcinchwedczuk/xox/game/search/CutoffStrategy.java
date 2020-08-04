@@ -5,7 +5,6 @@ import pl.marcinchwedczuk.xox.game.BoardMark;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CutoffStrategy implements SearchStrategy {
     public static CutoffStrategy basedOn(SearchStrategy strategy) {

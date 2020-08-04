@@ -1,17 +1,12 @@
 package pl.marcinchwedczuk.xox.game;
 
-import pl.marcinchwedczuk.xox.game.util.MoveDebugInfo;
-import pl.marcinchwedczuk.xox.util.Logger;
 import pl.marcinchwedczuk.xox.game.heuristic.Heuristics;
 import pl.marcinchwedczuk.xox.game.heuristic.Score;
 import pl.marcinchwedczuk.xox.game.search.MoveProposal;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
-import pl.marcinchwedczuk.xox.util.CancelOperation;
-import pl.marcinchwedczuk.xox.util.Either;
-import pl.marcinchwedczuk.xox.util.ErrorMessage;
-import pl.marcinchwedczuk.xox.util.OperationCanceledException;
+import pl.marcinchwedczuk.xox.game.util.MoveDebugInfo;
+import pl.marcinchwedczuk.xox.util.*;
 
-import javax.imageio.plugins.bmp.BMPImageWriteParam;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,8 +108,6 @@ public class AlphaBetaAlgo {
                         alpha, beta,
                         score.isFinished));
             }
-
-
 
             board.removeMark(move.row, move.col);
         }

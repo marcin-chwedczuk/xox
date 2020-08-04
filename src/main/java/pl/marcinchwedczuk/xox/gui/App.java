@@ -7,8 +7,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 public class App extends Application {
 

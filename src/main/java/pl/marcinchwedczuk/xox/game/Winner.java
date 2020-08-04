@@ -1,8 +1,5 @@
 package pl.marcinchwedczuk.xox.game;
 
-import pl.marcinchwedczuk.xox.game.BoardMark;
-import pl.marcinchwedczuk.xox.game.WinningStride;
-
 import java.util.List;
 
 public class Winner {

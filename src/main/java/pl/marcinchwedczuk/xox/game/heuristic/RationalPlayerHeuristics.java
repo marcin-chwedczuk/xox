@@ -1,6 +1,8 @@
 package pl.marcinchwedczuk.xox.game.heuristic;
 
-import pl.marcinchwedczuk.xox.game.*;
+import pl.marcinchwedczuk.xox.game.Board;
+import pl.marcinchwedczuk.xox.game.Move;
+import pl.marcinchwedczuk.xox.game.XoXGameRules;
 
 public class RationalPlayerHeuristics implements Heuristics {
     public final XoXGameRules gameRules;

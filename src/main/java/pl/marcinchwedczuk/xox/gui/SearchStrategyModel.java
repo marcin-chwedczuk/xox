@@ -1,8 +1,6 @@
 package pl.marcinchwedczuk.xox.gui;
 
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import pl.marcinchwedczuk.xox.game.search.CutoffStrategy;

@@ -1,10 +1,10 @@
 package pl.marcinchwedczuk.xox.game;
 
-import pl.marcinchwedczuk.xox.util.Logger;
 import pl.marcinchwedczuk.xox.game.heuristic.Heuristics;
 import pl.marcinchwedczuk.xox.game.heuristic.RationalPlayerHeuristics;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 import pl.marcinchwedczuk.xox.util.CancelOperation;
+import pl.marcinchwedczuk.xox.util.Logger;
 
 import java.util.Optional;
 import java.util.Stack;

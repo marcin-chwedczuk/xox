@@ -1,17 +1,14 @@
 package pl.marcinchwedczuk.xox.mvvm;
 
 import javafx.application.Platform;
-import javafx.beans.Observable;
-import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
-import pl.marcinchwedczuk.xox.util.*;
+import pl.marcinchwedczuk.xox.util.CancelOperation;
+import pl.marcinchwedczuk.xox.util.Either;
+import pl.marcinchwedczuk.xox.util.OperationCanceledException;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 
 public class AsyncCommand<R> {
