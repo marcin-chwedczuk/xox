@@ -1,6 +1,8 @@
 package pl.marcinchwedczuk.xox.game.heuristic;
 
+import com.google.common.annotations.VisibleForTesting;
 import pl.marcinchwedczuk.xox.game.Board;
+import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.Move;
 import pl.marcinchwedczuk.xox.game.XoXGameRules;
 
@@ -24,9 +26,13 @@ public class RationalPlayerHeuristics implements Heuristics {
         // Logic behind empty fields counting:
         // The faster we win (larger number of empty fields) the better
         int emptyFieldBonus = countEmptyFields ? emptyPlaces : 0;
+        int almostWinsBonus = countAlmostWins
+                ? countAlmostWins(board, lastMove.mark)
+                : 0;
 
         if (wins > 0) {
-            return Score.gameEnded(wins*1000 + emptyFieldBonus);
+            return Score.gameEnded(
+                    wins*1000 + almostWinsBonus*50 + emptyFieldBonus);
         }
         else if (endGame) {
             // Draw - nobody won
@@ -36,6 +42,27 @@ public class RationalPlayerHeuristics implements Heuristics {
             // Game is still ongoing
             return Score.gameOngoing(0);
         }
+    }
+
+    @VisibleForTesting
+    int countAlmostWins(Board board, BoardMark player) {
+        int almostWins = 0;
+
+        for (int row = 0; row < board.sideSize(); row++) {
+            for (int col = 0; col < board.sideSize(); col++) {
+                if (!board.isEmpty(row, col)) {
+                    continue;
+                }
+
+                board.putMark(row, col, player);
+                almostWins += gameRules.countWinsForLastMove(
+                        board, new Move(row, col, player));
+
+                board.removeMark(row, col);
+            }
+        }
+
+        return almostWins;
     }
 
     public void setCountEmptyFields(boolean countEmptyFields) {
