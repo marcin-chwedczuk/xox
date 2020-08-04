@@ -32,25 +32,25 @@ public class SearchStrategyModel {
 
     public SearchStrategyModel() {
         searchStrategyTypeProperty.addListener((observable, oldValue, newValue) -> {
-                resetStrategy();
+                reset();
         });
 
         probabilisticSearch_numberOfMovesProperty.addListener((observable, oldValue, newValue) -> {
-            resetStrategy();
+            reset();
         });
 
         probabilisticSearch_cutoffLevelProperty.addListener((observable, oldValue, newValue) -> {
-            resetStrategy();
+            reset();
         });
 
         cutoffSearch_cutoffLevelProperty.addListener((observable, oldValue, newValue) -> {
-            resetStrategy();
+            reset();
         });
 
-        resetStrategy();
+        reset();
     }
 
-    private void resetStrategy() {
+    private void reset() {
         switch (searchStrategyTypeProperty.get()) {
             case FULL_SEARCH:
                 searchStrategyProperty.set(new FullSearch());

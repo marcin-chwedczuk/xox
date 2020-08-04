@@ -51,9 +51,8 @@ public class MainWindowController {
 
     @FXML private ChoiceBox<Integer> cutOffSearch_cutOffLevelCombo;
 
-    @FXML private CheckBox emptyFieldsLoseCheck;
-    @FXML private CheckBox countAlmostWinsCheck;
-    @FXML private CheckBox emptyFieldsWinCheck;
+    @FXML private CheckBox countAlmostWinsCheckbox;
+    @FXML private CheckBox countEmptyFieldsCheckbox;
 
     @FXML private Button nextMoveBtn;
     @FXML private Button undoBtn;
@@ -95,11 +94,9 @@ public class MainWindowController {
         cutOffSearch_cutOffLevelCombo.valueProperty()
                 .bindBidirectional(model.searchStrategyModel.cutoffSearch_cutoffLevelProperty);
 
-        emptyFieldsLoseCheck.selectedProperty()
-                .bindBidirectional(model.heuristicsModel.countEmptyFieldsOnLooseProperty);
-        emptyFieldsWinCheck.selectedProperty()
-                .bindBidirectional(model.heuristicsModel.countEmptyFieldsOnWinProperty);
-        countAlmostWinsCheck.selectedProperty()
+        countEmptyFieldsCheckbox.selectedProperty()
+                .bindBidirectional(model.heuristicsModel.countEmptyFieldsProperty);
+        countAlmostWinsCheckbox.selectedProperty()
                 .bindBidirectional(model.heuristicsModel.countAlmostWinsProperty);
 
         nextMoveBtn.setOnAction(event -> {

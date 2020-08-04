@@ -8,10 +8,7 @@ public class HeuristicsModel {
     public final ObjectProperty<GameGeometry> gameGeometryProperty =
             new SimpleObjectProperty<>();
 
-    public final BooleanProperty countEmptyFieldsOnLooseProperty =
-            new SimpleBooleanProperty(true);
-
-    public final BooleanProperty countEmptyFieldsOnWinProperty =
+    public final BooleanProperty countEmptyFieldsProperty =
             new SimpleBooleanProperty(true);
 
     public final BooleanProperty countAlmostWinsProperty =
@@ -29,11 +26,7 @@ public class HeuristicsModel {
             reset();
         });
 
-        countEmptyFieldsOnLooseProperty.addListener((observable, oldValue, newValue) -> {
-            reset();
-        });
-
-        countEmptyFieldsOnWinProperty.addListener((observable, oldValue, newValue) -> {
+        countEmptyFieldsProperty.addListener((observable, oldValue, newValue) -> {
             reset();
         });
     }
@@ -45,14 +38,13 @@ public class HeuristicsModel {
             return;
         }
 
-        var scorer = new RationalPlayerHeuristics(
+        var heuristics = new RationalPlayerHeuristics(
                 new XoXGameRules(geometry.boardSize, geometry.winningStride));
 
-        scorer.setCountEmptyFieldsOnLoose(countEmptyFieldsOnLooseProperty.get());
-        scorer.setCountEmptyFieldsOnWin(countEmptyFieldsOnWinProperty.get());
-        scorer.setCountAlmostWins(countAlmostWinsProperty.get());
+        heuristics.setCountEmptyFields(countEmptyFieldsProperty.get());
+        heuristics.setCountAlmostWins(countAlmostWinsProperty.get());
 
-        heuristicsProperty.set(scorer);
+        heuristicsProperty.set(heuristics);
     }
 
     public ReadOnlyObjectProperty<RationalPlayerHeuristics> heuristicsProperty() {
