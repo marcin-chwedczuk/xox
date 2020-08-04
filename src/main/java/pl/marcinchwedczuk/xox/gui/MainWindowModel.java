@@ -1,5 +1,6 @@
 package pl.marcinchwedczuk.xox.gui;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
@@ -84,7 +85,16 @@ public class MainWindowModel {
                 nextMoveEnabled);
 
         nextMoveCommand.resultProperty()
-                .addListener((observable, oldValue, newValue) -> handleModelChanges());
+                .addListener((observable, oldValue, newValue) -> {
+                    handleModelChanges();
+
+                    // TODO: This sucks, needs some refactor
+                    newValue.onRight(result -> {
+                        result.onLeft(errorMessage -> {
+                            Platform.runLater(() -> dialogs.info(errorMessage.message));
+                        });
+                    });
+                });
 
         reset();
     }
@@ -135,7 +145,7 @@ public class MainWindowModel {
 
     public void onBoardClicked(int row, int col) {
         var result = gameMode.performHumanMove(row, col);
-        result.onLeft(msg -> dialogs.error("Error", msg.message));
+        result.onLeft(msg -> dialogs.info(msg.message));
 
         handleModelChanges();
     }

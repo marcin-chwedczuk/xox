@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.xox.gui.gamemode;
 
 import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.XoXGame;
+import pl.marcinchwedczuk.xox.gui.TextResources;
 import pl.marcinchwedczuk.xox.util.*;
 
 public class ComputerComputerGameMode implements GameMode {
@@ -36,8 +37,6 @@ public class ComputerComputerGameMode implements GameMode {
 
     @Override
     public Either<ErrorMessage, Unit> performHumanMove(int row, int col) {
-        return Either.left(ErrorMessage.of(
-                "In this game mode user input is not accepted."
-        ));
+        return Either.left(ErrorMessage.of(TextResources.NO_HUMAN_MOVE_POSSIBLE));
     }
 }

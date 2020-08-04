@@ -2,6 +2,7 @@ package pl.marcinchwedczuk.xox.gui.gamemode;
 
 import pl.marcinchwedczuk.xox.game.BoardMark;
 import pl.marcinchwedczuk.xox.game.XoXGame;
+import pl.marcinchwedczuk.xox.gui.TextResources;
 import pl.marcinchwedczuk.xox.util.*;
 
 public class HumanComputerGameMode implements GameMode {
@@ -38,9 +39,7 @@ public class HumanComputerGameMode implements GameMode {
             return Either.right(Unit.instance);
         }
         else {
-            return Either.left(ErrorMessage.of(
-                    "This is human move turn. Please click on the board."
-            ));
+            return Either.left(ErrorMessage.of(TextResources.HUMAN_TURN));
         }
     }
 
@@ -51,9 +50,7 @@ public class HumanComputerGameMode implements GameMode {
             return Either.right(Unit.instance);
         }
         else {
-            return Either.left(ErrorMessage.of(
-                    "This is computer move turn."
-            ));
+            return Either.left(ErrorMessage.of(TextResources.COMPUTER_TURN));
         }
     }
 }
