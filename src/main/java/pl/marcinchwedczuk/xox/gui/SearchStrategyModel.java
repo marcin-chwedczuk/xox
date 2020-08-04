@@ -9,41 +9,41 @@ import pl.marcinchwedczuk.xox.game.search.ProbabilisticSearch;
 import pl.marcinchwedczuk.xox.game.search.SearchStrategy;
 
 public class SearchStrategyModel {
-    public final ObjectProperty<StrategyType> strategyTypeProperty =
+    public final ObjectProperty<StrategyType> searchStrategyTypeProperty =
             new SimpleObjectProperty<>(StrategyType.FULL_SEARCH);
 
     // Probabilistic Strategy Properties
-    public final IntegerProperty minNumberOfMovesProperty =
+    public final IntegerProperty probabilisticSearch_numberOfMovesProperty =
             new SimpleIntegerProperty(17);
 
-    public final IntegerProperty percentageOfMovesProperty =
-            new SimpleIntegerProperty(40);
+    public final IntegerProperty probabilisticSearch_cutoffLevelProperty =
+            new SimpleIntegerProperty(0);
 
     // Cutoff strategy properties
-    public final ObservableList<Integer> cutoffLevelsProperty = FXCollections.observableArrayList(
-            1, 2, 3, 4, 5
+    public final ObservableList<Integer> cutoffSearch_cutoffLevelsProperty = FXCollections.observableArrayList(
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
     );
 
-    public final ObjectProperty<Integer> cutoffLevelProperty =
-            new SimpleObjectProperty<>(cutoffLevelsProperty.get(0));
+    public final ObjectProperty<Integer> cutoffSearch_cutoffLevelProperty =
+            new SimpleObjectProperty<>(cutoffSearch_cutoffLevelsProperty.get(0));
 
-    private final ObjectProperty<SearchStrategy> strategyProperty =
+    private final ObjectProperty<SearchStrategy> searchStrategyProperty =
             new SimpleObjectProperty<>();
 
     public SearchStrategyModel() {
-        strategyTypeProperty.addListener((observable, oldValue, newValue) -> {
+        searchStrategyTypeProperty.addListener((observable, oldValue, newValue) -> {
                 resetStrategy();
         });
 
-        minNumberOfMovesProperty.addListener((observable, oldValue, newValue) -> {
+        probabilisticSearch_numberOfMovesProperty.addListener((observable, oldValue, newValue) -> {
             resetStrategy();
         });
 
-        percentageOfMovesProperty.addListener((observable, oldValue, newValue) -> {
+        probabilisticSearch_cutoffLevelProperty.addListener((observable, oldValue, newValue) -> {
             resetStrategy();
         });
 
-        cutoffLevelProperty.addListener((observable, oldValue, newValue) -> {
+        cutoffSearch_cutoffLevelProperty.addListener((observable, oldValue, newValue) -> {
             resetStrategy();
         });
 
@@ -51,23 +51,23 @@ public class SearchStrategyModel {
     }
 
     private void resetStrategy() {
-        switch (strategyTypeProperty.get()) {
+        switch (searchStrategyTypeProperty.get()) {
             case FULL_SEARCH:
-                strategyProperty.set(new FullSearch());
+                searchStrategyProperty.set(new FullSearch());
                 break;
 
             case CUT_OFF: {
                 var strategy = CutoffStrategy.basedOn(new FullSearch());
-                strategy.setCutoff(cutoffLevelProperty.get());
-                strategyProperty.set(strategy);
+                strategy.setCutoff(cutoffSearch_cutoffLevelProperty.get());
+                searchStrategyProperty.set(strategy);
                 break;
             }
 
             case PROBABILISTIC: {
                 var strategy = ProbabilisticSearch.basedOn(new FullSearch());
-                strategy.setMinNumberOfMoves(minNumberOfMovesProperty.get());
-                strategy.setPercentageOfMovesToCheck(percentageOfMovesProperty.get());
-                strategyProperty.set(strategy);
+                strategy.setNumberOfMoves(probabilisticSearch_numberOfMovesProperty.get());
+                strategy.setCutoff(probabilisticSearch_cutoffLevelProperty.get());
+                searchStrategyProperty.set(strategy);
                 break;
             }
 
@@ -77,6 +77,6 @@ public class SearchStrategyModel {
     }
 
     public ReadOnlyObjectProperty<SearchStrategy> strategyProperty() {
-        return strategyProperty;
+        return searchStrategyProperty;
     }
 }

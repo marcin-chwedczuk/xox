@@ -41,16 +41,15 @@ public class MainWindowController {
 
     private ToggleGroupValue<StrategyType> searchStrategyToggleGroup = new ToggleGroupValue<>();
     @FXML private RadioButton probabilisticSearchRadio;
-    @FXML private RadioButton cutOffRadio;
+    @FXML private RadioButton cutOffSearchRadio;
     @FXML private RadioButton fullSearchRadio;
 
-    @FXML private Label minNumberOfMovesLbl;
-    @FXML private Slider minNumberOfMovesSlider;
+    @FXML private Label probabilisticSearch_numberOfMovesLabel;
+    @FXML private Slider probabilisticSearch_numberOfMovesSlider;
+    @FXML private Label probabilisticSearch_cutoffLabel;
+    @FXML private Slider probabilisticSearch_cutoffSlider;
 
-    @FXML private Label percentageSearchSpaceLabel;
-    @FXML private Slider percentageSearchSpaceSlider;
-
-    @FXML private ChoiceBox<Integer> cutOffLevelCombo;
+    @FXML private ChoiceBox<Integer> cutOffSearch_cutOffLevelCombo;
 
     @FXML private CheckBox emptyFieldsLoseCheck;
     @FXML private CheckBox countAlmostWinsCheck;
@@ -60,10 +59,9 @@ public class MainWindowController {
     @FXML private Button undoBtn;
     @FXML private Button resetBtn;
 
-    @FXML private ProgressIndicator progressIndicator;
-    @FXML private TabPane tabPane;
+    @FXML private TabPane mainPane;
     @FXML private Pane waitCurtain;
-    @FXML private Button curtainCancelBtn;
+    @FXML private Button waitCurtain_cancelBtn;
 
     @FXML private GameBoard gameBoard;
 
@@ -78,24 +76,24 @@ public class MainWindowController {
         gameModeToggleGroup.valueProperty().bindBidirectional(model.gameModeProperty);
 
         searchStrategyToggleGroup.add(probabilisticSearchRadio, StrategyType.PROBABILISTIC);
-        searchStrategyToggleGroup.add(cutOffRadio, StrategyType.CUT_OFF);
+        searchStrategyToggleGroup.add(cutOffSearchRadio, StrategyType.CUT_OFF);
         searchStrategyToggleGroup.add(fullSearchRadio, StrategyType.FULL_SEARCH);
         searchStrategyToggleGroup.valueProperty()
-                .bindBidirectional(model.searchStrategyModel.strategyTypeProperty);
+                .bindBidirectional(model.searchStrategyModel.searchStrategyTypeProperty);
 
-        minNumberOfMovesSlider.valueProperty()
-                .bindBidirectional(model.searchStrategyModel.minNumberOfMovesProperty);
-        minNumberOfMovesLbl.textProperty()
-                .bind(model.searchStrategyModel.minNumberOfMovesProperty.asString());
+        probabilisticSearch_numberOfMovesSlider.valueProperty()
+                .bindBidirectional(model.searchStrategyModel.probabilisticSearch_numberOfMovesProperty);
+        probabilisticSearch_numberOfMovesLabel.textProperty()
+                .bind(model.searchStrategyModel.probabilisticSearch_numberOfMovesProperty.asString());
 
-        percentageSearchSpaceSlider.valueProperty()
-                .bindBidirectional(model.searchStrategyModel.percentageOfMovesProperty);
-        percentageSearchSpaceLabel.textProperty()
-                .bind(model.searchStrategyModel.percentageOfMovesProperty.asString());
+        probabilisticSearch_cutoffSlider.valueProperty()
+                .bindBidirectional(model.searchStrategyModel.probabilisticSearch_cutoffLevelProperty);
+        probabilisticSearch_cutoffLabel.textProperty()
+                .bind(model.searchStrategyModel.probabilisticSearch_cutoffLevelProperty.asString());
 
-        cutOffLevelCombo.setItems(model.searchStrategyModel.cutoffLevelsProperty);
-        cutOffLevelCombo.valueProperty()
-                .bindBidirectional(model.searchStrategyModel.cutoffLevelProperty);
+        cutOffSearch_cutOffLevelCombo.setItems(model.searchStrategyModel.cutoffSearch_cutoffLevelsProperty);
+        cutOffSearch_cutOffLevelCombo.valueProperty()
+                .bindBidirectional(model.searchStrategyModel.cutoffSearch_cutoffLevelProperty);
 
         emptyFieldsLoseCheck.selectedProperty()
                 .bindBidirectional(model.heuristicsModel.countEmptyFieldsOnLooseProperty);
@@ -123,7 +121,7 @@ public class MainWindowController {
             model.reset();
         });
 
-        tabPane.disableProperty()
+        mainPane.disableProperty()
                 .bind(model.nextMoveCommand.isRunningProperty());
 
         model.nextMoveCommand.isRunningProperty().addListener((observable, oldValue, newValue) -> {
@@ -140,7 +138,7 @@ public class MainWindowController {
 
             setCursor(newValue ? Cursor.WAIT : Cursor.DEFAULT);
         });
-        curtainCancelBtn.setOnAction(event -> {
+        waitCurtain_cancelBtn.setOnAction(event -> {
             model.nextMoveCommand.cancel();
         });
 

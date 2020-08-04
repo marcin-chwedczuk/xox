@@ -27,6 +27,10 @@ public class CutoffStrategy implements SearchStrategy {
         return innerStrategy.movesToCheck(board, player, level);
     }
 
+    public int getCutoff() {
+        return cutoff;
+    }
+
     public void setCutoff(int level) {
         if (cutoff <= 0) {
             throw new IllegalArgumentException("level");

@@ -11,48 +11,49 @@ public class ProbabilisticSearch implements SearchStrategy {
         return new ProbabilisticSearch(innerStrategy);
     }
 
-    private final SearchStrategy innerStrategy;
+    private final CutoffStrategy cutoffStrategy;
 
-    private int minNumberOfMoves = 17;
-    private int percentageOfMovesToCheck = 40;
+    private int numberOfMoves = 17;
 
     public ProbabilisticSearch(SearchStrategy innerStrategy) {
-        this.innerStrategy = innerStrategy;
+        this.cutoffStrategy = CutoffStrategy.basedOn(innerStrategy);
+        this.setCutoff(Short.MAX_VALUE);
     }
 
     @Override
     public List<MoveProposal> movesToCheck(Board board, BoardMark player, int level) {
         List<MoveProposal> moves =
-                innerStrategy.movesToCheck(board, player, level);
+                cutoffStrategy.movesToCheck(board, player, level);
 
-        if (moves.size() < minNumberOfMoves) {
+        if (moves.size() <= numberOfMoves) {
             return moves;
         }
 
-        int movesToCheck = Math.max(1, percentageOfMovesToCheck*moves.size()/100);
         Collections.shuffle(moves);
-        return moves.subList(0, movesToCheck);
+        return moves.subList(0, numberOfMoves);
     }
 
-    public void setMinNumberOfMoves(int minNumberOfMoves) {
+    public void setNumberOfMoves(int minNumberOfMoves) {
         if (minNumberOfMoves < 0) {
             throw new IllegalArgumentException("minNumberOfMoves");
         }
 
-        this.minNumberOfMoves = minNumberOfMoves;
+        this.numberOfMoves = minNumberOfMoves;
     }
 
-    public void setPercentageOfMovesToCheck(int percentageOfMovesToCheck) {
-        if (percentageOfMovesToCheck <= 0 || percentageOfMovesToCheck > 100) {
-            throw new IllegalArgumentException("percentageOfMovesToCheck");
+    public void setCutoff(int level) {
+        if (level < 0) {
+            throw new IllegalArgumentException("cutoffLevel");
         }
 
-        this.percentageOfMovesToCheck = percentageOfMovesToCheck;
+        // We tread 0 as "no cutoff"
+        level = (level == 0) ? Short.MAX_VALUE : level;
+        cutoffStrategy.setCutoff(level);
     }
 
     @Override
     public String toString() {
-        return String.format("ProbabilisticSearch(min=%d, percentage=%d)",
-                minNumberOfMoves, percentageOfMovesToCheck);
+        return String.format("ProbabilisticSearch(moves=%d, cutoff=%d)",
+                numberOfMoves, cutoffStrategy.getCutoff());
     }
 }

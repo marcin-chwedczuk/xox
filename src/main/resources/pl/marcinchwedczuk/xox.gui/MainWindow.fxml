@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 <?import pl.marcinchwedczuk.xox.gui.controls.GameBoard?>
+
 <AnchorPane prefHeight="790.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.marcinchwedczuk.xox.gui.MainWindowController">
    <children>
-      <TabPane fx:id="tabPane" layoutX="379.0" layoutY="-44.0" prefHeight="744.0" prefWidth="734.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TabPane fx:id="mainPane" layoutX="379.0" layoutY="-44.0" prefHeight="744.0" prefWidth="734.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
           <Tab text="Game">
             <content>
@@ -15,11 +27,7 @@
                      <children>
                         <AnchorPane layoutX="14.0" layoutY="239.0" prefHeight="500.0" prefWidth="500.0" style="-fx-border-color: gray;">
                            <children>
-                               <GameBoard fx:id="gameBoard"
-                                          AnchorPane.bottomAnchor="0.0"
-                                          AnchorPane.leftAnchor="0.0"
-                                          AnchorPane.rightAnchor="0.0"
-                                          AnchorPane.topAnchor="0.0" />
+                               <GameBoard fx:id="gameBoard" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                               <!--
                               <Canvas fx:id="boardCanvas" height="499.0" width="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                               -->
@@ -45,14 +53,14 @@
                         <RadioButton fx:id="probabilisticSearchRadio" layoutX="264.0" layoutY="45.0" mnemonicParsing="false" text="Use probabilistic search">
 
                         </RadioButton>
-                        <Slider fx:id="minNumberOfMovesSlider" layoutX="291.0" layoutY="96.0" max="25.0" min="10.0" prefHeight="16.0" prefWidth="180.0" />
-                        <Label layoutX="293.0" layoutY="71.0" text="Min number of moves:" />
-                        <Label fx:id="minNumberOfMovesLbl" layoutX="427.0" layoutY="71.0" prefHeight="17.0" prefWidth="41.0" text="99" />
-                        <Label layoutX="293.0" layoutY="122.0" text="Perentage of the search space:" />
-                        <Label fx:id="percentageSearchSpaceLabel" layoutX="468.0" layoutY="122.0" prefHeight="17.0" prefWidth="41.0" text="99" />
-                        <Slider fx:id="percentageSearchSpaceSlider" layoutX="293.0" layoutY="145.0" min="10.0" prefHeight="16.0" prefWidth="180.0" />
-                        <RadioButton fx:id="cutOffRadio" layoutX="264.0" layoutY="173.0" mnemonicParsing="false" text="Use cut-off level" />
-                        <ChoiceBox fx:id="cutOffLevelCombo" layoutX="386.0" layoutY="168.0" prefHeight="27.0" prefWidth="82.0" />
+                        <Slider fx:id="probabilisticSearch_numberOfMovesSlider" layoutX="291.0" layoutY="96.0" max="25.0" min="1.0" prefHeight="16.0" prefWidth="180.0" />
+                        <Label layoutX="293.0" layoutY="71.0" text="Number of moves:" />
+                        <Label fx:id="probabilisticSearch_numberOfMovesLabel" layoutX="397.0" layoutY="71.0" prefHeight="17.0" prefWidth="41.0" text="99" />
+                        <Label layoutX="293.0" layoutY="122.0" text="Cut-off level (0 = No cut-off):" />
+                        <Label fx:id="probabilisticSearch_cutoffLabel" layoutX="458.0" layoutY="122.0" prefHeight="17.0" prefWidth="41.0" text="99" />
+                        <Slider fx:id="probabilisticSearch_cutoffSlider" layoutX="291.0" layoutY="143.0" max="25.0" prefHeight="16.0" prefWidth="180.0" />
+                        <RadioButton fx:id="cutOffSearchRadio" layoutX="264.0" layoutY="173.0" mnemonicParsing="false" text="Use cut-off level" />
+                        <ChoiceBox fx:id="cutOffSearch_cutOffLevelCombo" layoutX="386.0" layoutY="168.0" prefHeight="27.0" prefWidth="82.0" />
                         <RadioButton fx:id="fullSearchRadio" layoutX="264.0" layoutY="207.0" mnemonicParsing="false" selected="true" text="Full search" />
                         <Button fx:id="nextMoveBtn" layoutX="539.0" layoutY="239.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Next Move" />
                         <Button fx:id="resetBtn" layoutX="539.0" layoutY="675.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Restart" />
@@ -105,7 +113,7 @@
                   <Font size="70.0" />
                </font>
             </Label>
-            <Button fx:id="curtainCancelBtn" layoutX="531.0" layoutY="511.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="161.0" text="Cancel" />
+            <Button fx:id="waitCurtain_cancelBtn" layoutX="531.0" layoutY="511.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="161.0" text="Cancel" />
             <ProgressIndicator fx:id="progressIndicator" layoutX="222.0" layoutY="177.0" minHeight="250.0" minWidth="250.0" />
          </children>
       </Pane>
