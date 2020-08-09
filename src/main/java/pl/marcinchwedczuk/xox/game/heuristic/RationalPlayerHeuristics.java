@@ -40,7 +40,7 @@ public class RationalPlayerHeuristics implements Heuristics {
         }
         else {
             // Game is still ongoing
-            return Score.gameOngoing(0);
+            return Score.gameOngoing(almostWinsBonus*50);
         }
     }
 

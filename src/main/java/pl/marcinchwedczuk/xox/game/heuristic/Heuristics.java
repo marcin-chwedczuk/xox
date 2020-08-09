@@ -5,5 +5,4 @@ import pl.marcinchwedczuk.xox.game.Move;
 
 public interface Heuristics {
     Score score(Board board, Move lastMove);
-
 }

@@ -5,6 +5,10 @@ import java.util.Arrays;
 import static pl.marcinchwedczuk.xox.game.BoardMark.EMPTY;
 
 public class Board {
+    public static Board emptyWithSide(int size) {
+        return new Board(size);
+    }
+
     public static Board of(
             BoardMark a00, BoardMark a01, BoardMark a02,
             BoardMark a10, BoardMark a11, BoardMark a12,
