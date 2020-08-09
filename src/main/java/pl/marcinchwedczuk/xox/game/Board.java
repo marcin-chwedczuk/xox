@@ -41,32 +41,32 @@ public class Board {
         return board;
     }
 
-    private final int size;
+    private final int sideSize;
     private final BoardMark[] board;
 
-    public Board(int size) {
-        if (size <= 0) throw new IllegalArgumentException("size");
+    public Board(int sideSize) {
+        if (sideSize <= 0) throw new IllegalArgumentException("size");
 
-        this.size = size;
-        this.board = new BoardMark[size*size];
+        this.sideSize = sideSize;
+        this.board = new BoardMark[sideSize * sideSize];
         Arrays.fill(board, EMPTY);
     }
 
     public Board copyOf() {
-        var b = new Board(size);
+        var b = new Board(sideSize);
         System.arraycopy(board, 0, b.board, 0, board.length);
         return b;
     }
 
-    public int sideSize() { return size; }
-    public int numberOfFields() { return size*size; }
+    public int sideSize() { return sideSize; }
+    public int numberOfFields() { return sideSize * sideSize; }
 
     public BoardMark get(int row, int col) {
-        return board[row*size + col];
+        return board[row* sideSize + col];
     }
 
     private void set(int row, int col, BoardMark mark) {
-        board[row*size + col] = mark;
+        board[row* sideSize + col] = mark;
     }
 
     public int countEmpty() {
@@ -80,29 +80,15 @@ public class Board {
     }
 
     public boolean isEmpty(int row, int col) {
-        return board[row*size + col] == EMPTY;
+        return board[row* sideSize + col] == EMPTY;
     }
 
     public void putMark(int row, int col, BoardMark mark) {
-        board[row*size + col] = mark;
+        board[row* sideSize + col] = mark;
     }
 
     public void removeMark(int row, int col) {
-        board[row*size + col] = EMPTY;
-    }
-
-    public boolean isEquivalent(Board other) {
-        if (this.size != other.size) {
-            return false;
-        }
-
-        for (int i = 0; i < size*size; i++) {
-            if (board[i] != other.board[i]) {
-                return false;
-            }
-        }
-
-        return true;
+        board[row* sideSize + col] = EMPTY;
     }
 
     public String asText() {
@@ -110,17 +96,17 @@ public class Board {
         String newLine = System.lineSeparator();
 
         text.append('=')
-                .append("===".repeat(size))
+                .append("===".repeat(sideSize))
                 .append(newLine);
-        for (int r = 0; r < size; r++) {
+        for (int r = 0; r < sideSize; r++) {
             text.append('|');
-            for (int c = 0; c < size; c++) {
+            for (int c = 0; c < sideSize; c++) {
                 text.append(get(r, c).asText().repeat(2))
                     .append('|');
             }
             text.append(newLine)
                     .append('=')
-                    .append("===".repeat(size))
+                    .append("===".repeat(sideSize))
                     .append(newLine);
         }
         text.append(newLine);
