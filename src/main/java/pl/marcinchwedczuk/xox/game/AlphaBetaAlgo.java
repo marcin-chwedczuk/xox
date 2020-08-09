@@ -18,11 +18,6 @@ public class AlphaBetaAlgo {
 
     public boolean debugMode = true;
 
-    private Board debugBoard = Board.of(
-            BoardMark.X, BoardMark.EMPTY, BoardMark.O,
-            BoardMark.X, BoardMark.X, BoardMark.EMPTY,
-            BoardMark.O, BoardMark.EMPTY, BoardMark.EMPTY);
-
     public AlphaBetaAlgo(Logger logger,
                          Board board,
                          Heuristics scorer,
@@ -75,10 +70,6 @@ public class AlphaBetaAlgo {
             // Try move
             board.putMark(move.row, move.col, player);
             var score = scoreBoard(board, move, player, maximize);
-
-            if (board.isEquivalent(debugBoard)) {
-                logger.debug("we are there!");
-            }
 
             Optional<ScoredMove> next = Optional.empty();
             if (!score.isFinished) {
