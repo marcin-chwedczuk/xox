@@ -13,6 +13,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -53,7 +54,10 @@
 
                               </RadioButton>
                                                 <RadioButton fx:id="computerHumanRadio" mnemonicParsing="false" text="Computer vs Human" />
-                                                <RadioButton fx:id="computerComputerRadio" mnemonicParsing="false" text="Computer vs Computer" />
+                                                <RadioButton fx:id="computerComputerRadio" mnemonicParsing="false" text="Computer vs Computer">
+                                                   <tooltip>
+                                                      <Tooltip text="Computer vs Computer" />
+                                                   </tooltip></RadioButton>
                                              </children>
                                           </VBox>
                                        </content>
@@ -81,7 +85,10 @@
                                           <VBox styleClass="settings-box">
                                              <children>
                                                 <CheckBox fx:id="countEmptyFieldsCheckbox" mnemonicParsing="false" selected="true" text="Count empty fields" />
-                                                <CheckBox fx:id="countAlmostWinsCheckbox" mnemonicParsing="false" text="Count almost wins e.g. X _ X" />
+                                                <CheckBox fx:id="countAlmostWinsCheckbox" mnemonicParsing="false" text="Count almost wins e.g. X _ X">
+                                                   <tooltip>
+                                                      <Tooltip text="Count almost wins e.g. X _ X" />
+                                                   </tooltip></CheckBox>
                                              </children>
                                           </VBox>
                                        </content>
@@ -92,30 +99,14 @@
                                              <children>
                                                 <HBox alignment="BASELINE_LEFT" styleClass="settings-box">
                                                    <children>
-                                                      <Label text="TURN:">
-                                                         <font>
-                                                            <Font name="System Bold" size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="turnLabel" styleClass="label-important" text="Lorem Ipsum">
-                                                         <font>
-                                                            <Font name="System Bold" size="14.0" />
-                                                         </font>
-                                                      </Label>
+                                                      <Label text="TURN:" />
+                                                      <Label fx:id="turnLabel" styleClass="label-important" text="Lorem Ipsum" />
                                                    </children>
                                                 </HBox>
                                                 <HBox alignment="BASELINE_LEFT" styleClass="settings-box">
                                                    <children>
-                                                      <Label text="MARK:">
-                                                         <font>
-                                                            <Font name="System Bold" size="14.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label fx:id="markLabel" styleClass="label-important" text="Lorem ipsum">
-                                                         <font>
-                                                            <Font name="System Bold" size="14.0" />
-                                                         </font>
-                                                      </Label>
+                                                      <Label text="MARK:" />
+                                                      <Label fx:id="markLabel" styleClass="label-important" text="Lorem ipsum" />
                                                    </children>
                                                 </HBox>
                                              </children>

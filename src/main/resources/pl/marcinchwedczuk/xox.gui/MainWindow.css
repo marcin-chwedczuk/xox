@@ -16,7 +16,9 @@
 }
 
 .label-important {
+    /* Looks bad on Linux, does not work on macOS
     -fx-font-weight: bold;
+    */
 }
 
 .buttons-container {
