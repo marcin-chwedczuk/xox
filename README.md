@@ -8,7 +8,10 @@ To start execute:
 ./gradlew run
 ```
 
-Application GUI was created using JavaFX 2.
+Application GUI was created using JavaFX.
+I tested it on both macOS and Linux.
+
+## Contributors Guide
 
 ### SceneBuilder setup
 
