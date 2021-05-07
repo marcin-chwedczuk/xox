@@ -58,12 +58,16 @@
                                           </VBox>
                                        </content>
                                     </TitledPane>
-                                    <HBox alignment="BASELINE_LEFT" minHeight="0.0" minWidth="0.0" styleClass="settings-box">
-                                       <children>
-                                          <Label text="Board size:" />
-                                          <ChoiceBox fx:id="boardSizeCombo" />
-                                       </children>
-                                    </HBox>
+                                    <HBox alignment="BASELINE_LEFT" minHeight="0.0" minWidth="0.0" styleClass="settings-box" />
+                                    <TitledPane animated="false" collapsible="false" minHeight="0.0" minWidth="0.0" text="Board Size">
+                                       <content>
+                                          <VBox alignment="CENTER_RIGHT" minHeight="0.0" minWidth="0.0" styleClass="settings-box">
+                                             <children>
+                                                <ChoiceBox fx:id="boardSizeCombo" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" VBox.vgrow="ALWAYS" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </TitledPane>
                                  </children>
                                  <styleClass>
                                     <String fx:value="settings-box" />
@@ -82,34 +86,42 @@
                                           </VBox>
                                        </content>
                                     </TitledPane>
-                                    <HBox alignment="BASELINE_LEFT" styleClass="settings-box">
-                                       <children>
-                                          <Label text="TURN:">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label fx:id="turnLabel" styleClass="label-important" text="Lorem Ipsum">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <HBox alignment="BASELINE_LEFT" styleClass="settings-box">
-                                       <children>
-                                          <Label text="MARK:">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label fx:id="markLabel" styleClass="label-important" text="Lorem ipsum">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                       </children>
-                                    </HBox>
+                                    <TitledPane animated="false" collapsible="false" minHeight="0.0" minWidth="0.0" text="Current Game">
+                                       <content>
+                                          <VBox minHeight="0.0" minWidth="0.0" styleClass="settings-box">
+                                             <children>
+                                                <HBox alignment="BASELINE_LEFT" styleClass="settings-box">
+                                                   <children>
+                                                      <Label text="TURN:">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="turnLabel" styleClass="label-important" text="Lorem Ipsum">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="BASELINE_LEFT" styleClass="settings-box">
+                                                   <children>
+                                                      <Label text="MARK:">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="markLabel" styleClass="label-important" text="Lorem ipsum">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </TitledPane>
                                  </children>
                                  <styleClass>
                                     <String fx:value="settings-box" />
@@ -167,7 +179,6 @@
                               </VBox>
                            </children>
                         </GridPane>
-                        <Separator prefWidth="200.0" />
                         <GridPane minHeight="0.0" minWidth="0.0" VBox.vgrow="ALWAYS">
                           <columnConstraints>
                             <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
