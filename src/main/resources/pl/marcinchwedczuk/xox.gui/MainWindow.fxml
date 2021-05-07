@@ -1,98 +1,204 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import pl.marcinchwedczuk.xox.gui.controls.GameBoard?>
 
-<AnchorPane prefHeight="790.0" prefWidth="733.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.marcinchwedczuk.xox.gui.MainWindowController">
+<AnchorPane minHeight="0.0" minWidth="0.0" stylesheets="@MainWindow.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.marcinchwedczuk.xox.gui.MainWindowController">
    <children>
-      <TabPane fx:id="mainPane" layoutX="379.0" layoutY="-44.0" prefHeight="744.0" prefWidth="734.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TabPane fx:id="mainPane" layoutX="379.0" minHeight="0.0" minWidth="0.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
           <Tab text="Game">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="735.0" prefWidth="728.0">
+              <VBox minHeight="0.0" minWidth="0.0" styleClass="parent-box">
                      <children>
-                        <AnchorPane layoutX="14.0" layoutY="239.0" prefHeight="500.0" prefWidth="500.0" style="-fx-border-color: gray;">
+                        <GridPane layoutX="21.0" layoutY="760.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
                            <children>
-                               <GameBoard fx:id="gameBoard" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                              <!--
-                              <Canvas fx:id="boardCanvas" height="499.0" width="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                              -->
-                           </children>
-                        </AnchorPane>
-                        <Pane prefHeight="156.0" prefWidth="205.0">
-                           <children>
-                              <Label layoutX="14.0" layoutY="14.0" text="Game Mode:" />
-                              <RadioButton fx:id="humanComputerRadio" layoutX="21.0" layoutY="44.0" mnemonicParsing="false" selected="true" text="Human vs Computer">
+                              <VBox minHeight="0.0" minWidth="0.0">
+                                 <children>
+                                    <TitledPane animated="false" collapsible="false" minHeight="0.0" minWidth="0.0" text="Game Mode" VBox.vgrow="NEVER">
+                                       <content>
+                                          <VBox minHeight="0.0" minWidth="0.0" styleClass="settings-box">
+                                             <children>
+                                                <RadioButton fx:id="humanComputerRadio" mnemonicParsing="false" selected="true" text="Human vs Computer">
 
                               </RadioButton>
-                              <RadioButton fx:id="computerComputerRadio" layoutX="21.0" layoutY="112.0" mnemonicParsing="false" text="Computer vs Computer" />
-                              <RadioButton fx:id="computerHumanRadio" layoutX="21.0" layoutY="78.0" mnemonicParsing="false" text="Computer vs Human" />
-                           </children>
-                        </Pane>
-                        <Label layoutX="14.0" layoutY="156.0" text="Board size:" />
-                        <ChoiceBox fx:id="boardSizeCombo" layoutX="81.0" layoutY="151.0" prefWidth="150.0" />
-                        <Label layoutX="489.0" layoutY="13.0" text="Heuristic Settings:" />
-                        <CheckBox fx:id="countEmptyFieldsCheckbox" layoutX="499.0" layoutY="43.0" mnemonicParsing="false" selected="true" text="Count empty fields" />
-                        <CheckBox fx:id="countAlmostWinsCheckbox" layoutX="499.0" layoutY="71.0" mnemonicParsing="false" text="Count almost wins e.g. X _ X" />
-                        <Label layoutX="260.0" layoutY="14.0" text="Search Settings:" />
-                        <RadioButton fx:id="probabilisticSearchRadio" layoutX="264.0" layoutY="45.0" mnemonicParsing="false" text="Use probabilistic search">
+                                                <RadioButton fx:id="computerHumanRadio" mnemonicParsing="false" text="Computer vs Human" />
+                                                <RadioButton fx:id="computerComputerRadio" mnemonicParsing="false" text="Computer vs Computer" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </TitledPane>
+                                    <HBox alignment="BASELINE_LEFT" minHeight="0.0" minWidth="0.0" styleClass="settings-box">
+                                       <children>
+                                          <Label text="Board size:" />
+                                          <ChoiceBox fx:id="boardSizeCombo" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <styleClass>
+                                    <String fx:value="settings-box" />
+                                    <String fx:value="column-container" />
+                                 </styleClass>
+                              </VBox>
+                              <VBox GridPane.columnIndex="2">
+                                 <children>
+                                    <TitledPane animated="false" collapsible="false" text="Heuristic Settings">
+                                       <content>
+                                          <VBox styleClass="settings-box">
+                                             <children>
+                                                <CheckBox fx:id="countEmptyFieldsCheckbox" mnemonicParsing="false" selected="true" text="Count empty fields" />
+                                                <CheckBox fx:id="countAlmostWinsCheckbox" mnemonicParsing="false" text="Count almost wins e.g. X _ X" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </TitledPane>
+                                    <HBox alignment="BASELINE_LEFT" styleClass="settings-box">
+                                       <children>
+                                          <Label text="TURN:">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="turnLabel" styleClass="label-important" text="Lorem Ipsum">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="BASELINE_LEFT" styleClass="settings-box">
+                                       <children>
+                                          <Label text="MARK:">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="markLabel" styleClass="label-important" text="Lorem ipsum">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <styleClass>
+                                    <String fx:value="settings-box" />
+                                    <String fx:value="column-container" />
+                                 </styleClass>
+                              </VBox>
+                              <VBox minHeight="0.0" minWidth="0.0" GridPane.columnIndex="1">
+                                 <children>
+                                    <TitledPane animated="false" collapsible="false" minHeight="0.0" minWidth="0.0" text="Search Settings">
+                                       <content>
+                                          <VBox minHeight="0.0" minWidth="0.0" styleClass="settings-box">
+                                             <children>
+                                                <RadioButton fx:id="probabilisticSearchRadio" mnemonicParsing="false" text="Use probabilistic search">
 
                         </RadioButton>
-                        <Slider fx:id="probabilisticSearch_numberOfMovesSlider" layoutX="291.0" layoutY="96.0" max="25.0" min="1.0" prefHeight="16.0" prefWidth="180.0" />
-                        <Label layoutX="293.0" layoutY="71.0" text="Number of moves:" />
-                        <Label fx:id="probabilisticSearch_numberOfMovesLabel" layoutX="397.0" layoutY="71.0" prefHeight="17.0" prefWidth="41.0" text="99" />
-                        <Label layoutX="293.0" layoutY="122.0" text="Cut-off level (0 = No cut-off):" />
-                        <Label fx:id="probabilisticSearch_cutoffLabel" layoutX="458.0" layoutY="122.0" prefHeight="17.0" prefWidth="41.0" text="99" />
-                        <Slider fx:id="probabilisticSearch_cutoffSlider" layoutX="291.0" layoutY="143.0" max="25.0" prefHeight="16.0" prefWidth="180.0" />
-                        <RadioButton fx:id="cutOffSearchRadio" layoutX="264.0" layoutY="173.0" mnemonicParsing="false" text="Use cut-off level" />
-                        <ChoiceBox fx:id="cutOffSearch_cutOffLevelCombo" layoutX="386.0" layoutY="168.0" prefHeight="27.0" prefWidth="82.0" />
-                        <RadioButton fx:id="fullSearchRadio" layoutX="264.0" layoutY="207.0" mnemonicParsing="false" selected="true" text="Full search" />
-                        <Button fx:id="nextMoveBtn" layoutX="539.0" layoutY="239.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Next Move" />
-                        <Button fx:id="resetBtn" layoutX="539.0" layoutY="675.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Restart" />
-                        <Button fx:id="undoBtn" layoutX="539.0" layoutY="315.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="174.0" text="Redo" />
-                        <Label layoutX="499.0" layoutY="130.0" prefHeight="17.0" prefWidth="61.0" text="TURN:">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="499.0" layoutY="164.0" prefHeight="17.0" prefWidth="61.0" text="MARK:">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="turnLabel" layoutX="558.0" layoutY="130.0" prefHeight="18.0" prefWidth="124.0">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="markLabel" layoutX="558.0" layoutY="164.0" prefHeight="18.0" prefWidth="140.0">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
+                                                <VBox minHeight="0.0" minWidth="0.0">
+                                                   <children>
+                                                      <Slider fx:id="probabilisticSearch_numberOfMovesSlider" max="25.0" min="1.0" />
+                                                      <HBox styleClass="settings-box">
+                                                         <children>
+                                                            <Label text="Number of moves:" />
+                                                            <Label fx:id="probabilisticSearch_numberOfMovesLabel" text="99" />
+                                                         </children>
+                                                      </HBox>
+                                                      <Separator prefWidth="200.0" />
+                                                      <Slider fx:id="probabilisticSearch_cutoffSlider" max="25.0" />
+                                                      <HBox styleClass="settings-box">
+                                                         <children>
+                                                            <Label minHeight="0.0" minWidth="0.0" styleClass="settings-box" text="Cut-off level (0 = No cut-off):" wrapText="true" HBox.hgrow="SOMETIMES" />
+                                                            <Label fx:id="probabilisticSearch_cutoffLabel" text="99" HBox.hgrow="ALWAYS" />
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                   <styleClass>
+                                                      <String fx:value="settings-box" />
+                                                      <String fx:value="subsettings-box" />
+                                                   </styleClass>
+                                                </VBox>
+                                                <HBox alignment="BASELINE_LEFT" styleClass="settings-box">
+                                                   <children>
+                                                      <RadioButton fx:id="cutOffSearchRadio" mnemonicParsing="false" text="Use cut-off level:" />
+                                                      <ChoiceBox fx:id="cutOffSearch_cutOffLevelCombo" />
+                                                   </children>
+                                                </HBox>
+                                                <RadioButton fx:id="fullSearchRadio" mnemonicParsing="false" selected="true" text="Full search" />
+                                             </children>
+                                          </VBox>
+                                       </content>
+                                    </TitledPane>
+                                 </children>
+                                 <styleClass>
+                                    <String fx:value="column-container" />
+                                    <String fx:value="settings-box" />
+                                 </styleClass>
+                              </VBox>
+                           </children>
+                        </GridPane>
+                        <GridPane minHeight="0.0" minWidth="0.0" VBox.vgrow="ALWAYS">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints vgrow="ALWAYS" />
+                          </rowConstraints>
+                           <children>
+                               <GameBoard fx:id="gameBoard" />
+                              <VBox alignment="TOP_RIGHT" GridPane.columnIndex="1">
+                                 <children>
+                                    <Button fx:id="nextMoveBtn" mnemonicParsing="false" text="Next Move" />
+                                    <Button fx:id="undoBtn" mnemonicParsing="false" text="Redo" />
+                                    <VBox alignment="BOTTOM_RIGHT" minHeight="0.0" minWidth="0.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <Button fx:id="resetBtn" mnemonicParsing="false" text="Restart" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </GridPane>
                      </children>
-                  </AnchorPane>
+                  </VBox>
             </content>
           </Tab>
           <Tab text="Debug Logs">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>
-                        <TextArea fx:id="debugLogTextArea" editable="false" layoutX="80.0" layoutY="42.0" prefHeight="200.0" prefWidth="200.0" wrapText="true" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="51.0">
+                        <TextArea fx:id="debugLogTextArea" editable="false" layoutX="80.0" layoutY="42.0" minHeight="0.0" minWidth="0.0" wrapText="true" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0">
                            <font>
                               <Font name="Courier New" size="14.0" />
                            </font>

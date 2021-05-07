@@ -1,0 +1,21 @@
+
+.settings-box {
+    -fx-spacing: 0.4em;
+}
+
+.subsettings-box {
+    -fx-padding: 0 0 0 2em;
+}
+
+.parent-box {
+    -fx-padding: 0.4em;
+}
+
+.column-container {
+    -fx-padding: 0.25em;
+}
+
+.label-important {
+    -fx-font-weight: bold;
+}
+
