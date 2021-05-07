@@ -1,6 +1,6 @@
 ### TicTacToe minimax
 
-![Application Main Window](docs/mainWindow.png)
+<img src="docs/mainWindow.png" width="800px" title="Application main window"/>
 
 To start execute:
 ```
