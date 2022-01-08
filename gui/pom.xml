@@ -21,7 +21,6 @@
 
             <!-- Needed to make module code accessible outside module e.g. in unit tests. -->
             --add-opens pl.marcinchwedczuk.xox.gui/pl.marcinchwedczuk.xox.gui=ALL-UNNAMED
-            --add-opens pl.marcinchwedczuk.xox.gui/pl.marcinchwedczuk.xox.gui.mainwindow=ALL-UNNAMED
         </extra-jvm-options-when-running-tests>
     </properties>
 
