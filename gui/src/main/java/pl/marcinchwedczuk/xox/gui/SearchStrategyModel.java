@@ -32,7 +32,7 @@ public class SearchStrategyModel {
 
     public SearchStrategyModel() {
         searchStrategyTypeProperty.addListener((observable, oldValue, newValue) -> {
-                reset();
+            reset();
         });
 
         probabilisticSearch_numberOfMovesProperty.addListener((observable, oldValue, newValue) -> {

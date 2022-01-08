@@ -49,6 +49,7 @@ public class Board {
 
         this.sideSize = sideSize;
         this.board = new BoardMark[sideSize * sideSize];
+
         Arrays.fill(board, EMPTY);
     }
 

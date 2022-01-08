@@ -38,24 +38,23 @@ public class AlphaBetaAlgo {
             return maybeMove
                     .map(Either::<ErrorMessage, ScoredMove>right)
                     .orElse(Either.left(ErrorMessage.of("No move possible!")));
-        }
-        catch (OperationCanceledException e) {
+        } catch (OperationCanceledException e) {
             return Either.left(ErrorMessage.of("Computation cancelled"));
         }
     }
 
-    public Optional<ScoredMove> minimax(int level, boolean maximize,
-                                 BoardMark player,
-                                 double alpha, double beta,
-                                 CancelOperation cancelOperation) {
+    public Optional<ScoredMove> minimax(int level,
+                                        boolean maximize,
+                                        BoardMark player,
+                                        double alpha, double beta,
+                                        CancelOperation cancelOperation) {
         cancelOperation.checkCancelled();
 
-        ScoredMove best = new ScoredMove(
+        var best = new ScoredMove(
                 new Move(-1, -1, BoardMark.EMPTY),
                 maximize ? alpha : beta);
 
-        List<MoveProposal> movesToCheck =
-                searchStrategy.movesToCheck(board, player, level);
+        List<MoveProposal> movesToCheck = searchStrategy.movesToCheck(board, player, level);
         if (movesToCheck.isEmpty()) {
             return Optional.empty();
         }
@@ -63,7 +62,7 @@ public class AlphaBetaAlgo {
         for (MoveProposal move : movesToCheck) {
             // alpha beta pruning
             if ((maximize && (best.score >= beta)) ||
-                (!maximize && (best.score <= alpha))) {
+                    (!maximize && (best.score <= alpha))) {
                 return Optional.of(best);
             }
 

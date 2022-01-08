@@ -31,7 +31,7 @@ public class MoveDebugInfo {
 
     @Override
     public String toString() {
-        StringBuilder debugInfo = new StringBuilder();
+        var debugInfo = new StringBuilder();
         String NL = System.lineSeparator();
 
         debugInfo

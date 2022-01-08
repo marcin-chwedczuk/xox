@@ -16,7 +16,6 @@ public class RationalPlayerHeuristics implements Heuristics {
     }
 
     public Score score(Board board, Move lastMove) {
-        // TODO: Count "almost" wins
         int wins = gameRules.countWinsForLastMove(board, lastMove);
 
         int emptyPlaces = board.countEmpty();

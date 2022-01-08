@@ -46,24 +46,24 @@ public class JfxDialogs implements Dialogs {
     @Override
     public void exception(Throwable ex) {
         // from: https://code.makery.ch/blog/javafx-dialogs-official/
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+        var alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Exception Dialog");
         alert.setHeaderText("Unhandled exception");
 
-        String message = ex.getMessage();
+        var message = ex.getMessage();
         if (message == null || message.isBlank()) {
             message = ex.getClass().getSimpleName();
         }
         alert.setContentText(message);
 
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
+        var sw = new StringWriter();
+        var pw = new PrintWriter(sw);
         ex.printStackTrace(pw);
-        String exceptionText = sw.toString();
+        var exceptionText = sw.toString();
 
-        Label label = new Label("The exception stacktrace:");
+        var label = new Label("The exception stacktrace:");
 
-        TextArea textArea = new TextArea(exceptionText);
+        var textArea = new TextArea(exceptionText);
         textArea.setEditable(false);
         textArea.setWrapText(true);
 
@@ -72,7 +72,7 @@ public class JfxDialogs implements Dialogs {
         GridPane.setVgrow(textArea, Priority.ALWAYS);
         GridPane.setHgrow(textArea, Priority.ALWAYS);
 
-        GridPane expContent = new GridPane();
+        var expContent = new GridPane();
         expContent.setMaxWidth(Double.MAX_VALUE);
         expContent.add(label, 0, 0);
         expContent.add(textArea, 0, 1);

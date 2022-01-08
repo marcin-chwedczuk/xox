@@ -10,7 +10,7 @@ public class FullSearch implements SearchStrategy {
 
     @Override
     public List<MoveProposal> movesToCheck(Board board, BoardMark player, int level) {
-        List<MoveProposal> moves = new ArrayList<>(board.numberOfFields());
+        var moves = new ArrayList<MoveProposal>(board.numberOfFields());
 
         for (int r = 0; r < board.sideSize(); r++) {
             for (int c = 0; c < board.sideSize(); c++) {
