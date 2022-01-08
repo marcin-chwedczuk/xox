@@ -7,11 +7,11 @@ import pl.marcinchwedczuk.xox.util.ErrorMessage;
 import pl.marcinchwedczuk.xox.util.Unit;
 
 public interface GameMode {
-    void init();
+    default void init() { }
 
     String currentPlayer();
     BoardMark currentPlayerMark();
 
-    Either<ErrorMessage,Unit> performComputerMove(CancelOperation cancelOperation);
-    Either<ErrorMessage,Unit> performHumanMove(int row, int col);
+    Either<ErrorMessage, Unit> performComputerMove(CancelOperation cancelOperation);
+    Either<ErrorMessage, Unit> performHumanMove(int row, int col);
 }

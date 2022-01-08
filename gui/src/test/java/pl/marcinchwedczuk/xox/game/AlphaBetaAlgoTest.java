@@ -42,10 +42,10 @@ public class AlphaBetaAlgoTest {
             errorOrMove.onRight(scoredMove -> {
                 moves.add(scoredMove.move);
                 board2x2.putMark(
-                        scoredMove.move.row, scoredMove.move.col,
-                        scoredMove.move.mark);
+                        scoredMove.move.row(), scoredMove.move.col(),
+                        scoredMove.move.mark());
             });
-            errorOrMove.onLeft(err -> fail(err.message));
+            errorOrMove.onLeft(err -> fail(err.message()));
 
             player = player.opponent();
         }
@@ -58,10 +58,10 @@ public class AlphaBetaAlgoTest {
 
     private static void assertMove(Move m, int row, int col, BoardMark player) {
         var failure = String.format("Expected (%d, %d) player %s but got (%d, %d) player %s.",
-                row, col, player, m.row, m.col, m.mark);
+                row, col, player, m.row(), m.col(), m.mark());
 
-        assertEquals(row, m.row, failure);
-        assertEquals(col, m.col, failure);
-        assertEquals(player, m.mark, failure);
+        assertEquals(row, m.row(), failure);
+        assertEquals(col, m.col(), failure);
+        assertEquals(player, m.mark(), failure);
     }
 }

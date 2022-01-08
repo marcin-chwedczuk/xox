@@ -17,14 +17,10 @@ public class ComputerHumanGameMode implements GameMode {
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
     public String currentPlayer() {
         return (game.currentPlayer() == computerPlayer)
-                ? "COMPUTER" : "HUMAN";
+                ? "COMPUTER"
+                : "HUMAN";
     }
 
     @Override
@@ -41,7 +37,6 @@ public class ComputerHumanGameMode implements GameMode {
         else {
             return Either.left(ErrorMessage.of(TextResources.HUMAN_TURN));
         }
-
     }
 
     @Override

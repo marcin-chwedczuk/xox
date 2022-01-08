@@ -67,11 +67,11 @@ public class AlphaBetaAlgo {
             }
 
             // Try move
-            board.putMark(move.row, move.col, player);
+            board.putMark(move.row(), move.col(), player);
             var score = scoreBoard(board, move, player, maximize);
 
             Optional<ScoredMove> next = Optional.empty();
-            if (!score.isFinished) {
+            if (!score.isFinished()) {
                 // Game did not end, do opponent move.
                 // May return empty() due to e.g. search strategy limits
                 next = minimax(level + 1, !maximize, player.opponent(),
@@ -81,8 +81,8 @@ public class AlphaBetaAlgo {
             }
 
             var candidate = new ScoredMove(
-                    new Move(move.row, move.col, player),
-                    next.map(x -> x.score).orElse(score.score));
+                    new Move(move.row(), move.col(), player),
+                    next.map(x -> x.score).orElse(score.score()));
 
             if (maximize) {
                 best = best.max(candidate);
@@ -96,10 +96,10 @@ public class AlphaBetaAlgo {
                         best.score,
                         board.copyOf(),
                         alpha, beta,
-                        score.isFinished));
+                        score.isFinished()));
             }
 
-            board.removeMark(move.row, move.col);
+            board.removeMark(move.row(), move.col());
         }
 
         return Optional.of(best);
@@ -113,7 +113,7 @@ public class AlphaBetaAlgo {
         // wins no matter X or O. 0 means player looses;
         var score = scorer.score(
                 board,
-                new Move(lastMove.row, lastMove.col, player));
+                new Move(lastMove.row(), lastMove.col(), player));
 
         if (!maximize) {
             return score.negate();

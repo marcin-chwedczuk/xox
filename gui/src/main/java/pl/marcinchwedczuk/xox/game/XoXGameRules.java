@@ -41,9 +41,9 @@ public class XoXGameRules {
         final int STRIDE = winningStride;
         int totalWins = 0;
 
-        final int lastMoveRow = lastMove.row;
-        final int lastMoveCol = lastMove.col;
-        final BoardMark player = lastMove.mark;
+        final int lastMoveRow = lastMove.row();
+        final int lastMoveCol = lastMove.col();
+        final BoardMark player = lastMove.mark();
 
         // horizontal
         {

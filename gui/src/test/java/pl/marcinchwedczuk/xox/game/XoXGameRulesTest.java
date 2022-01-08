@@ -252,9 +252,9 @@ public class XoXGameRulesTest {
         var maybeWinner = scorer_5x5_3.getWinner(xWinsBoard);
 
         assertTrue(maybeWinner.isPresent());
-        assertEquals(X, maybeWinner.get().winner);
-        assertEquals(1, maybeWinner.get().winningStrides.size());
-        assertEquals(stride(pos(1, 3), pos(3, 1)), maybeWinner.get().winningStrides.get(0));
+        assertEquals(X, maybeWinner.get().winner());
+        assertEquals(1, maybeWinner.get().winningStrides().size());
+        assertEquals(stride(pos(1, 3), pos(3, 1)), maybeWinner.get().winningStrides().get(0));
     }
 
     @Test public void getWinner_x_loses_5x5_3() {
@@ -269,9 +269,9 @@ public class XoXGameRulesTest {
         var maybeWinner = scorer_5x5_3.getWinner(xLosesBoard);
 
         assertTrue(maybeWinner.isPresent());
-        assertEquals(O, maybeWinner.get().winner);
-        assertEquals(1, maybeWinner.get().winningStrides.size());
-        assertEquals(stride(pos(2, 3), pos(4, 3)), maybeWinner.get().winningStrides.get(0));
+        assertEquals(O, maybeWinner.get().winner());
+        assertEquals(1, maybeWinner.get().winningStrides().size());
+        assertEquals(stride(pos(2, 3), pos(4, 3)), maybeWinner.get().winningStrides().get(0));
     }
 
     @Test public void getWinner_draw_3x3_3() {
@@ -306,9 +306,9 @@ public class XoXGameRulesTest {
         var winner = scorer_3x3_3.getWinner(board);
 
         assertTrue(winner.isPresent());
-        assertEquals(X, winner.get().winner);
+        assertEquals(X, winner.get().winner());
 
-        var winningStrides = winner.get().winningStrides;
+        var winningStrides = winner.get().winningStrides();
         assertEquals(1, winningStrides.size());
 
         var expected = new WinningStride(
@@ -327,9 +327,9 @@ public class XoXGameRulesTest {
         var winner = scorer_3x3_3.getWinner(board);
 
         assertTrue(winner.isPresent());
-        assertEquals(X, winner.get().winner);
+        assertEquals(X, winner.get().winner());
 
-        var winningStrides = winner.get().winningStrides;
+        var winningStrides = winner.get().winningStrides();
         assertEquals(1, winningStrides.size());
 
         var expected = new WinningStride(
@@ -348,9 +348,9 @@ public class XoXGameRulesTest {
         var winner = scorer_3x3_3.getWinner(board);
 
         assertTrue(winner.isPresent());
-        assertEquals(X, winner.get().winner);
+        assertEquals(X, winner.get().winner());
 
-        var winningStrides = winner.get().winningStrides;
+        var winningStrides = winner.get().winningStrides();
         assertEquals(1, winningStrides.size());
 
         var expected = new WinningStride(
@@ -369,9 +369,9 @@ public class XoXGameRulesTest {
         var winner = scorer_3x3_3.getWinner(board);
 
         assertTrue(winner.isPresent());
-        assertEquals(X, winner.get().winner);
+        assertEquals(X, winner.get().winner());
 
-        var winningStrides = winner.get().winningStrides;
+        var winningStrides = winner.get().winningStrides();
         assertEquals(1, winningStrides.size());
 
         var expected = new WinningStride(
@@ -390,7 +390,7 @@ public class XoXGameRulesTest {
         assertEquals(
                 expected,
                 scorer_5x5_3.countWinsForLastMove(board, lastMove),
-                String.format("Failed on move (%d, %d).", lastMove.row, lastMove.col));
+                "Failed on move (%d, %d).".formatted(lastMove.row(), lastMove.col()));
     }
 
     private WinningStride stride(BoardPosition from, BoardPosition to) {

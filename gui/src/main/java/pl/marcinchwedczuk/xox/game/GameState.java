@@ -2,6 +2,8 @@ package pl.marcinchwedczuk.xox.game;
 
 import java.util.Optional;
 
+// Board field is mutable. This cannot be converted to record,
+// without first making board immutable.
 public class GameState {
     public static GameState forRunningGame(Board board, BoardMark currentPlayer) {
         return new GameState(false,

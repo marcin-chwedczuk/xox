@@ -3,31 +3,12 @@ package pl.marcinchwedczuk.xox.game.util;
 import pl.marcinchwedczuk.xox.game.Board;
 import pl.marcinchwedczuk.xox.game.ScoredMove;
 
-public class MoveDebugInfo {
-    public final int level;
-    public final ScoredMove next;
-
-    public final double score;
-    public final Board boardCopy;
-
-    public final double alpha;
-    public final double beta;
-
-    public final boolean isGameFinished;
-
-    public MoveDebugInfo(int level, ScoredMove next,
-                         double score,
-                         Board boardCopy,
-                         double alpha, double beta,
-                         boolean isGameFinished) {
-        this.level = level;
-        this.next = next;
-        this.score = score;
-        this.boardCopy = boardCopy;
-        this.alpha = alpha;
-        this.beta = beta;
-        this.isGameFinished = isGameFinished;
-    }
+public record MoveDebugInfo(int level,
+                            ScoredMove next,
+                            double score,
+                            Board boardCopy,
+                            double alpha, double beta,
+                            boolean isGameFinished) {
 
     @Override
     public String toString() {

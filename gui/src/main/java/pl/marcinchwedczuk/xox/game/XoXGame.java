@@ -43,12 +43,12 @@ public class XoXGame {
         var errorOrMove = algo.selectMove(currentPlayer, cancelOperation);
 
         errorOrMove.onRight(scoredMove -> {
-            if (scoredMove.move.mark != currentPlayer) {
+            if (scoredMove.move.mark() != currentPlayer) {
                 throw new AssertionError();
             }
 
             logger.debug(scoredMove.debugInfo.toString());
-            performMove(scoredMove.move.row, scoredMove.move.col);
+            performMove(scoredMove.move.row(), scoredMove.move.col());
         });
 
         errorOrMove.onLeft(error -> {

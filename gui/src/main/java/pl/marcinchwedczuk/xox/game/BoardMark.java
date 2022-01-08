@@ -28,6 +28,6 @@ public enum BoardMark {
         this.text = text;
     }
 
-    public String asText() { return text; }
     public abstract BoardMark opponent();
+    public String asText() { return text; }
 }

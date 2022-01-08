@@ -24,7 +24,8 @@ public class HumanComputerGameMode implements GameMode {
     @Override
     public String currentPlayer() {
         return game.currentPlayer() == humanPlayer
-                ? "HUMAN" : "COMPUTER";
+                ? "HUMAN"
+                : "COMPUTER";
     }
 
     @Override

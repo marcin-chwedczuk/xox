@@ -37,7 +37,7 @@ public class MainWindowModel {
     public final StringProperty markProperty = new SimpleStringProperty();
 
     public final ObjectProperty<GameState> gameStateProperty =
-            new SimpleObjectProperty<>(null);
+            new SimpleObjectProperty<>("MainWindowModel", "gameStateProperty", null);
 
     public final AsyncCommand<Either<ErrorMessage, Unit>> nextMoveCommand;
     public final BooleanProperty canUndo = new SimpleBooleanProperty(false);
@@ -48,7 +48,8 @@ public class MainWindowModel {
     private XoXGame game;
     private GameMode gameMode;
 
-    public Runnable modelChangedListener = () -> { };
+    public Runnable modelChangedListener = () -> {
+    };
 
     public MainWindowModel(Dialogs dialogs, Logger logger) {
         this.dialogs = dialogs;
@@ -88,12 +89,13 @@ public class MainWindowModel {
                 .addListener((observable, oldValue, newValue) -> {
                     handleModelChanges();
 
-                    // TODO: This sucks, needs some refactor
-                    newValue.onRight(result -> {
+                    // TODO: This sucks, needs some refactor - flatMap is needed
+                    newValue.onRight((Either<ErrorMessage, Unit> result) -> {
                         result.onLeft(errorMessage -> {
-                            Platform.runLater(() -> dialogs.info(errorMessage.message));
+                            Platform.runLater(() -> dialogs.info(errorMessage.message()));
                         });
                     });
+                    newValue.onLeft(ex -> ex.printStackTrace());
                 });
 
         reset();
@@ -115,7 +117,8 @@ public class MainWindowModel {
         logger.debug("Scorer is: %s", boardScorer);
 
         game = new XoXGame(logger,
-                gameGeometry.boardSize, gameGeometry.winningStride,
+                gameGeometry.boardSize(),
+                gameGeometry.winningStride(),
                 boardScorer, searchStrategy);
 
         resetGameMode();
@@ -145,7 +148,7 @@ public class MainWindowModel {
 
     public void onBoardClicked(int row, int col) {
         var result = gameMode.performHumanMove(row, col);
-        result.onLeft(msg -> dialogs.info(msg.message));
+        result.onLeft(msg -> dialogs.info(msg.message()));
 
         handleModelChanges();
     }

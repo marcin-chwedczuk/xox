@@ -16,14 +16,14 @@ public class FixedPositionsHeuristics implements Heuristics {
 
     @Override
     public Score score(Board board, Move lastMove) {
-        BoardMark player = lastMove.mark;
+        BoardMark player = lastMove.mark();
         double playerTotal = 0.0;
 
         for (Map.Entry<BoardPosition, Double> entry: values.entrySet()) {
             BoardPosition pos = entry.getKey();
             double posValue = entry.getValue();
 
-            if (board.get(pos.row, pos.col) == player) {
+            if (board.get(pos.row(), pos.col()) == player) {
                 playerTotal += posValue;
             }
         }

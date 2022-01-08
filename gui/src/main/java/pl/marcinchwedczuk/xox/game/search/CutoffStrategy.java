@@ -41,6 +41,6 @@ public class CutoffStrategy implements SearchStrategy {
 
     @Override
     public String toString() {
-        return String.format("CutoffStrategy(cutoff=%d)", cutoff);
+        return "CutoffStrategy(cutoff=%d)".formatted(cutoff);
     }
 }

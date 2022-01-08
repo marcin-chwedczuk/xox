@@ -157,14 +157,14 @@ public class GameBoard extends Pane {
 
         gc.setFill(Color.AQUA);
 
-        List<WinningStride> winningStrides = winner.get().winningStrides;
+        List<WinningStride> winningStrides = winner.get().winningStrides();
         for (WinningStride stride: winningStrides) {
 
-            int r = stride.from.row;
-            int c = stride.from.col;
+            int r = stride.from().row();
+            int c = stride.from().col();
 
-            int toR = stride.to.row;
-            int toC = stride.to.col;
+            int toR = stride.to().row();
+            int toC = stride.to().col();
 
             do {
                 highlightCell(gc, r, c);

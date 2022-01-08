@@ -1,16 +1,8 @@
 package pl.marcinchwedczuk.xox.gui;
 
-public class GameGeometry {
-    public final int boardSize;
-    public final int winningStride;
-
-    public GameGeometry(int boardSize, int winningStride) {
-        this.boardSize = boardSize;
-        this.winningStride = winningStride;
-    }
-
+public record GameGeometry(int boardSize, int winningStride) {
     @Override
     public String toString() {
-        return String.format("%dx%d board - %d wins", boardSize, boardSize, winningStride);
+        return "%dx%d board - %d wins".formatted(boardSize, boardSize, winningStride);
     }
 }

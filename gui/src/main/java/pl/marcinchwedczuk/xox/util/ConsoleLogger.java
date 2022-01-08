@@ -7,6 +7,6 @@ public class ConsoleLogger implements Logger {
 
     @Override
     public void debug(String fmt, Object... args) {
-        System.out.println(String.format(fmt, args));
+        System.out.println(fmt.formatted(args));
     }
 }

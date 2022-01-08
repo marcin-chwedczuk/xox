@@ -54,9 +54,9 @@ public class Board {
     }
 
     public Board copyOf() {
-        var b = new Board(sideSize);
-        System.arraycopy(board, 0, b.board, 0, board.length);
-        return b;
+        var copy = new Board(sideSize);
+        System.arraycopy(board, 0, copy.board, 0, board.length);
+        return copy;
     }
 
     public int sideSize() { return sideSize; }
@@ -71,30 +71,32 @@ public class Board {
     }
 
     public int countEmpty() {
-        int c = 0;
-        for (int i = 0; i < board.length; i++) {
-            if (board[i] == EMPTY) {
-                c++;
+        int count = 0;
+
+        for (BoardMark boardMark : board) {
+            if (boardMark == EMPTY) {
+                count++;
             }
         }
-        return c;
+
+        return count;
     }
 
     public boolean isEmpty(int row, int col) {
-        return board[row* sideSize + col] == EMPTY;
+        return get(row, col) == EMPTY;
     }
 
     public void putMark(int row, int col, BoardMark mark) {
-        board[row* sideSize + col] = mark;
+        set(row, col, mark);
     }
 
     public void removeMark(int row, int col) {
-        board[row* sideSize + col] = EMPTY;
+        set(row, col, EMPTY);
     }
 
     public String asText() {
-        StringBuilder text = new StringBuilder();
-        String newLine = System.lineSeparator();
+        var text = new StringBuilder();
+        var newLine = System.lineSeparator();
 
         text.append('=')
                 .append("===".repeat(sideSize))

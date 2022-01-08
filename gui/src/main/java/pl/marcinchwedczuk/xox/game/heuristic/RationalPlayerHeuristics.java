@@ -25,7 +25,7 @@ public class RationalPlayerHeuristics implements Heuristics {
         // The faster we win (larger number of empty fields) the better
         int emptyFieldBonus = countEmptyFields ? emptyPlaces : 0;
         int almostWinsBonus = countAlmostWins
-                ? countAlmostWins(board, lastMove.mark)
+                ? countAlmostWins(board, lastMove.mark())
                 : 0;
 
         if (wins > 0) {

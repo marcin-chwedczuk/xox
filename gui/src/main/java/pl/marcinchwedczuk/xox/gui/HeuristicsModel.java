@@ -39,7 +39,9 @@ public class HeuristicsModel {
         }
 
         var heuristics = new RationalPlayerHeuristics(
-                new XoXGameRules(geometry.boardSize, geometry.winningStride));
+                new XoXGameRules(
+                        geometry.boardSize(),
+                        geometry.winningStride()));
 
         heuristics.setCountEmptyFields(countEmptyFieldsProperty.get());
         heuristics.setCountAlmostWins(countAlmostWinsProperty.get());

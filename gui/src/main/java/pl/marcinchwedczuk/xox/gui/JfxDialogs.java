@@ -14,18 +14,19 @@ import java.util.Optional;
 public class JfxDialogs implements Dialogs {
     @Override
     public boolean ask(String question) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        var alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Question");
         alert.setHeaderText(null);
         alert.setContentText(question);
 
-        Optional<ButtonType> result = alert.showAndWait();
-        return result.get() == ButtonType.OK;
+        return alert.showAndWait()
+                .map(buttonType -> buttonType == ButtonType.OK)
+                .orElse(false);
     }
 
     @Override
     public void info(String text) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        var alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Info");
         alert.setHeaderText(null);
         alert.setContentText(text);
@@ -35,7 +36,7 @@ public class JfxDialogs implements Dialogs {
 
     @Override
     public void error(String title, String body) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+        var alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Info");
         alert.setHeaderText(title);
         alert.setContentText(body);

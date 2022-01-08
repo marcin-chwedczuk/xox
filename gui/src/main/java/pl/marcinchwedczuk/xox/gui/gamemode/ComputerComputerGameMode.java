@@ -15,13 +15,8 @@ public class ComputerComputerGameMode implements GameMode {
     }
 
     @Override
-    public void init() {
-        // Do Nothing
-    }
-
-    @Override
     public String currentPlayer() {
-        return String.format("COMPUTER %s", game.currentPlayer());
+        return "COMPUTER %s".formatted(game.currentPlayer());
     }
 
     @Override
