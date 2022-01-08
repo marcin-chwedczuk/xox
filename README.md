@@ -15,38 +15,30 @@ I tested it on both macOS and Linux.
 
 ### SceneBuilder setup
 
-TODO: Upgrade after upgrading to JavaFX 17
-
-I. Create a JAR with `GameBoard` custom control
+0. Make sure to upgrade to SceneBuilder 17.0
+![Import Step 0](docs/sceneBuilder.png)
+   
+1. Create a JAR with `GameBoard` custom control
 ```
-./gradlew jar
+./mvnw clean package
 ```
+This will create `gui/target/gui-1.0.0-SNAPSHOT.jar` file.
 
-Make sure that the JAR uses the same Java version as the
-one used by SceneBuilder. You can adjust Java version by editing
-`build.gradle.kts`:
-```kotlin
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
-```
-For example, I had to downgrade my project to v11 from v14 to be
-able to import my custom controls.
+2. Import JAR into SceneBuilder
 
-II. Import JAR into SceneBuilder
-
+Open JAR/FXML Manager:
 ![Import Step 1](docs/import1.png)
 
-Select "Add library from file system" option.
-Be default Gradle will create `xox.jar` in
-`build/libs/` directory.
+Select "Add Library/FXML from file system" option and select
+`gui/target/gui-1.0.0-SNAPSHOT.jar` file.
 
 Select only `GameBoard` control:
 ![Import Step 2](docs/import2.png)
 
 If `GameBoard` does not show up on the list,
-you need to tweak Java version settings.
+you need to check SceneBuilder version.
+You have to use SceneBuilder compatible with JDK and JavaFX versions
+used in the project.
 
-III. Now you should be able to open `MainWindow.fxml` in SceneBuilder
+3. Now you should be able to open `MainWindow.fxml` in SceneBuilder
 ![Import Finished](docs/import3.png)

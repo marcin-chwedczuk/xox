@@ -26,7 +26,7 @@
 <?import javafx.scene.text.Font?>
 <?import pl.marcinchwedczuk.xox.gui.controls.GameBoard?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" stylesheets="@MainWindow.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.marcinchwedczuk.xox.gui.MainWindowController">
+<AnchorPane minHeight="0.0" minWidth="0.0" stylesheets="@MainWindow.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.marcinchwedczuk.xox.gui.MainWindowController">
    <children>
       <TabPane fx:id="mainPane" layoutX="379.0" minHeight="0.0" minWidth="0.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
