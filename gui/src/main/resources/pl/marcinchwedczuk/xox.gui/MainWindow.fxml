@@ -183,7 +183,7 @@
                               <VBox alignment="TOP_RIGHT" styleClass="buttons-container" GridPane.columnIndex="1">
                                  <children>
                                     <Button fx:id="nextMoveBtn" mnemonicParsing="false" styleClass="main-button" text="Next Move" />
-                                    <Button fx:id="undoBtn" mnemonicParsing="false" styleClass="main-button" text="Redo" />
+                                    <Button fx:id="undoBtn" mnemonicParsing="false" styleClass="main-button" text="Undo" />
                                     <VBox alignment="BOTTOM_RIGHT" minHeight="0.0" minWidth="0.0" VBox.vgrow="ALWAYS">
                                        <children>
                                           <Button fx:id="resetBtn" mnemonicParsing="false" styleClass="main-button" text="Restart" />

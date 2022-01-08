@@ -4,8 +4,8 @@
 
 To start execute:
 ```
-./gradlew build
-./gradlew run
+./mvnw clean install
+./mvnw javafx:run -pl gui
 ```
 
 Application GUI was created using JavaFX.
@@ -14,6 +14,8 @@ I tested it on both macOS and Linux.
 ## Contributors Guide
 
 ### SceneBuilder setup
+
+TODO: Upgrade after upgrading to JavaFX 17
 
 I. Create a JAR with `GameBoard` custom control
 ```
