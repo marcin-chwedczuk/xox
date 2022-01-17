@@ -2,15 +2,10 @@ package pl.marcinchwedczuk.xox.util;
 
 import java.util.function.Consumer;
 
-final class Left<L,R> implements Either<L,R> {
-    private final L value;
-
-    Left(L value) {
-        this.value = value;
-    }
-
+record Left<L,R>(L value) implements Either<L,R> {
     @Override
-    public void onLeft(Consumer<L> consumer) {
+    public Left<L,R> onLeft(Consumer<L> consumer) {
         consumer.accept(value);
+        return this;
     }
 }

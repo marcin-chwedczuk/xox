@@ -1,6 +1,8 @@
 package pl.marcinchwedczuk.xox.gui;
 
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
@@ -85,8 +87,14 @@ public class MainWindowModel {
                 cancelOp -> gameMode.performComputerMove(cancelOp),
                 nextMoveEnabled);
 
+        // In case of success we return Unit, unfortunately all units are equal to
+        // each other and JavaFX listeners optimize for that case and will not trigger.
+        // Instead we need to use invalidate listener that triggers each time a new value is set,
+        // even if the new value is equal to the old one.
         nextMoveCommand.resultProperty()
-                .addListener((observable, oldValue, newValue) -> {
+                .addListener(observable -> {
+                    var newValue = nextMoveCommand.resultProperty().getValue();
+
                     handleModelChanges();
 
                     // TODO: This sucks, needs some refactor - flatMap is needed
@@ -95,7 +103,7 @@ public class MainWindowModel {
                             Platform.runLater(() -> dialogs.info(errorMessage.message()));
                         });
                     });
-                    newValue.onLeft(ex -> ex.printStackTrace());
+                    newValue.onLeft(Throwable::printStackTrace);
                 });
 
         reset();
